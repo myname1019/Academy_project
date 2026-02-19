@@ -23,4 +23,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('Board/', include('Board.urls')),
     path('',views.Main),
+    path('common/', include('common.urls')),
+    path('course/', include('course.urls')),
+    path('StudentPage/', include('StudentPage.urls')),
+    path('TeacherPage/', include('TeacherPage.urls')),
 ]
