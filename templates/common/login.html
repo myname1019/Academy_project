@@ -144,6 +144,9 @@
     <div class="modal-overlay">
         <div class="login-box">
             <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            <button type="button" class="close-btn" onclick="history.back();">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
             
             <div class="logo-area">
                 INFLEARN
@@ -157,7 +160,7 @@
                 </div>
                 
                 <div class="input-group">
-                    <input type="password" name = 'password' placeholder="Enter User Password" value="{{ form.password.value | default_if_none:'' }} required>
+                    <input type="password" name = 'password' placeholder="Enter User Password" value="{{ form.password.value | default_if_none:'' }}" required>
                     <i class="fa-regular fa-eye eye-icon"></i>
                 </div>
 
@@ -166,7 +169,7 @@
 
             <div class="sub-links">
 
-                <a href="#">회원가입</a> | 
+                <a href="{% url "common:signup" %}">회원가입</a> 
 
             </div>
 {% comment %} 

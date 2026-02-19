@@ -1,26 +1,13 @@
+# models.py
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User
 
-# Create your models here.
-class Student(models.Model):
-  title = models.CharField(max_length=30)
-  content = models.TextField()
-  file_upload = models.FileField(upload_to='board/data/%Y/%m/%d/', blank=True)
-  author = models.ForeignKey(User, on_delete=models.CASCADE)
-  create_date = models.DateTimeField(auto_now_add=True)
-  modify_date = models.DateTimeField(auto_now=True, null=True, blank=True)
-
-  def __str__(self):
-    return f'[PK:{self.pk}]-{self.title} :: {self.author}'
-
-
-class Teacher(models.Model):
-  title = models.CharField(max_length=30)
-  content = models.TextField()
-  file_upload = models.FileField(upload_to='board/data/%Y/%m/%d/', blank=True)
-  author = models.ForeignKey(User, on_delete=models.CASCADE)
-  create_date = models.DateTimeField(auto_now_add=True)
-  modify_date = models.DateTimeField(auto_now=True, null=True, blank=True)
-
-  def __str__(self):
-    return f'[PK:{self.pk}]-{self.title} :: {self.author}'
+class CustomUser(AbstractUser):
+    # 선택지 만들기: 왼쪽은 DB에 저장될 실제 값, 오른쪽은 화면에 보일 이름
+    ROLE_CHOICES = (
+        ('student', '학생'),
+        ('teacher', '선생님(지식공유자)'),
+    )
+    
+    # role(역할) 필드 추가
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student', verbose_name="가입 유형")
