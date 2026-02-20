@@ -1,20 +1,135 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>강의 목록</h2>
+<style>
+body {
+    background: #f5f7fa;
+}
 
-{% for course in courses %}
-    <div>
-        <h3>
-            <a href="{% url 'course:course_detail' course.pk %}">
-                {{ course.title }}
-            </a>
-        </h3>
-        <p>수강료: {{ course.price }}원</p>
+.course-container {
+    max-width: 1100px;
+    margin: 60px auto;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.course-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+
+.thumbnail {
+    height: 160px;
+    background: linear-gradient(135deg, #4e73df, #1cc88a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.course-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.course-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.course-title a {
+    text-decoration: none;
+    color: #333;
+}
+
+.course-title a:hover {
+    color: #4e73df;
+}
+
+.course-desc {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.course-footer {
+    padding: 15px 20px;
+    background: #f8f9fc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-weight: bold;
+    color: #4e73df;
+}
+
+.empty-box {
+    text-align: center;
+    padding: 80px;
+    background: white;
+    border-radius: 12px;
+    color: #888;
+}
+</style>
+
+<div class="course-container">
+    <div class="page-title">📚 전체 강의</div>
+
+    {% if courses %}
+    <div class="course-grid">
+        {% for course in courses %}
+        <div class="course-card">
+            <div class="thumbnail">
+                🎬 {{ course.title|truncatechars:10 }}
+            </div>
+
+            <div class="course-body">
+                <div class="course-title">
+                    <a href="{% url 'course:course_detail' course.pk %}">
+                        {{ course.title }}
+                    </a>
+                </div>
+
+                <div class="course-desc">
+                    {{ course.description|truncatechars:80 }}
+                </div>
+            </div>
+
+            <div class="course-footer">
+                <div class="price">₩ {{ course.price }}</div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <hr>
-{% empty %}
-    <p>등록된 강의가 없습니다.</p>
-{% endfor %}
-
+    {% else %}
+        <div class="empty-box">
+            아직 등록된 강의가 없습니다 🚀
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

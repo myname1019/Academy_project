@@ -1,12 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>강의 등록 / 수정</h2>
+<style>
+body {
+    background: #f5f7fa;
+}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">저장</button>
-</form>
+.form-wrapper {
+    max-width: 750px;
+    margin: 70px auto;
+}
 
+.form-card {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+.form-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.form-card input,
+.form-card textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: 0.2s;
+}
+
+.form-card input:focus,
+.form-card textarea:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78,115,223,0.1);
+}
+
+.submit-btn {
+    background: #4e73df;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+</style>
+
+<div class="form-wrapper">
+    <div class="form-card">
+        <div class="form-title">🎓 강의 등록 / 수정</div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">
+                저장하기
+            </button>
+        </form>
+    </div>
+</div>
 {% endblock %}
