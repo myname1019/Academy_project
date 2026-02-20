@@ -1,20 +1,33 @@
 {% extends 'base.html' %}
 
+{% block title %}강의 목록{% endblock %}
+
 {% block content %}
-<h2>강의 목록</h2>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>강의 목록</h2>
+    <a href="{% url 'course:course_create' %}" class="btn btn-primary">새 강의 등록</a>
+</div>
+<hr>
 
-{% for course in courses %}
-    <div>
-        <h3>
-            <a href="{% url 'course:course_detail' course.pk %}">
-                {{ course.title }}
-            </a>
-        </h3>
-        <p>수강료: {{ course.price }}원</p>
-    </div>
-    <hr>
-{% empty %}
-    <p>등록된 강의가 없습니다.</p>
-{% endfor %}
-
+<ul>
+    {% for course in courses %}
+    <li style="margin-bottom: 15px;">
+        <a href="{% url 'course:course_detail' pk=course.id %}" style="font-size: 18px; font-weight: bold;">
+            {{ course.title }}
+        </a>
+        - <span>수강료: {{ course.price }}원</span>
+        
+        <div style="margin-left: 20px; display: inline-block;">
+            | <a href="{% url 'course:course_update' pk=course.id %}">수정</a> |
+            
+            <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline; padding:0; font-size: 16px;">삭제</button>
+            </form>
+        </div>
+    </li>
+    {% empty %}
+    <li>등록된 강의가 없습니다.</li>
+    {% endfor %}
+</ul>
 {% endblock %}

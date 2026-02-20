@@ -6,16 +6,22 @@
     <title>{% block title %}강의 관리 시스템{% endblock %}</title>
 </head>
 <body>
+    <header>
+        <h1><a href="{% url 'course:course_list' %}">강의 관리</a></h1>
+        <nav>
+            <a href="{% url 'course:course_create' %}">강의 생성</a>
+        </nav>
+    </header>
+    <hr>
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-<header>
-    <h1><a href="{% url 'course:course_list' %}">강의 관리</a></h1>
-    <a href="{% url 'course:course_create' %}">강의 생성</a>
-</header>
-
-<hr>
-
-{% block content %}
-{% endblock %}
-
+    <hr>
+    <footer>
+        <p>&copy; 2026 My Academy</p>
+    </footer>
 </body>
 </html>

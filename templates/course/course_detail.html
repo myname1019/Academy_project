@@ -9,16 +9,25 @@
 {% if course.video %}
     <video width="500" controls>
         <source src="{{ course.video.url }}">
+        브라우저가 비디오를 지원하지 않습니다.
     </video>
 {% endif %}
 
-<br><br>
+<hr>
 
-<a href="{% url 'course:course_update' course.pk %}">수정</a>
+<div style="display: flex; gap: 10px; align-items: center;">
+    <a href="{% url 'course:course_update' pk=course.id %}" class="btn">수정</a> 
+    
+    <span>|</span>
 
-<form method="post" action="{% url 'course:course_delete' course.pk %}">
-    {% csrf_token %}
-    <button type="submit">삭제</button>
-</form>
+    <a href="{% url 'course:course_list' %}">목록</a>
+
+    <span>|</span>
+
+    <form method="post" action="{% url 'course:course_delete' pk=course.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline; padding:0; font-size:16px;">삭제</button>
+    </form>
+</div>
 
 {% endblock %}
