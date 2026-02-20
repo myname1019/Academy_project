@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 팝업</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 기본 설정 */
+        * {
+            box-sizing: border-box;
+            font-family: 'Pretendard', sans-serif;
+        }
+        body {
+            margin: 0;
+            /* 배경 이미지가 있다고 가정 */
+            background-color: #f0f0f0; 
+        }
+
+        /* 모달 배경 (어둡게 덮는 부분) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* 반투명 검은색 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* 로그인 하얀색 박스 */
+        .login-box {
+            background: #fff;
+            width: 400px;
+            padding: 40px 30px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        /* 닫기 버튼 */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        /* 로고 영역 */
+        .logo-area {
+            text-align: center;
+            color: #00c471;
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 30px;
+        }
+
+        /* 입력 폼 공통 */
+        .input-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 15px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #00c471;
+        }
+
+        /* 비밀번호 보기 아이콘 */
+        .eye-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            cursor: pointer;
+        }
+
+        /* 로그인 버튼 */
+        .login-btn {
+            width: 100%;
+            background-color: #00c471;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .login-btn:hover {
+            background-color: #00a760;
+        }
+
+        /* 서브 링크 (비밀번호 찾기 등) */
+        .sub-links {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #868e96;
+        }
+        .sub-links a {
+            color: #868e96;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        .sub-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* 간편 로그인 구분선 */
+        .divider {
+            display: flex;
+            align-items: center;
+            color: #adb5bd;
+            font-size: 12px;
+            margin: 30px 0 20px;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .divider span {
+            padding: 0 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay">
+        <div class="login-box">
+            <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="logo-area">
+                INFLEARN
+            </div>
+
+            <form action="{% url "common:login" %}" method="POST">
+              {% csrf_token %}
+              {% include "form_errors.html" %}
+                <div class="input-group">
+                    <input type="text" name='username' placeholder="Enter User ID" value="{{ form.username.value | default_if_none:'' }}" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" name = 'password' placeholder="Enter User Password" value="{{ form.password.value | default_if_none:'' }}" required>
+                    <i class="fa-regular fa-eye eye-icon"></i>
+                </div>
+
+                <button type="submit" class="login-btn">로그인</button>
+            </form>
+
+            <div class="sub-links">
+
+                <a href="#">회원가입</a> | 
+
+            </div>
+            
+            {% comment %} <div class="divider">
+                <span>간편 로그인</span>
+            </div>
+
+            <div class="social-login">
+                <a href="#" class="social-circle google"><i class="fa-brands fa-google"></i></a>
+                <a href="#" class="social-circle github"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="social-circle apple"><i class="fa-brands fa-apple"></i></a>
+                <a href="#" class="social-circle kakao"><i class="fa-solid fa-comment"></i></a> {% endcomment %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
