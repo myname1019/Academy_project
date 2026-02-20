@@ -3,36 +3,141 @@
 {% block title %}강의 목록{% endblock %}
 
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="font-weight: 700; margin: 0;">강의 목록</h2>
-        <a href="{% url 'course:course_create' %}" style="background-color: #00c471; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">새 강의 등록</a>
-    </div>
-    <hr style="border: 0; border-top: 1px solid #dee2e6; margin-bottom: 30px;">
+<style>
+/* course3의 카드 그리드 스타일 유지 및 버튼 스타일 추가 */
+body { background: #f5f7fa; }
 
-    <ul style="list-style: none; padding: 0;">
+.course-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
+
+/* 상단 타이틀 및 등록 버튼 영역 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+.page-title { font-size: 28px; font-weight: 700; margin: 0; color: #212529; }
+.btn-create {
+    background-color: #00c471;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.btn-create:hover { background-color: #00a760; }
+
+/* 카드 그리드 레이아웃 */
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.course-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+.course-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+
+/* 썸네일 영역 */
+.thumbnail {
+    height: 160px;
+    background: linear-gradient(135deg, #4e73df, #1cc88a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.course-body { padding: 20px; flex-grow: 1; }
+.course-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.course-title a { text-decoration: none; color: #212529; }
+.course-title a:hover { color: #4e73df; }
+.course-desc { font-size: 14px; color: #868e96; margin-bottom: 20px; line-height: 1.5; }
+
+/* 하단 푸터 (가격 및 관리자 액션) */
+.course-footer {
+    padding: 15px 20px;
+    background: #f8f9fc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f3f5;
+}
+.price { font-weight: bold; color: #4e73df; font-size: 16px; }
+
+.admin-actions a { color: #868e96; text-decoration: none; font-size: 13px; margin-right: 8px; }
+.admin-actions a:hover { color: #495057; }
+.btn-delete {
+    background: none; border: none; color: #fa5252;
+    cursor: pointer; padding: 0; font-size: 13px; font-weight: 500;
+}
+.btn-delete:hover { text-decoration: underline; }
+
+.empty-box {
+    text-align: center; padding: 80px; background: white;
+    border-radius: 12px; color: #868e96; font-size: 18px;
+}
+</style>
+
+
+
+<div class="course-container">
+    <div class="page-header">
+        <h2 class="page-title">📚 전체 강의</h2>
+        <a href="{% url 'course:course_create' %}" class="btn-create">새 강의 등록</a>
+    </div>
+
+    {% if courses %}
+    <div class="course-grid">
         {% for course in courses %}
-        <li style="margin-bottom: 20px; padding: 20px; border: 1px solid #f1f3f5; border-radius: 8px; background-color: #fff;">
-            <a href="{% url 'course:course_detail' pk=course.id %}" style="font-size: 20px; font-weight: bold; color: #212529; text-decoration: none;">
-                {{ course.title }}
+        <div class="course-card">
+            <a href="{% url 'course:course_detail' pk=course.id %}" style="text-decoration: none;">
+                <div class="thumbnail">
+                    🎬 {{ course.title|truncatechars:10 }}
+                </div>
             </a>
-            <div style="margin-top: 8px; color: #495057;">
-                <span>수강료: <strong>{{ course.price }}원</strong></span>
+
+            <div class="course-body">
+                <div class="course-title">
+                    <a href="{% url 'course:course_detail' pk=course.id %}">
+                        {{ course.title }}
+                    </a>
+                </div>
+                <div class="course-desc">
+                    {{ course.description|truncatechars:80 }}
+                </div>
             </div>
-            
-            <div style="margin-top: 15px; font-size: 14px;">
-                <a href="{% url 'course:course_update' pk=course.id %}" style="color: #868e96; text-decoration: none;">수정</a> 
-                <span style="color: #dee2e6; margin: 0 10px;">|</span>
+
+            <div class="course-footer">
+                <div class="price">
+                    {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
+                </div>
                 
-                <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                    {% csrf_token %}
-                    <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline; padding:0; font-size: 14px;">삭제</button>
-                </form>
+                <div class="admin-actions">
+                    <a href="{% url 'course:course_update' pk=course.id %}">수정</a>
+                    <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">삭제</button>
+                    </form>
+                </div>
             </div>
-        </li>
-        {% empty %}
-        <li style="text-align: center; color: #868e96; padding: 50px 0;">등록된 강의가 없습니다.</li>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    {% else %}
+        <div class="empty-box">
+            아직 등록된 강의가 없습니다 🚀
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

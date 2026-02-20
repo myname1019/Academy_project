@@ -3,25 +3,100 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}강의 관리 시스템{% endblock %}</title>
+
+    <style>
+        /* 1. 기본 설정 및 테마 컬러 */
+        body {
+            margin: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* 2. HEADER (GNB) - course3의 세련된 디자인 채택 */
+        .navbar {
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 20px;
+        }
+
+        .navbar a:hover {
+            opacity: 0.8;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* 3. MAIN CONTENT 영역 */
+        .main-container {
+            min-height: 80vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 80px 20px;
+        }
+
+        /* 4. FOOTER */
+        .footer {
+            background: #ffffff;
+            padding: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
+
+        /* 5. 공통 버튼 스타일 */
+        .btn-primary {
+            background: #4e73df;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #2e59d9;
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
+
 <body>
-    <header>
-        <h1><a href="{% url 'course:course_list' %}">강의 관리</a></h1>
+    <header class="navbar">
+        <div class="logo">
+            🎓 <a href="{% url 'course:course_list' %}" style="margin-left: 5px;">Course Platform</a>
+        </div>
+
         <nav>
-            <a href="{% url 'course:course_create' %}">강의 생성</a>
+            <a href="{% url 'course:course_list' %}">강의 목록</a>
+            <a href="{% url 'course:course_create' %}" class="btn-primary">강의 생성</a>
         </nav>
     </header>
-    <hr>
-    
-    <main>
+
+    <main class="main-container">
         {% block content %}
         {% endblock %}
     </main>
 
-    <hr>
-    <footer>
-        <p>&copy; 2026 My Academy</p>
+    <footer class="footer">
+        <p>&copy; 2026 My Academy | Course Management System</p>
     </footer>
 </body>
 </html>
