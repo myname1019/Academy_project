@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}강의 목록{% endblock %}
+
+{% block content %}
+<ul>
+    {% for course in courses %}
+        <li>
+            <a href="{% url 'course:detail' pk=course.id %}">{{ course.title }}</a>
+            | <a href="{% url 'course:board_update' pk=course.id %}">수정</a>
+            | <a href="{% url 'course:board_delete' pk=course.id %}">삭제</a>
+        </li>
+    {% empty %}
+        <li>등록된 강의가 없습니다.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

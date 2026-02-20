@@ -1,0 +1,16 @@
+<!-- templates/course_form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if course %}강의 수정{% else %}강의 생성{% endif %}</title>
+</head>
+<body>
+    <h1>{% if course %}강의 수정{% else %}강의 생성{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{% if course %}수정{% else %}생성{% endif %}</button>
+    </form>
+    <a href="{% url 'course:board_list' %}">목록으로 돌아가기</a>
+</body>
+</html>
