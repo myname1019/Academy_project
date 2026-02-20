@@ -13,7 +13,8 @@
 {% endif %}
 
 <p>
-    <a href="{% url 'course:course_update' course.pk %}">수정</a> |
+    <a href="{% url 'course:course_update' pk=course.id %}">수정</a> |
+    <a href="{% url 'course:course_delete' pk=course.id %}">삭제</a> |
     <a href="{% url 'course:course_list' %}">목록</a>
 </p>
 {% endblock %}

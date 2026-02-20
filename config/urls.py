@@ -26,9 +26,12 @@ urlpatterns = [
     path('Board/', include('Board.urls')),
     path('', views.Main),
     path('common/', include('common.urls')),
-
-    # course 앱 연결
-    path('course/', include('course.urls', namespace='course')),  # 새로 활성화
-    # path('StudentPage/', include('StudentPage.urls')),
+    
+    # 1. main 브랜치에서 수정한 course 앱 연결 (namespace 포함)
+    path('course/', include('course.urls', namespace='course')),
+    
+    # 2. feature/student-page 브랜치에서 수정한 StudentPage 연결
+    path('StudentPage/', include('StudentPage.urls')),
+    
     # path('TeacherPage/', include('TeacherPage.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ target_user.username }}님의 프로필{% endblock %}
+
+{% block content %}
+<style>
+    /* 전체 배경 및 폰트 설정 */
+    body { background-color: #fff; color: #212529; font-family: 'Pretendard', sans-serif; }
+    
+    .profile-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+    /* 1. 상단 프로필 헤더 (아바타, 닉네임, 팔로우 버튼) */
+    .profile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .profile-info-group { display: flex; align-items: center; gap: 20px; }
+    
+    .profile-avatar { 
+        width: 90px; height: 90px; 
+        border-radius: 50%; object-fit: cover; 
+        border: 1px solid #dee2e6; 
+    }
+    
+    .profile-name { font-size: 32px; font-weight: 800; margin: 0 0 4px 0; line-height: 1.2; }
+    .profile-username { color: #868e96; font-size: 16px; margin: 0; }
+    
+    .follow-btn { 
+        background: transparent; color: #00c471; 
+        border: 1px solid #00c471; border-radius: 8px; 
+        padding: 10px 20px; font-size: 15px; font-weight: 600; 
+        cursor: pointer; transition: background-color 0.2s; 
+    }
+    .follow-btn:hover { background-color: rgba(0, 196, 113, 0.05); }
+
+    /* 2. 통계 박스 (수강평 수, 평균 평점 등) */
+    .profile-stats { display: flex; gap: 12px; margin-bottom: 40px; }
+    .stat-box { 
+        flex: 1; padding: 16px 20px; 
+        border: 1px solid #e9ecef; border-radius: 8px; 
+        background-color: #fff; 
+    }
+    .stat-label { color: #868e96; font-size: 13px; font-weight: 500; margin-bottom: 6px; display: block; }
+    .stat-value { color: #212529; font-size: 18px; font-weight: bold; margin: 0; }
+
+    /* 3. 탭 네비게이션 */
+    .profile-tabs { display: flex; gap: 24px; border-bottom: 1px solid #dee2e6; margin-bottom: 30px; }
+    .tab-item { 
+        padding: 12px 4px; color: #868e96; font-size: 18px; font-weight: 700; 
+        text-decoration: none; border-bottom: 3px solid transparent; 
+    }
+    .tab-item.active { color: #212529; border-bottom-color: #212529; }
+    .tab-item:hover { color: #212529; }
+
+    /* 4. 본문 콘텐츠 영역 */
+    .profile-content { min-height: 200px; }
+    .empty-state { 
+        text-align: center; color: #212529; font-size: 16px; 
+        padding: 60px 0; font-weight: 500; 
+        background: #f8f9fa; border-radius: 8px;
+    }
+    .bio-text { line-height: 1.6; font-size: 16px; white-space: pre-wrap; }
+</style>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-info-group">
+            <img class="profile-avatar" src="{% if target_user.profile_img %}{{ target_user.profile_img.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}" alt="프로필 이미지">
+            <div>
+                <h2 class="profile-name">{{ target_user.first_name|default:"내닉넴" }}</h2>
+                <p class="profile-username">@{{ target_user.username }}</p>
+            </div>
+        </div>
+        
+        {% if request.user != target_user %}
+        <button class="follow-btn">🔔 팔로우</button>
+        {% endif %}
+    </div>
+
+    <div class="profile-stats">
+        <div class="stat-box">
+            <span class="stat-label">수강평 작성수</span>
+            <p class="stat-value">{{ target_user.reviews.count|default:"0" }}개</p>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">평균평점</span>
+            <p class="stat-value">-</p>
+        </div>
+        </div>
+
+    <div class="profile-tabs">
+        <a href="#" class="tab-item active">소개</a>
+        <a href="#" class="tab-item">홈</a>
+    </div>
+
+    <div class="profile-content">
+        {% if target_user.bio %}
+            <div class="bio-text">{{ target_user.bio }}</div>
+        {% else %}
+            <div class="empty-state">소개글이 비어있어요</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{% if object %}강좌 수정{% else %}강좌 등록{% endif %}</h2>
+<h2>{% if object %}강의 수정{% else %}강의 등록{% endif %}</h2>
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">{% if object %}수정{% else %}등록{% endif %}</button>
+    <button type="submit" class="btn btn-primary">
+        {% if object %}수정하기{% else %}등록하기{% endif %}
+    </button>
 </form>
 
+<hr>
 <a href="{% url 'course:course_list' %}">목록으로 돌아가기</a>
 {% endblock %}
