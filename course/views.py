@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from .models import Course
@@ -44,4 +44,3 @@ def course_delete(request, pk):
         return redirect('course:course_list')
 
     return redirect('course:course_detail', pk=pk)
-

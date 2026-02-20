@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from Main import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -24,9 +24,14 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('Board/', include('Board.urls')),
-    path('',views.Main),
+    path('', views.Main),
     path('common/', include('common.urls')),
-    path('course/', include('course.urls')),
+    
+    # 1. main 브랜치에서 수정한 course 앱 연결 (namespace 포함)
+    path('course/', include('course.urls', namespace='course')),
+    
+    # 2. feature/student-page 브랜치에서 수정한 StudentPage 연결
     path('StudentPage/', include('StudentPage.urls')),
+    
     # path('TeacherPage/', include('TeacherPage.urls')),
-] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

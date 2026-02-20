@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from common.forms import UserForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+
 # 새로 분리해서 만든 모델들을 가져옵니다.
 from .models import Student, Teacher 
 

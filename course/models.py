@@ -5,7 +5,11 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.IntegerField()
+    
+    # 1. main 브랜치에서 추가한 동영상 파일 필드
+    video = models.FileField(upload_to='videos/%Y/%m/%d/', blank=True, null=True)
 
+    # 2. feature/student-page 브랜치에서 추가한 선생님/학생 관계 필드
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

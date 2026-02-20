@@ -3,16 +3,25 @@
 {% block title %}강의 목록{% endblock %}
 
 {% block content %}
+<h2>강의 목록</h2>
+<a href="{% url 'course:course_create' %}">새 강의 등록</a>
+<hr>
+
 <ul>
     {% for course in courses %}
-        <li>
-            <a href="{% url 'course:detail' pk=course.id %}">{{ course.title }}</a>
-            | <a href="{% url 'course:board_update' pk=course.id %}">수정</a>
-            | <a href="{% url 'course:board_delete' pk=course.id %}">삭제</a>
-        </li>
+    <li>
+        <a href="{% url 'course:course_detail' pk=course.id %}">{{ course.title }}</a>
+        - {{ course.price }}원
+        
+        | <a href="{% url 'course:course_update' pk=course.id %}">수정</a>
+        
+        <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline; padding:0;">삭제</button>
+        </form>
+    </li>
     {% empty %}
-        <li>등록된 강의가 없습니다.</li>
+    <li>등록된 강의가 없습니다.</li>
     {% endfor %}
 </ul>
 {% endblock %}
-

@@ -1,19 +1,21 @@
 from django import forms
 from .models import Course
 
-
 class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        fields = ['title', 'description', 'price']
+        # main 브랜치에서 추가한 'video' 필드 포함
+        fields = ['title', 'description', 'price', 'video']
 
         labels = {
             'title': '강의 제목',
             'description': '강의 설명',
             'price': '수강료',
+            'video': '강의 동영상',
         }
 
+        # student-page 브랜치의 깔끔한 폼 디자인 유지 + video 위젯 추가
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -27,6 +29,9 @@ class CourseForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '수강료 입력'
+            }),
+            'video': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
             }),
         }
 
