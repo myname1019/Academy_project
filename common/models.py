@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
         ('teacher', '선생님'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student', verbose_name="가입 유형")
-
+    bio = models.TextField(blank=True, null=True, verbose_name="자기소개")
 # 2. 학생 전용 테이블 따로 만들기
 class Student(models.Model):
     # CustomUser 테이블과 1:1로 연결! (유저가 삭제되면 학생 정보도 같이 삭제됨)
