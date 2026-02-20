@@ -1,102 +1,124 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }}{% endblock %}
 
 {% block content %}
 <style>
-body {
-    background: #f5f7fa;
-}
+    /* course3의 테마와 어울리는 세련된 배경색 설정 */
+    body { background-color: #f5f7fa; }
 
-.detail-container {
-    max-width: 1000px;
-    margin: 60px auto;
-}
+    .detail-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
 
-.detail-card {
-    background: white;
-    border-radius: 16px;
-    padding: 40px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
-}
+    /* 메인 카드 디자인 */
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    }
 
-.detail-title {
-    font-size: 30px;
-    font-weight: 700;
-    margin-bottom: 15px;
-}
+    .breadcrumb { font-size: 14px; color: #868e96; margin-bottom: 12px; }
+    .detail-title { font-size: 32px; font-weight: 800; margin-bottom: 15px; color: #212529; }
+    
+    .stats-row { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; font-size: 15px; color: #495057; }
+    .stars { color: #fab005; font-weight: bold; }
 
-.detail-price {
-    font-size: 20px;
-    font-weight: bold;
-    color: #4e73df;
-    margin-bottom: 25px;
-}
+    .detail-price {
+        font-size: 24px;
+        font-weight: 800;
+        color: #4e73df; /* base.html의 포인트 컬러와 통일 */
+        margin: 20px 0;
+        padding: 15px 0;
+        border-top: 1px solid #f1f3f5;
+    }
 
-.video-box {
-    margin: 30px 0;
-    border-radius: 12px;
-    overflow: hidden;
-}
+    .description-box { line-height: 1.8; color: #495057; font-size: 16px; margin-bottom: 30px; }
 
-.video-box video {
-    width: 100%;
-    border-radius: 12px;
-}
+    /* 비디오 영역 */
+    .video-box {
+        margin: 30px 0;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000;
+        aspect-ratio: 16 / 9;
+        display: flex;
+        align-items: center;
+    }
+    .video-box video { width: 100%; }
 
-.button-group {
-    margin-top: 30px;
-}
+    /* 버튼 그룹 */
+    .button-group {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f3f5;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
 
-.btn {
-    padding: 10px 18px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    margin-right: 10px;
-}
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: 0.2s;
+    }
 
-.btn-edit {
-    background: #4e73df;
-    color: white;
-}
+    .btn-edit { background: #4e73df; color: white; }
+    .btn-edit:hover { background: #2e59d9; }
 
-.btn-delete {
-    background: #e74a3b;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+    .btn-delete {
+        background: #fff;
+        color: #fa5252;
+        border: 1px solid #fa5252;
+        cursor: pointer;
+    }
+    .btn-delete:hover { background: #fa5252; color: #fff; }
+
+    .btn-list { background: #f1f3f5; color: #495057; }
 </style>
 
 <div class="detail-container">
+    <div class="breadcrumb">개발 · 프로그래밍 > 알고리즘</div>
+    
     <div class="detail-card">
+        <h1 class="detail-title">{{ course.title }}</h1>
+        <div class="stats-row">
+            <span class="stars">⭐ 5.0</span>
+            <span>수강생 <strong>1,158</strong>명</span>
+            <span>지식공유자: <strong>{{ course.teacher.user.username|default:"dremdeveloper" }}</strong></span>
+        </div>
 
-        <div class="detail-title">{{ course.title }}</div>
+        <div class="description-box">
+            {{ course.description|linebreaks }}
+        </div>
 
-        <div>{{ course.description }}</div>
-
-        <div class="detail-price">₩ {{ course.price }}</div>
+        <div class="detail-price">
+            {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
+        </div>
 
         {% if course.video %}
         <div class="video-box">
             <video controls>
                 <source src="{{ course.video.url }}">
+                브라우저가 비디오를 지원하지 않습니다.
             </video>
         </div>
         {% endif %}
 
         <div class="button-group">
-            <a href="{% url 'course:course_update' course.pk %}" class="btn btn-edit">
-                수정
-            </a>
-
-            <form method="post" action="{% url 'course:course_delete' course.pk %}" style="display:inline;">
+            <a href="{% url 'course:course_list' %}" class="btn btn-list">목록으로</a>
+            <a href="{% url 'course:course_update' pk=course.id %}" class="btn btn-edit">수정하기</a>
+            
+            <form method="post" action="{% url 'course:course_delete' pk=course.id %}" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-delete">
-                    삭제
+                <button type="submit" class="btn btn-delete" onclick="return confirm('정말 이 강의를 삭제하시겠습니까?')">
+                    삭제하기
                 </button>
             </form>
         </div>
-
     </div>
 </div>
 {% endblock %}

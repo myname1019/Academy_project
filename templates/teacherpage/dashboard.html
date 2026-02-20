@@ -1,0 +1,34 @@
+{% extends 'board_base.html' %}
+{% load static %}
+
+{% block title %}{{ target_user.user.username }}님의 프로필{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- 1. 프로필 헤더 -->
+    <div class="profile-header">
+        <div class="profile-info-group">
+            <img class="profile-avatar" src="{% if target_user.profile_img %}{{ target_user.profile_img.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}" alt="프로필 이미지">
+            <div>
+                <h2 class="profile-name">{{ target_user.user.first_name|default:"이름없음" }}</h2>
+                <p class="profile-username">@{{ target_user.user.username }}</p>
+                <p class="profile-subject">담당 과목: {{ target_user.subject|default:"없음" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 강의 목록 -->
+    <h3>내 강의 목록</h3>
+    <div class="courses-list">
+        {% for course in courses %}
+            <div class="course-item">
+                <h4>{{ course.title }}</h4>
+                <p>{{ course.description }}</p>
+                <p>수강생: {{ course.students.count }}</p>
+            </div>
+        {% empty %}
+            <p>등록된 강의가 없습니다.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
