@@ -2,6 +2,7 @@ from django import forms
 from .models import Course
 
 class CourseForm(forms.ModelForm):
+
     class Meta:
         model = Course
         fields = ['title', 'description', 'price', 'video']
@@ -9,13 +10,22 @@ class CourseForm(forms.ModelForm):
             'title': '강의 제목',
             'description': '강의 설명',
             'price': '수강료',
-            'video': '강의 동영상',
+            'video': '강의 영상',
         }
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '강의 제목'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows':5, 'placeholder': '강의 설명'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '수강료'}),
-            'video': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '강의 제목을 입력하세요'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 5,
+                'placeholder': '강의 설명을 입력하세요'
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '수강료 입력'
+            }),
         }
 
     def clean_price(self):
