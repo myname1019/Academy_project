@@ -1,20 +1,3 @@
-"""
-URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 from django.contrib import admin
 from django.urls import path, include
 from Main import views
@@ -27,11 +10,14 @@ urlpatterns = [
     path('', views.Main),
     path('common/', include('common.urls')),
     
-    # 1. main 브랜치에서 수정한 course 앱 연결 (namespace 포함)
+    # 1. main 브랜치의 namespace 설정을 채택합니다.
     path('course/', include('course.urls', namespace='course')),
     
-    # 2. feature/student-page 브랜치에서 수정한 StudentPage 연결
+    # 2. StudentPage 연결 (feature 브랜치)
     path('StudentPage/', include('StudentPage.urls')),
     
-    # path('TeacherPage/', include('TeacherPage.urls')),
+    # 3. TeacherPage 연결 (test 브랜치 버전 살림 + namespace 추가 권장)
+    # 만약 TeacherPage/urls.py 안에 app_name이 설정되어 있다면 namespace를 빼셔도 됩니다.
+    path('TeacherPage/', include('TeacherPage.urls', namespace='TeacherPage')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

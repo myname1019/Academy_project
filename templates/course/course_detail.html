@@ -11,6 +11,7 @@
         --inflearn-green: #00c471;
         --dark-bg: #101113;
         --gray-text: #868e96;
+        --danger-red: #fa5252;
     }
     body { background-color: #fff; font-family: 'Pretendard', sans-serif; margin: 0; }
 
@@ -47,25 +48,31 @@
 
     /* 4. 우측 플로팅 결제창 (사이드바) */
     .sidebar { width: 340px; position: sticky; top: 100px; height: fit-content; }
-    .payment-card { border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .payment-card { border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: #fff; }
     .price { font-size: 26px; font-weight: 700; margin-bottom: 20px; }
-    .btn-enroll { width: 100%; background: var(--inflearn-green); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+    .btn-enroll { width: 100%; background: var(--inflearn-green); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-bottom: 10px; display: block; text-align: center; text-decoration: none; }
     .btn-enroll:hover { background: #00a760; }
     
+    /* 관리용 버튼 (수정/삭제) */
+    .admin-actions { margin-top: 15px; display: flex; gap: 10px; }
+    .btn-edit { flex: 1; padding: 10px; border: 1px solid #dee2e6; border-radius: 6px; text-align: center; color: #495057; text-decoration: none; font-size: 14px; }
+    .btn-delete { flex: 1; padding: 10px; border: 1px solid var(--danger-red); border-radius: 6px; background: none; color: var(--danger-red); cursor: pointer; font-size: 14px; }
+    .btn-delete:hover { background: var(--danger-red); color: #fff; }
+
     .course-meta { list-style: none; padding: 20px 0 0 0; border-top: 1px solid #f1f3f5; margin-top: 20px; font-size: 14px; }
-    .course-meta li { display: flex; justify-content: space-between; margin-bottom: 10px; }
-    .meta-val { font-weight: 700; }
+    .course-meta li { display: flex; justify-content: space-between; margin-bottom: 10px; color: #495057; }
+    .meta-val { font-weight: 700; color: #212529; }
 </style>
 
 <header class="course-header">
     <div class="header-container">
         <div class="header-info">
-            <div class="breadcrumb">개발 · 프로그래밍 > 개발 · 프로그래밍 자격증</div>
-            <h1 class="title">{{ course.title|default:"코딩 테스트 합격자 되기 - 파이썬 편" }}</h1>
+            <div class="breadcrumb">개발 · 프로그래밍 > 알고리즘 기초</div>
+            <h1 class="title">{{ course.title }}</h1>
             <div class="stats">
                 <span class="stars">⭐ 5.0</span>
-                <span>수강생 {{ course.student_count|default:"1,158" }}명</span>
-                <span>지식공유자: <strong>dremdeveloper</strong></span>
+                <span>수강생 <strong>{{ course.student_count|default:"1,158" }}</strong>명</span>
+                <span>지식공유자: <strong>{{ course.teacher.user.username|default:"dremdeveloper" }}</strong></span>
             </div>
         </div>
         <div class="thumbnail-box">
@@ -79,34 +86,27 @@
         <nav class="tabs">
             <a href="#" class="tab-item active">강의 소개</a>
             <a href="#curriculum" class="tab-item">커리큘럼</a>
-            <a href="#" class="tab-item">수강평 (11)</a>
-            <a href="#" class="tab-item">커뮤니티</a>
+            <a href="#" class="tab-item">수강평</a>
+            <a href="#" class="tab-item">질문 & 답변</a>
         </nav>
+
+        <section id="intro">
+            <h3 class="section-title">강의 설명</h3>
+            <div style="line-height: 1.8; color: #495057;">
+                {{ course.description|linebreaks }}
+            </div>
+        </section>
+
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #e9ecef;">
 
         <section id="curriculum">
             <h3 class="section-title">커리큘럼</h3>
             <div class="curriculum-card">
-                <div class="curriculum-header">섹션 1. 코딩테스트 기본 지식</div>
+                <div class="curriculum-header">기초 다지기</div>
                 <ul class="unit-list">
                     <li class="unit-item">
-                        <a href="#" class="unit-link">📄 알고리즘의 효율 분석</a>
+                        <span class="unit-link">📄 알고리즘 효율 분석</span>
                         <span class="preview-badge">미리보기</span>
-                    </li>
-                    <li class="unit-item">
-                        <a href="#" class="unit-link">🔥 시간복잡도 - 코드 분석</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="curriculum-card">
-                <div class="curriculum-header">섹션 2. 자료구조</div>
-                <ul class="unit-list">
-                    <li class="unit-item">
-                        <a href="#" class="unit-link">📄 스택</a>
-                        <span class="preview-badge">미리보기</span>
-                    </li>
-                    <li class="unit-item">
-                        <a href="#" class="unit-link">📄 큐</a>
                     </li>
                 </ul>
             </div>
@@ -116,15 +116,27 @@
     <aside class="sidebar">
         <div class="payment-card">
             <div class="price">
-                {% if course.price == 0 or not course.price %}무료{% else %}{{ course.price }}원{% endif %}
+                {% if course.price == 0 %}무료{% else %}{{ course.price }}원{% endif %}
             </div>
-            <button class="btn-enroll">수강신청 하기</button>
+            
+            <a href="#" class="btn-enroll">수강신청 하기</a>
+            
+            <div class="admin-actions">
+                <a href="{% url 'course:course_update' pk=course.id %}" class="btn-edit">수정</a>
+                <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="flex:1;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+                </form>
+            </div>
             
             <ul class="course-meta">
                 <li><span>지식공유자</span> <span class="meta-val">dremdeveloper</span></li>
                 <li><span>수강기한</span> <span class="meta-val">무제한</span></li>
                 <li><span>난이도</span> <span class="meta-val">입문</span></li>
             </ul>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'course:course_list' %}" style="color: var(--gray-text); text-decoration: none; font-size: 14px;">← 목록으로 돌아가기</a>
         </div>
     </aside>
 </div>
