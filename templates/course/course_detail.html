@@ -1,19 +1,14 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<h2>{{ course.title }}</h2>
-<p>{{ course.description }}</p>
-<p>수강료: {{ course.price }}원</p>
-
-{% if course.video %}
-<video width="600" controls>
-    <source src="{{ course.video.url }}" type="video/mp4">
-    브라우저가 비디오를 지원하지 않습니다.
-</video>
-{% endif %}
-
-<p>
-    <a href="{% url 'course:course_update' course.pk %}">수정</a> |
-    <a href="{% url 'course:course_list' %}">목록</a>
-</p>
-{% endblock %}
+<!-- templates/course_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ course.title }}</title>
+</head>
+<body>
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+    <a href="{% url 'course:board_update' pk=course.id %}">수정</a>
+    <a href="{% url 'course:board_delete' pk=course.id %}">삭제</a>
+    <a href="{% url 'course:board_list' %}">목록으로 돌아가기</a>
+</body>
+</html>

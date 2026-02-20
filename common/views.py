@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from common.forms import UserForm
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 # 새로 분리해서 만든 모델들을 가져옵니다.
 from .models import Student, Teacher 
 
@@ -34,3 +35,10 @@ def signup(request):
         form = UserForm()
         
     return render(request, 'common/signup.html', {'form': form})
+
+@login_required
+def mypage_redirect(request):
+    if request.user.role == 'student':
+        return redirect('student_dashboard')  # 그대로 사용 가능
+    elif request.user.role == 'teacher':
+        return redirect('TeacherPage:teacher_dashboard')  # namespace 포함

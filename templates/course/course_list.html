@@ -1,23 +1,18 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2>강좌 목록</h2>
-<a href="{% url 'course:course_create' %}">강좌 등록</a>
-<hr>
+{% block title %}강의 목록{% endblock %}
 
+{% block content %}
 <ul>
     {% for course in courses %}
-    <li>
-        <a href="{% url 'course:course_detail' course.pk %}">{{ course.title }}</a>
-        - {{ course.price }}원
-        <a href="{% url 'course:course_update' course.pk %}">수정</a>
-        <form action="{% url 'course:course_delete' course.pk %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit">삭제</button>
-        </form>
-    </li>
+        <li>
+            <a href="{% url 'course:detail' pk=course.id %}">{{ course.title }}</a>
+            | <a href="{% url 'course:board_update' pk=course.id %}">수정</a>
+            | <a href="{% url 'course:board_delete' pk=course.id %}">삭제</a>
+        </li>
     {% empty %}
-    <li>등록된 강좌가 없습니다.</li>
+        <li>등록된 강의가 없습니다.</li>
     {% endfor %}
 </ul>
 {% endblock %}
+

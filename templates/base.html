@@ -1,6 +1,6 @@
 <!-- templates/base.html -->
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -11,10 +11,20 @@
     <header>
         <h1><a href="{% url 'course:course_list' %}">강의 관리</a></h1>
         <nav>
-            <a href="{% url 'course:course_create' %}">강의 생성</a>
+            <a href="{% url 'course:course_create' pk=0 %}">강의 생성</a>
         </nav>
     </header>
     <hr>
-    {% block content %}{% endblock %}
+    
+    <main>
+        {% block content %}
+        <!-- 페이지마다 여기에 내용이 들어감 -->
+        {% endblock %}
+    </main>
+
+    <hr>
+    <footer>
+        <p>&copy; 2026 My Academy</p>
+    </footer>
 </body>
 </html>

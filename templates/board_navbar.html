@@ -99,7 +99,7 @@
         </nav>
         {% else %}
         <nav class="nav-menu">
-            <a href="#">내 페이지</a>
+            <a href="{% url 'common:mypage' %}">내 페이지</a>
             <form action="{% url 'common:logout' %}" method="post" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="logout-btn">로그아웃</button>

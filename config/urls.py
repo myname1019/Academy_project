@@ -26,9 +26,7 @@ urlpatterns = [
     path('Board/', include('Board.urls')),
     path('', views.Main),
     path('common/', include('common.urls')),
-
-    # course 앱 연결
-    path('course/', include('course.urls', namespace='course')),  # 새로 활성화
-    # path('StudentPage/', include('StudentPage.urls')),
-    # path('TeacherPage/', include('TeacherPage.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('course/', include('course.urls')),
+    path('StudentPage/', include('StudentPage.urls')),
+    path('TeacherPage/', include('TeacherPage.urls')),
+] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
