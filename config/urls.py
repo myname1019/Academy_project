@@ -26,7 +26,7 @@ urlpatterns = [
     path('Board/', include('Board.urls')),
     path('',views.Main),
     path('common/', include('common.urls')),
-    # path('course/', include('course.urls')),
+    path('course/', include('course.urls')),
     # path('StudentPage/', include('StudentPage.urls')),
     # path('TeacherPage/', include('TeacherPage.urls')),
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

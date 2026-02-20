@@ -11,6 +11,6 @@
         {{ form.as_p }}
         <button type="submit">{% if course %}수정{% else %}생성{% endif %}</button>
     </form>
-    <a href="{% url 'course:board_list' %}">목록으로 돌아가기</a>
+    <a href="{% url 'course:course_list' %}">목록으로 돌아가기</a>
 </body>
 </html>
