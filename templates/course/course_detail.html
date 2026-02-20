@@ -1,0 +1,14 @@
+<!-- templates/course_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ course.title }}</title>
+</head>
+<body>
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+    <a href="{% url 'course:board_update' pk=course.id %}">수정</a>
+    <a href="{% url 'course:board_delete' pk=course.id %}">삭제</a>
+    <a href="{% url 'course:board_list' %}">목록으로 돌아가기</a>
+</body>
+</html>
