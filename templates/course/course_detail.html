@@ -2,19 +2,32 @@
 
 {% block content %}
 <h2>{{ course.title }}</h2>
+
 <p>{{ course.description }}</p>
 <p>수강료: {{ course.price }}원</p>
 
 {% if course.video %}
-<video width="600" controls>
-    <source src="{{ course.video.url }}" type="video/mp4">
-    브라우저가 비디오를 지원하지 않습니다.
-</video>
+    <video width="500" controls>
+        <source src="{{ course.video.url }}">
+        브라우저가 비디오를 지원하지 않습니다.
+    </video>
 {% endif %}
 
-<p>
-    <a href="{% url 'course:course_update' pk=course.id %}">수정</a> |
-    <a href="{% url 'course:course_delete' pk=course.id %}">삭제</a> |
+<hr>
+
+<div style="display: flex; gap: 10px; align-items: center;">
+    <a href="{% url 'course:course_update' pk=course.id %}" class="btn">수정</a> 
+    
+    <span>|</span>
+
     <a href="{% url 'course:course_list' %}">목록</a>
-</p>
+
+    <span>|</span>
+
+    <form method="post" action="{% url 'course:course_delete' pk=course.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline; padding:0; font-size:16px;">삭제</button>
+    </form>
+</div>
+
 {% endblock %}
