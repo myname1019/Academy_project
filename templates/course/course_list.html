@@ -14,9 +14,7 @@ body { background: #f5f7fa; }
     align-items: center;
     margin-bottom: 40px;
 }
-
 .page-title { font-size: 28px; font-weight: 700; margin: 0; color: #212529; }
-
 .btn-create {
     background-color: #00c471;
     color: white;
@@ -24,7 +22,9 @@ body { background: #f5f7fa; }
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
+    transition: 0.2s;
 }
+.btn-create:hover { background-color: #00a760; }
 
 .course-grid {
     display: grid;
@@ -41,6 +41,7 @@ body { background: #f5f7fa; }
     display: flex;
     flex-direction: column;
 }
+.course-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
 
 .thumbnail {
     height: 160px;
@@ -54,17 +55,10 @@ body { background: #f5f7fa; }
 }
 
 .course-body { padding: 20px; flex-grow: 1; }
-
-.category-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #1c7ed6;
-    margin-bottom: 6px;
-}
-
 .course-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
-
-.course-desc { font-size: 14px; color: #868e96; margin-bottom: 20px; }
+.course-title a { text-decoration: none; color: #212529; }
+.course-title a:hover { color: #4e73df; }
+.course-desc { font-size: 14px; color: #868e96; margin-bottom: 20px; line-height: 1.5; }
 
 .course-footer {
     padding: 15px 20px;
@@ -72,15 +66,22 @@ body { background: #f5f7fa; }
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-top: 1px solid #f1f3f5;
 }
-
 .price { font-weight: bold; color: #4e73df; font-size: 16px; }
 
-.admin-actions a { font-size: 13px; margin-right: 8px; }
+.admin-actions a { color: #868e96; text-decoration: none; font-size: 13px; margin-right: 8px; }
+.admin-actions a:hover { color: #495057; }
+.btn-delete {
+    background: none; border: none; color: #fa5252;
+    cursor: pointer; padding: 0; font-size: 13px; font-weight: 500;
+}
+.btn-delete:hover { text-decoration: underline; }
 
-.btn-delete { background: none; border: none; color: #fa5252; cursor: pointer; font-size: 13px; }
-
-.empty-box { text-align: center; padding: 80px; background: white; border-radius: 12px; }
+.empty-box {
+    text-align: center; padding: 80px; background: white;
+    border-radius: 12px; color: #868e96; font-size: 18px;
+}
 </style>
 
 <div class="course-container">
@@ -93,25 +94,18 @@ body { background: #f5f7fa; }
     <div class="course-grid">
         {% for course in courses %}
         <div class="course-card">
-
-            <a href="{% url 'course:course_detail' pk=course.id %}">
+            <a href="{% url 'course:course_detail' pk=course.id %}" style="text-decoration: none;">
                 <div class="thumbnail">
                     🎬 {{ course.title|truncatechars:10 }}
                 </div>
             </a>
 
             <div class="course-body">
-                <!-- 🔽 카테고리 표시 -->
-                <div class="category-label">
-                    {{ course.get_category_display }}
-                </div>
-
                 <div class="course-title">
                     <a href="{% url 'course:course_detail' pk=course.id %}">
                         {{ course.title }}
                     </a>
                 </div>
-
                 <div class="course-desc">
                     {{ course.description|truncatechars:80 }}
                 </div>
@@ -121,25 +115,22 @@ body { background: #f5f7fa; }
                 <div class="price">
                     {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
                 </div>
-
-                <!-- 🔐 작성자만 보이게 -->
-                {% if request.user == course.teacher %}
+                
                 <div class="admin-actions">
                     <a href="{% url 'course:course_update' pk=course.id %}">수정</a>
-
-                    <form action="{% url 'course:course_delete' pk=course.id %}"
-                          method="post" style="display:inline;"
-                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
                         {% csrf_token %}
                         <button type="submit" class="btn-delete">삭제</button>
                     </form>
                 </div>
-                {% endif %}
             </div>
-
         </div>
         {% endfor %}
     </div>
+
+    <!-- 페이지네이션 include -->
+    {% include 'course/_pagination.html' %}
+
     {% else %}
         <div class="empty-box">
             아직 등록된 강의가 없습니다 🚀
