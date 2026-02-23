@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Avg, Count
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
@@ -30,3 +31,22 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+    def get_average_rating(self):
+        avg = self.reviews.aggregate(
+            Avg('rating')
+        )['rating__avg']
+        return round(avg, 1) if avg else 0
+    
+    def get_rating_distribution(self):
+        distribution = {i: 0 for i in range(1, 6)}
+        qs = self.reviews.values('rating').annotate(
+            count=Count('rating')
+        )
+        for item in qs:
+            distribution[item['rating']] = item['count']
+        return distribution
+    
+    def get_review_count(self):
+        return self.reviews.count()

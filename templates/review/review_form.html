@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Pretendard', -apple-system, sans-serif;
+    }
+
+    .review-container {
+        max-width: 800px;
+        margin: 60px auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+
+    .review-title {
+        font-size: 26px;
+        font-weight: 800;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        font-size: 15px;
+        outline: none;
+        resize: none;
+    }
+
+    textarea:focus {
+        border-color: #4c6ef5;
+    }
+
+    /* ⭐ 별점 스타일 */
+    .star-rating {
+        font-size: 30px;
+        cursor: pointer;
+        color: #ddd;
+    }
+
+    .star {
+        transition: 0.2s;
+    }
+
+    .star.active {
+        color: #f59f00;
+    }
+
+    .btn-group {
+        text-align: right;
+        margin-top: 30px;
+    }
+
+    .btn-primary {
+        background-color: #4c6ef5;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        background-color: #dee2e6;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        margin-right: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        color: black;
+    }
+
+    .btn-primary:hover {
+        background-color: #3b5bdb;
+    }
+</style>
+
+<div class="review-container">
+    <div class="review-title">
+        {{ course.title }} 리뷰 작성
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- ⭐ 별점 선택 -->
+        <div class="form-group">
+            <label>평점 선택</label>
+            <div class="star-rating" id="starRating">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+
+            <!-- 실제 폼 rating 필드 숨김 -->
+            {{ form.rating.as_hidden }}
+        </div>
+
+        <!-- 리뷰 내용 -->
+        <div class="form-group">
+            <label>리뷰 내용</label>
+            {{ form.content }}
+        </div>
+
+        <div class="btn-group">
+            <a href="{% url 'course:course_detail' course.id %}" class="btn-secondary">
+                취소
+            </a>
+            <button type="submit" class="btn-primary">
+                리뷰 등록
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const stars = document.querySelectorAll(".star");
+    const ratingInput = document.querySelector("input[name='rating']");
+
+    stars.forEach(star => {
+        star.addEventListener("click", function () {
+            const value = this.getAttribute("data-value");
+            ratingInput.value = value;
+
+            stars.forEach(s => s.classList.remove("active"));
+
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add("active");
+            }
+        });
+    });
+</script>
+
+{% endblock %}
