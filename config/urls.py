@@ -12,7 +12,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # 메인
-    path("", views.Main),
+    path("", views.main_page, name="main_page"),
 
     # 게시판
     path("Board/", include("Board.urls")),
