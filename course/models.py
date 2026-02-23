@@ -5,23 +5,35 @@ from django.db.models import Avg, Count
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-<<<<<<< HEAD
-    price = models.IntegerField()
-
-    # main 브랜치에서 추가한 동영상 파일 필드
-    video = models.FileField(upload_to='videos/%Y/%m/%d/', blank=True, null=True)
-
-    # feature/student-page 브랜치에서 추가한 선생님 필드
-=======
-    
-    # course2 브랜치의 더 안전한 필드(양수만 허용)를 선택합니다.
+# 강의 가격 (음수 방지: 양수만 허용)
     price = models.PositiveIntegerField()
-    
-    # 동영상 파일 필드
-    video = models.FileField(upload_to='videos/%Y/%m/%d/', blank=True, null=True)
 
-    # feature/student-page(main 병합본)에서 추가한 선생님/학생 관계 필드를 유지합니다.
->>>>>>> main
+    # 동영상 파일 필드
+    video = models.FileField(upload_to="videos/%Y/%m/%d/", blank=True, null=True)
+
+    # 강사(선생님)
+    teacher = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="teacher_courses",
+        null=True,
+        blank=True,
+    )
+
+    # 수강생들
+    students = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="student_courses",
+        blank=True,
+    )
+
+    # 강의 썸네일
+    thumbnail = models.ImageField(
+        upload_to="course_thumbnails/",
+        blank=True,
+        null=True,
+    )
+
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

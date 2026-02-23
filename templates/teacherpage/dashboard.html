@@ -1,154 +1,246 @@
-{% extends 'board_base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ target_user.user.username }}님의 프로필{% endblock %}
+{% block top_actions %}
+{% endblock %}
+
+{% block title %}{{ target_user.first_name|default:target_user.username }} 강사 대시보드{% endblock %}
 
 {% block content %}
+<style>
+    body { background-color: #f8f9fa; color: #212529; font-family: 'Pretendard', -apple-system, sans-serif; }
+    .profile-container {
+        max-width: 950px; margin: 40px auto; padding: 40px;
+        background: #fff; border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+
+    .profile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .profile-info-group { display: flex; align-items: center; gap: 20px; }
+    .profile-avatar {
+        width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+        border: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .profile-name { font-size: 26px; font-weight: 800; margin: 0; }
+    .profile-username { color: #868e96; font-size: 15px; margin-top: 2px; }
+
+    .profile-stats { display: flex; gap: 15px; margin-bottom: 35px; flex-wrap: wrap; }
+    .stat-box {
+        flex: 1; min-width: 200px;
+        padding: 20px; border: 1px solid #f1f3f5; border-radius: 12px;
+        background: #fff; transition: 0.2s;
+    }
+    .stat-box:hover { border-color: #00c471; transform: translateY(-3px); }
+    .stat-label { color: #868e96; font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; }
+    .stat-value { font-size: 18px; font-weight: 700; margin: 0; }
+
+    .section-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-top: 30px;
+        margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f1f3f5;
+    }
+    .section-title { font-size: 18px; font-weight: 700; }
+
+    .bio-box {
+        background: #f8f9fa; padding: 25px; border-radius: 12px;
+        min-height: 120px; line-height: 1.7; position: relative;
+    }
+    .bio-text { font-size: 16px; color: #444; white-space: pre-wrap; }
+
+    .bio-textarea {
+        width: 100%; border: 1px solid #00c471; border-radius: 8px; padding: 15px;
+        font-size: 16px; display: none; margin-bottom: 10px; outline: none;
+    }
+    .btn-group { display: none; text-align: right; gap: 8px; }
+
+    .btn-save {
+        background: #00c471; color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700;
+    }
+    .btn-outline {
+        background: white; color: #00c471; border: 1px solid #00c471;
+        padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700;
+        text-decoration: none; display: inline-block;
+    }
+    .btn-gray {
+        background: #adb5bd; color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 700;
+    }
+    .edit-trigger { color: #00c471; cursor: pointer; font-weight: 700; font-size: 14px; background: none; border: none; }
+
+    /* 강의 카드/테이블 */
+    .course-list { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .course-card {
+        border: 1px solid #f1f3f5; border-radius: 14px; background: #fff;
+        padding: 16px; transition: 0.2s;
+        display: flex; gap: 14px; align-items: center; justify-content: space-between;
+    }
+    .course-card:hover { border-color: #00c471; transform: translateY(-2px); }
+    .course-left { display: flex; gap: 14px; align-items: center; min-width: 0; }
+    .thumb {
+        width: 110px; height: 68px; border-radius: 12px; object-fit: cover;
+        background: #f1f3f5; flex: 0 0 auto;
+    }
+    .course-meta { min-width: 0; }
+    .course-title { font-weight: 800; margin: 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .course-sub { color: #868e96; font-size: 13px; margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 10px; border-radius: 999px; font-size: 12px;
+        background: #f8f9fa; border: 1px solid #f1f3f5; color: #495057;
+    }
+    .course-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn-sm {
+        padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 13px;
+        border: 1px solid #00c471; background: white; color: #00c471; cursor: pointer;
+        text-decoration: none; display: inline-block;
+    }
+    .btn-danger-sm {
+        padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 13px;
+        border: 1px solid #343a40; background: #343a40; color: white; cursor: pointer;
+        text-decoration: none; display: inline-block;
+    }
+</style>
+
 <div class="profile-container">
-    <!-- 1. 프로필 헤더 -->
+
+    <!-- 상단 프로필 -->
     <div class="profile-header">
         <div class="profile-info-group">
-            <img class="profile-avatar" src="{% if target_user.profile_img %}{{ target_user.profile_img.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}" alt="프로필 이미지">
+            <img class="profile-avatar"
+                src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
+                alt="프로필">
             <div>
-                <h2 class="profile-name">{{ target_user.user.first_name|default:"이름없음" }}</h2>
-                <p class="profile-username">@{{ target_user.user.username }}</p>
-                <p class="profile-subject">담당 과목: {{ target_user.subject|default:"없음" }}</p>
+                <h2 class="profile-name">{{ target_user.first_name|default:target_user.username }}</h2>
+                <p class="profile-username">@{{ target_user.username }} · 강사</p>
             </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <a class="btn-outline" href="{% url 'teacherpage:course_create' %}">강의 등록</a>
+            <a class="btn-save" href="{% url 'teacherpage:dashboard' %}">새로고침</a>
         </div>
     </div>
 
-    <!-- 2. 강의 목록 -->
-    <h3>내 강의 목록</h3>
-    <div class="courses-list">
-        {% for course in courses %}
-            <div class="course-item">
-                <h4>{{ course.title }}</h4>
-                <p>{{ course.description }}</p>
-                <p>수강생: {{ course.students.count }}</p>
+    <!-- 통계 -->
+    <div class="profile-stats">
+        <div class="stat-box">
+            <span class="stat-label">📚 내 강의</span>
+            <p class="stat-value">{{ total_courses|default:"0" }}개</p>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">👥 전체 수강생(중복 제외)</span>
+            <p class="stat-value">{{ total_students|default:"0" }}명</p>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">💰 강의 가격 합</span>
+            <p class="stat-value">{{ total_price_sum|default:"0" }}</p>
+        </div>
+    </div>
+
+    <!-- 자기소개(강사) -->
+    <div class="section-header">
+        <span class="section-title">강사 소개</span>
+        {% if request.user == target_user %}
+            <button class="edit-trigger" onclick="showEditForm()">수정하기</button>
+        {% endif %}
+    </div>
+
+    <div class="bio-box">
+        <div id="bio-display">
+            {% if target_user.bio %}
+                <div class="bio-text">{{ target_user.bio }}</div>
+            {% else %}
+                <p style="color: #adb5bd; text-align: center;">강사 소개가 아직 없습니다. 수강생에게 소개를 남겨보세요!</p>
+            {% endif %}
+        </div>
+
+        {% if request.user == target_user %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <textarea name="bio" id="bio-input" class="bio-textarea" rows="5">{{ target_user.bio }}</textarea>
+            <div id="btn-group" class="btn-group">
+                <button type="submit" class="btn-save">저장하기</button>
+                <button type="button" class="btn-gray" onclick="hideEditForm()">취소</button>
             </div>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- 강의 관리 -->
+    <div class="section-header">
+        <span class="section-title">강의 관리</span>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn-outline" href="{% url 'teacherpage:course_create' %}">새 강의 만들기</a>
+        </div>
+    </div>
+
+    <div class="course-list">
+        {% for course in my_courses %}
+        <div class="course-card">
+            <div class="course-left">
+                {% if course.thumbnail %}
+                    <img class="thumb" src="{{ course.thumbnail.url }}" alt="썸네일">
+                {% else %}
+                    <div class="thumb"></div>
+                {% endif %}
+
+                <div class="course-meta">
+                    <p class="course-title">{{ course.title }}</p>
+                    <div class="course-sub">
+                        <span class="pill">가격: {{ course.price }}</span>
+                        <span class="pill">수강생: {{ course.student_count|default:"0" }}명</span>
+                        {% if course.video %}
+                            <span class="pill">영상: 등록됨</span>
+                        {% else %}
+                            <span class="pill">영상: 없음</span>
+                        {% endif %}
+                        <span class="pill">등록일: {{ course.created_at|date:"Y-m-d" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="course-actions">
+                <a class="btn-sm" href="{% url 'teacherpage:course_students' course.id %}">수강생</a>
+                <a class="btn-sm" href="{% url 'teacherpage:course_edit' course.id %}">수정</a>
+                <a class="btn-danger-sm" href="{% url 'teacherpage:course_delete' course.id %}">삭제</a>
+            </div>
+        </div>
         {% empty %}
-            <p>등록된 강의가 없습니다.</p>
+        <div class="bio-box" style="min-height:auto;">
+            <p style="margin:0; color:#868e96; text-align:center;">
+                아직 등록한 강의가 없습니다. 상단의 “강의 등록”으로 시작해보세요.
+            </p>
+        </div>
         {% endfor %}
     </div>
-</div>
-{% endblock %}
-{% extends "base.html" %}
-
-{% block content %}
-<div class="container my-4">
-
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="mb-1">강사 대시보드</h2>
-      <div class="text-muted" style="font-size: 0.95rem;">
-        내 강의 관리, 썸네일 업로드, 수강생 현황을 확인할 수 있습니다.
-      </div>
-    </div>
-
-    <a class="btn btn-dark" href="{% url 'teacherpage:course_create' %}">
-      새 강의 등록
-    </a>
-  </div>
-
-  {# 상단 통계 카드 #}
-  <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="text-muted">내 강의 수</div>
-          <div style="font-size: 1.8rem; font-weight: 700;">{{ total_courses }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="text-muted">총 수강신청</div>
-          <div style="font-size: 1.8rem; font-weight: 700;">{{ total_enrollments }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <div class="text-muted">총 수강생(중복 제거)</div>
-          <div style="font-size: 1.8rem; font-weight: 700;">{{ total_students }}</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {# 내 강의 목록 #}
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4 class="mb-0">내 강의</h4>
-    <div class="text-muted" style="font-size: 0.9rem;">
-      썸네일이 없으면 카드 상단에 “썸네일 없음”이 표시됩니다.
-    </div>
-  </div>
-
-  {% if courses %}
-    <div class="row g-3">
-      {% for course in courses %}
-        <div class="col-md-4">
-          <div class="card h-100">
-
-            {% if course.thumbnail %}
-              <img src="{{ course.thumbnail.url }}"
-                   class="card-img-top"
-                   alt="thumbnail"
-                   style="height: 180px; object-fit: cover;">
-            {% else %}
-              <div style="height:180px; background:#eee; display:flex; align-items:center; justify-content:center;">
-                <span class="text-muted">썸네일 없음</span>
-              </div>
-            {% endif %}
-
-            <div class="card-body">
-              <h5 class="card-title mb-1">{{ course.title }}</h5>
-
-              {% if course.description %}
-                <p class="card-text text-muted">{{ course.description|truncatechars:60 }}</p>
-              {% endif %}
-
-              <div class="d-flex justify-content-between align-items-center">
-                <small class="text-muted">수강생: {{ course.student_count }}</small>
-                <small class="text-muted">{{ course.created_at|date:"Y-m-d" }}</small>
-              </div>
-
-              <div class="d-flex gap-2 mt-3">
-                <a class="btn btn-outline-dark btn-sm"
-                   href="{% url 'course:course_detail' course.id %}">
-                  상세
-                </a>
-
-                <a class="btn btn-outline-primary btn-sm"
-                   href="{% url 'teacherpage:course_edit' course.id %}">
-                  수정
-                </a>
-
-                <a class="btn btn-outline-danger btn-sm"
-                   href="{% url 'teacherpage:course_delete' course.id %}">
-                  삭제
-                </a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="alert alert-light border mt-3">
-      등록된 강의가 없습니다.
-      <div class="mt-2">
-        <a class="btn btn-sm btn-dark" href="{% url 'teacherpage:course_create' %}">
-          첫 강의 등록하기
-        </a>
-      </div>
-    </div>
-  {% endif %}
 
 </div>
+
+<script>
+    function showEditForm() {
+        const display = document.getElementById('bio-display');
+        const trigger = document.querySelector('.edit-trigger');
+        const input = document.getElementById('bio-input');
+        const btns = document.getElementById('btn-group');
+
+        if (display) display.style.display = 'none';
+        if (trigger) trigger.style.display = 'none';
+        if (input) input.style.display = 'block';
+        if (btns) btns.style.display = 'flex';
+        if (input) input.focus();
+    }
+
+    function hideEditForm() {
+        const display = document.getElementById('bio-display');
+        const trigger = document.querySelector('.edit-trigger');
+        const input = document.getElementById('bio-input');
+        const btns = document.getElementById('btn-group');
+
+        if (display) display.style.display = 'block';
+        if (trigger) trigger.style.display = 'block';
+        if (input) input.style.display = 'none';
+        if (btns) btns.style.display = 'none';
+    }
+</script>
 {% endblock %}
