@@ -1,0 +1,89 @@
+<style>
+    /* 페이지네이션 전체 컨테이너 */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 50px 0;
+        gap: 5px;
+    }
+
+    /* 공통 페이지 버튼 스타일 */
+    .page-link-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 15px;
+        border-radius: 8px;
+        background-color: #ffffff;
+        color: #495057;
+        text-decoration: none;
+        font-weight: 600;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+
+    /* 호버 효과: 보라색 테마 적용 */
+    .page-link-custom:hover:not(.disabled) {
+        background-color: #f8f9fa;
+        border-color: #877cf3;
+        color: #877cf3;
+        transform: translateY(-2px);
+    }
+
+    /* 현재 활성화된 페이지 (보라색 배경) */
+    .page-link-custom.active {
+        background-color: #877cf3;
+        color: white;
+        border-color: #877cf3;
+        box-shadow: 0 4px 10px rgba(135, 124, 243, 0.3);
+    }
+
+    /* 비활성화된 버튼 (이전/다음이 없을 때) */
+    .page-link-custom.disabled {
+        color: #adb5bd;
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        cursor: not-allowed;
+    }
+
+    /* 그룹 구분선 스타일 */
+    .page-divider {
+        margin: 0 10px;
+        color: #e9ecef;
+        font-size: 18px;
+    }
+</style>
+
+<div class="pagination-container">
+    {% if prev_group_start %}
+        <a href="?page={{ prev_group_start }}" class="page-link-custom" title="{{ prev_group_start }}페이지로 이동">
+            &laquo; 이전
+        </a>
+    {% else %}
+        <span class="page-link-custom disabled">&laquo; 이전</span>
+    {% endif %}
+
+    <span class="page-divider">|</span>
+
+    {% for i in custom_page_range %}
+        {% if page_obj.number == i %}
+            <span class="page-link-custom active">{{ i }}</span>
+        {% else %}
+            <a href="?page={{ i }}" class="page-link-custom">{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+
+    <span class="page-divider">|</span>
+
+    {% if next_group_start %}
+        <a href="?page={{ next_group_start }}" class="page-link-custom" title="{{ next_group_start }}페이지로 이동">
+            다음 &raquo;
+        </a>
+    {% else %}
+        <span class="page-link-custom disabled">다음 &raquo;</span>
+    {% endif %}
+</div>
