@@ -33,5 +33,10 @@ urlpatterns = [
     # 2. feature/student-page 브랜치에서 수정한 StudentPage 연결
     path('StudentPage/', include('StudentPage.urls')),
     
-    # path('TeacherPage/', include('TeacherPage.urls')),
+    # 3. feature/Teacher-page 브랜치에서 수정한 eacherPage 연결
+    path("teacher/", include("TeacherPage.urls")),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">강사 대시보드</h2>
+      <div class="text-muted" style="font-size: 0.95rem;">
+        내 강의 관리, 썸네일 업로드, 수강생 현황을 확인할 수 있습니다.
+      </div>
+    </div>
+
+    <a class="btn btn-dark" href="{% url 'teacherpage:course_create' %}">
+      새 강의 등록
+    </a>
+  </div>
+
+  {# 상단 통계 카드 #}
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">내 강의 수</div>
+          <div style="font-size: 1.8rem; font-weight: 700;">{{ total_courses }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">총 수강신청</div>
+          <div style="font-size: 1.8rem; font-weight: 700;">{{ total_enrollments }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted">총 수강생(중복 제거)</div>
+          <div style="font-size: 1.8rem; font-weight: 700;">{{ total_students }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# 내 강의 목록 #}
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0">내 강의</h4>
+    <div class="text-muted" style="font-size: 0.9rem;">
+      썸네일이 없으면 카드 상단에 “썸네일 없음”이 표시됩니다.
+    </div>
+  </div>
+
+  {% if courses %}
+    <div class="row g-3">
+      {% for course in courses %}
+        <div class="col-md-4">
+          <div class="card h-100">
+
+            {% if course.thumbnail %}
+              <img src="{{ course.thumbnail.url }}"
+                   class="card-img-top"
+                   alt="thumbnail"
+                   style="height: 180px; object-fit: cover;">
+            {% else %}
+              <div style="height:180px; background:#eee; display:flex; align-items:center; justify-content:center;">
+                <span class="text-muted">썸네일 없음</span>
+              </div>
+            {% endif %}
+
+            <div class="card-body">
+              <h5 class="card-title mb-1">{{ course.title }}</h5>
+
+              {% if course.description %}
+                <p class="card-text text-muted">{{ course.description|truncatechars:60 }}</p>
+              {% endif %}
+
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">수강생: {{ course.student_count }}</small>
+                <small class="text-muted">{{ course.created_at|date:"Y-m-d" }}</small>
+              </div>
+
+              <div class="d-flex gap-2 mt-3">
+                <a class="btn btn-outline-dark btn-sm"
+                   href="{% url 'course:course_detail' course.id %}">
+                  상세
+                </a>
+
+                <a class="btn btn-outline-primary btn-sm"
+                   href="{% url 'teacherpage:course_edit' course.id %}">
+                  수정
+                </a>
+
+                <a class="btn btn-outline-danger btn-sm"
+                   href="{% url 'teacherpage:course_delete' course.id %}">
+                  삭제
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-light border mt-3">
+      등록된 강의가 없습니다.
+      <div class="mt-2">
+        <a class="btn btn-sm btn-dark" href="{% url 'teacherpage:course_create' %}">
+          첫 강의 등록하기
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

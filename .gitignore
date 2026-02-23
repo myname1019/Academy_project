@@ -1,13 +1,23 @@
-# 가상환경 폴더 (사용하시는 이름이 myhome이라면)
-myhome/
-
-# 파이썬 컴파일 파일
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.sqlite3
 
-# 데이터베이스 (SQLite 사용 시)
-db.sqlite3
+# Virtualenv
+.venv/
+venv/
 
-# OS 설정 파일
-.DS_Store
-Thumbs.db
+# Media files
+media/
+
+# Static collected
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env

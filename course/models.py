@@ -5,23 +5,31 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.IntegerField()
-    
-    # 1. main 브랜치에서 추가한 동영상 파일 필드
+
+    # main 브랜치에서 추가한 동영상 파일 필드
     video = models.FileField(upload_to='videos/%Y/%m/%d/', blank=True, null=True)
 
-    # 2. feature/student-page 브랜치에서 추가한 선생님/학생 관계 필드
+    # feature/student-page 브랜치에서 추가한 선생님 필드
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='teacher_courses',
-        null=True,      # 🔥 추가
-        blank=True      # 🔥 추가
+        null=True,
+        blank=True
     )
 
+    # 수강생들 (ManyToMany)
     students = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='student_courses',
         blank=True
+    )
+
+    #추가할 썸네일 필드 (반드시 Course 안에 있어야 함!)
+    thumbnail = models.ImageField(
+        upload_to="course_thumbnails/",
+        blank=True,
+        null=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
