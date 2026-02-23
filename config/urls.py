@@ -31,7 +31,7 @@ urlpatterns = [
     path("teacher/", include("TeacherPage.urls")),
 
     # 리뷰 앱이 실제로 설치돼 있고 urls.py가 존재할 때만 사용
-    # path("review/", include("review.urls")),
+    path("review/", include("review.urls")),
 ]
 
 # 개발환경에서만 MEDIA 서빙
