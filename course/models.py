@@ -1,10 +1,7 @@
-# models.py
 from django.db import models
 from django.conf import settings
 
 class Course(models.Model):
-
-    # 카테고리 영어 코드 + 한글 라벨
     CATEGORY_CHOICES = [
         ('korean', '국어'),
         ('math', '수학'),
@@ -16,18 +13,13 @@ class Course(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField()
-
     price = models.PositiveIntegerField()
-
-    # 카테고리 필드
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
         default='etc'
     )
-
     video = models.FileField(upload_to='videos/%Y/%m/%d/', blank=True, null=True)
-
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -35,14 +27,16 @@ class Course(models.Model):
         null=True,
         blank=True
     )
-
     students = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='student_courses',
         blank=True
     )
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # [수정] 최신순 정렬 추가
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
