@@ -5,7 +5,6 @@
 
 {% block content %}
 <style>
-    /* 1. 기본 레이아웃 */
     body { background-color: #f8f9fa; color: #212529; font-family: 'Pretendard', -apple-system, sans-serif; }
     .profile-container { 
         max-width: 850px; margin: 40px auto; padding: 40px; 
@@ -13,7 +12,6 @@
         box-shadow: 0 8px 24px rgba(0,0,0,0.05); 
     }
 
-    /* 2. 헤더 섹션 */
     .profile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
     .profile-info-group { display: flex; align-items: center; gap: 20px; }
     .profile-avatar { 
@@ -23,7 +21,6 @@
     .profile-name { font-size: 26px; font-weight: 800; margin: 0; }
     .profile-username { color: #868e96; font-size: 15px; margin-top: 2px; }
 
-    /* 3. 통계 카드 */
     .profile-stats { display: flex; gap: 15px; margin-bottom: 35px; }
     .stat-box { 
         flex: 1; padding: 20px; border: 1px solid #f1f3f5; border-radius: 12px;
@@ -33,7 +30,6 @@
     .stat-label { color: #868e96; font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; }
     .stat-value { font-size: 18px; font-weight: 700; margin: 0; }
 
-    /* 4. 자기소개 섹션 */
     .section-header {
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f1f3f5;
@@ -46,7 +42,6 @@
     }
     .bio-text { font-size: 16px; color: #444; white-space: pre-wrap; }
 
-    /* 5. 수정 폼 및 버튼 */
     .bio-textarea {
         width: 100%; border: 1px solid #00c471; border-radius: 8px; padding: 15px;
         font-size: 16px; display: none; margin-bottom: 10px; outline: none;
@@ -61,12 +56,15 @@
 <div class="profile-container">
     <div class="profile-header">
         <div class="profile-info-group">
-            <img class="profile-avatar" src="{% if target_user.profile_img %}{{ target_user.profile_img.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}" alt="프로필">
+            <img class="profile-avatar"
+                 src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
+                 alt="프로필">
             <div>
                 <h2 class="profile-name">{{ target_user.first_name|default:target_user.username }}</h2>
                 <p class="profile-username">@{{ target_user.username }}</p>
             </div>
         </div>
+
         {% if request.user != target_user %}
             <button class="btn-save" style="background: white; color: #00c471; border: 1px solid #00c471;">🔔 팔로우</button>
         {% endif %}
@@ -75,11 +73,12 @@
     <div class="profile-stats">
         <div class="stat-box">
             <span class="stat-label">📝 작성한 수강평</span>
-            <p class="stat-value">{{ courses.count|default:"0" }}개</p>
+            <p class="stat-value">{{ review_count|default:"0" }}개</p>
         </div>
+
         <div class="stat-box">
             <span class="stat-label">⭐ 평균 평점</span>
-            <p class="stat-value">4.5</p>
+            <p class="stat-value">{{ avg_rating|default:"0" }}</p>
         </div>
     </div>
 
@@ -99,7 +98,8 @@
             {% endif %}
         </div>
 
-        <form action="{% url 'student_dashboard' %}" method="POST">
+        {% if request.user == target_user %}
+        <form method="POST">
             {% csrf_token %}
             <textarea name="bio" id="bio-input" class="bio-textarea" rows="5">{{ target_user.bio }}</textarea>
             <div id="btn-group" class="btn-group">
@@ -107,6 +107,7 @@
                 <button type="button" class="btn-cancel" onclick="hideEditForm()">취소</button>
             </div>
         </form>
+        {% endif %}
     </div>
 </div>
 
@@ -114,7 +115,6 @@
     function showEditForm() {
         document.getElementById('bio-display').style.display = 'none';
         document.querySelector('.edit-trigger').style.display = 'none';
-        
         document.getElementById('bio-input').style.display = 'block';
         document.getElementById('btn-group').style.display = 'flex';
         document.getElementById('bio-input').focus();
@@ -123,7 +123,6 @@
     function hideEditForm() {
         document.getElementById('bio-display').style.display = 'block';
         document.querySelector('.edit-trigger').style.display = 'block';
-        
         document.getElementById('bio-input').style.display = 'none';
         document.getElementById('btn-group').style.display = 'none';
     }
