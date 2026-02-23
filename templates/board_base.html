@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내 프로젝트 - 라이프타임 커리어 플랫폼</title>
     <style>
-        /* 기본 설정 */
+        /* 1. 기본 설정 (초록색을 연한 보라색으로 변경) */
         :root {
-            --main-green: #00c471;
-            --hover-green: #00a760;
+            --main-purple: #a29bfe; /* 메인 연한 보라색 */
+            --hover-purple: #8c7ae6; /* 마우스 오버 시 살짝 진해지는 보라색 */
             --gray-bg: #f8f9fa;
             --text-black: #212529;
             --border-color: #dee2e6;
@@ -41,10 +41,11 @@
             justify-content: space-between;
         }
 
+        /* 2. 로고 색상 변수 수정 */
         .logo {
             font-weight: 900;
             font-size: 24px;
-            color: var(--main-green);
+            color: var(--main-purple); 
             text-decoration: none;
         }
 
@@ -73,7 +74,7 @@
 
         /* 메인 배너 */
         .banner {
-            background-color: #002c40;
+            background-color: #002c40; /* 주의: 이 부분은 현재 짙은 남색입니다 */
             color: white;
             padding: 60px 20px;
             text-align: center;
@@ -146,9 +147,10 @@
             color: #616568;
         }
 
+        /* 3. 가격 색상 변수 수정 */
         .card-price {
             font-weight: 700;
-            color: var(--main-green);
+            color: var(--main-purple);
             margin-top: 5px;
         }
 
