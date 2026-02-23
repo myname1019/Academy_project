@@ -1,12 +1,35 @@
 from django.db import models
 from django.conf import settings
-from django.db.models import Avg, Count
 
 class Course(models.Model):
+    CATEGORY_CHOICES = [
+        ('korean', '국어'),
+        ('math', '수학'),
+        ('english', '영어'),
+        ('social', '사회'),
+        ('science', '과학'),
+        ('etc', '기타'),
+    ]
+
     title = models.CharField(max_length=200)
     description = models.TextField()
-# 강의 가격 (음수 방지: 양수만 허용)
+
+    # 강의 가격 (음수 방지: 양수만 허용)
     price = models.PositiveIntegerField()
+
+    # 강의 카테고리 (MainPage 브랜치 내용)
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='etc'
+    )
+
+    # 강의 썸네일 (teacher-dashboard 브랜치 내용)
+    thumbnail = models.ImageField(
+        upload_to="course_thumbnails/",
+        blank=True,
+        null=True,
+    )
 
     # 동영상 파일 필드
     video = models.FileField(upload_to="videos/%Y/%m/%d/", blank=True, null=True)
@@ -20,62 +43,18 @@ class Course(models.Model):
         blank=True,
     )
 
-    # 수강생들
+    # 수강생들 (ManyToMany)
     students = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name="student_courses",
         blank=True,
     )
 
-    # 강의 썸네일
-    thumbnail = models.ImageField(
-        upload_to="course_thumbnails/",
-        blank=True,
-        null=True,
-    )
-
-    teacher = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='teacher_courses',
-        null=True,
-        blank=True
-    )
-
-    # 수강생들 (ManyToMany)
-    students = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='student_courses',
-        blank=True
-    )
-
-    #추가할 썸네일 필드 (반드시 Course 안에 있어야 함!)
-    thumbnail = models.ImageField(
-        upload_to="course_thumbnails/",
-        blank=True,
-        null=True
-    )
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # [수정] 최신순 정렬 추가
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
-    
-
-    def get_average_rating(self):
-        avg = self.reviews.aggregate(
-            Avg('rating')
-        )['rating__avg']
-        return round(avg, 1) if avg else 0
-    
-    def get_rating_distribution(self):
-        distribution = {i: 0 for i in range(1, 6)}
-        qs = self.reviews.values('rating').annotate(
-            count=Count('rating')
-        )
-        for item in qs:
-            distribution[item['rating']] = item['count']
-        return distribution
-    
-    def get_review_count(self):
-        return self.reviews.count()
