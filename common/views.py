@@ -48,9 +48,9 @@ def signup(request):
 @login_required
 def mypage_redirect(request):
     if request.user.role == 'student':
-        return redirect('student_dashboard')
+        return redirect('/StudentPage/')   # 학생 경로에 맞게
     elif request.user.role == 'teacher':
-        return redirect('TeacherPage:teacher_dashboard')
+        return redirect('teacherpage:dashboard')
 
 
 # ✅ 프로필 페이지 (자기소개 수정 + 리뷰 통계)
