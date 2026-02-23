@@ -5,11 +5,16 @@
 
 {% block content %}
 <style>
+<<<<<<< HEAD
 body { background-color: #f5f7fa; }
+=======
+    body { background-color: #f5f7fa; }
+>>>>>>> 790692ef8e64e4750f894505ef9464ce35bc8340
 
 .detail-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
 .detail-card { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
 
+<<<<<<< HEAD
 .breadcrumb { font-size: 14px; color: #868e96; margin-bottom: 12px; }
 
 .category-badge {
@@ -26,6 +31,29 @@ body { background-color: #f5f7fa; }
 .detail-title { font-size: 32px; font-weight: 800; margin-bottom: 15px; color: #212529; }
 .stats-row { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; font-size: 15px; color: #495057; }
 .stars { color: #fab005; font-weight: bold; }
+=======
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    }
+
+    .breadcrumb { font-size: 14px; color: #868e96; margin-bottom: 12px; }
+    .detail-title { font-size: 32px; font-weight: 800; margin-bottom: 15px; color: #212529; }
+
+    .stats-row { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; font-size: 15px; color: #495057; }
+    .stars { color: #fab005; font-weight: bold; }
+
+    .detail-price {
+        font-size: 24px;
+        font-weight: 800;
+        color: #4e73df;
+        margin: 20px 0;
+        padding: 15px 0;
+        border-top: 1px solid #f1f3f5;
+    }
+>>>>>>> 790692ef8e64e4750f894505ef9464ce35bc8340
 
 .detail-price {
     font-size: 24px;
@@ -36,6 +64,7 @@ body { background-color: #f5f7fa; }
     border-top: 1px solid #f1f3f5;
 }
 
+<<<<<<< HEAD
 .description-box { line-height: 1.8; color: #495057; font-size: 16px; margin-bottom: 30px; }
 
 .video-box {
@@ -48,6 +77,27 @@ body { background-color: #f5f7fa; }
     align-items: center;
 }
 .video-box video { width: 100%; }
+=======
+    .video-box {
+        margin: 30px 0;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000;
+        aspect-ratio: 16 / 9;
+        display: flex;
+        align-items: center;
+    }
+    .video-box video { width: 100%; }
+
+    .button-group {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f3f5;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+>>>>>>> 790692ef8e64e4750f894505ef9464ce35bc8340
 
 .button-group {
     margin-top: 40px;
@@ -63,6 +113,7 @@ body { background-color: #f5f7fa; }
 .btn-edit { background: #4e73df; color: white; }
 .btn-edit:hover { background: #2e59d9; }
 
+<<<<<<< HEAD
 .btn-delete { background: #fff; color: #fa5252; border: 1px solid #fa5252; cursor: pointer; }
 .btn-delete:hover { background: #fa5252; color: #fff; }
 
@@ -70,6 +121,28 @@ body { background-color: #f5f7fa; }
 </style>
 
 <div class="detail-container">
+=======
+    .btn-list { background: #f1f3f5; color: #495057; }
+
+    .review-box {
+        border-top: 1px solid #eee;
+        padding: 20px 0;
+    }
+
+    .review-header {
+        font-weight: 600;
+    }
+
+    .review-date {
+        font-size: 14px;
+        color: #868e96;
+    }
+</style>
+
+<div class="detail-container">
+    <div class="breadcrumb">개발 · 프로그래밍 > 알고리즘</div>
+
+>>>>>>> 790692ef8e64e4750f894505ef9464ce35bc8340
     <div class="detail-card">
 
         <!-- 🔽 카테고리 표시 추가 -->
@@ -79,12 +152,33 @@ body { background-color: #f5f7fa; }
 
         <h1 class="detail-title">{{ course.title }}</h1>
 
+<<<<<<< HEAD
         <div class="stats-row">
             <span class="stars">⭐ 5.0</span>
             <span>지식공유자:
                 <strong>
                     {{ course.teacher.username|default:"미지정" }}
                 </strong>
+=======
+        <!-- ⭐ 평점 영역 -->
+        <div class="stats-row">
+            <span class="stars">
+                {% for i in "12345" %}
+                    {% if forloop.counter <= course.get_average_rating %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %}
+                ({{ course.get_average_rating }})
+            </span>
+
+            <span>리뷰 <strong>{{ course.get_review_count }}</strong>개</span>
+
+            <span>
+                지식공유자:
+                <strong>{{ course.teacher.username|default:"dremdeveloper" }}</strong>
+>>>>>>> 790692ef8e64e4750f894505ef9464ce35bc8340
             </span>
         </div>
 
@@ -93,7 +187,11 @@ body { background-color: #f5f7fa; }
         </div>
 
         <div class="detail-price">
-            {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
+            {% if course.price == 0 %}
+                무료
+            {% else %}
+                ₩ {{ course.price }}
+            {% endif %}
         </div>
 
         {% if course.video %}
@@ -105,9 +203,55 @@ body { background-color: #f5f7fa; }
         </div>
         {% endif %}
 
+        <hr style="margin:40px 0;">
+
+        <!-- 📝 리뷰 영역 -->
+        <h3>수강평</h3>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'review:review_create' course.id %}" 
+               class="btn btn-edit" 
+               style="margin-bottom:20px;">
+                리뷰 작성
+            </a>
+        {% endif %}
+
+        {% for review in course.reviews.all %}
+            <div class="review-box">
+                <div class="review-header">
+                    {{ review.user.username }}
+                    <span class="stars">⭐ {{ review.rating }}</span>
+                </div>
+                <div class="review-date">
+                    {{ review.created_at|date:"Y.m.d" }}
+                </div>
+                <p style="margin-top:10px;">
+                    {{ review.content }}
+                </p>
+
+                {% if review.user == request.user %}
+                    <div style="margin-top:8px;">
+                        <a href="{% url 'review:review_update' review.id %}" 
+                           style="font-size:14px; color:#4e73df;">
+                           수정
+                        </a>
+
+                        <a href="{% url 'review:review_delete' review.id %}" 
+                           style="font-size:14px; color:#fa5252; margin-left:10px;">
+                           삭제
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p style="color:#868e96;">아직 작성된 리뷰가 없습니다.</p>
+        {% endfor %}
+
+        <!-- 버튼 영역 -->
         <div class="button-group">
             <a href="{% url 'course:course_list' %}" class="btn btn-list">목록으로</a>
 
+<<<<<<< HEAD
             <!-- 🔐 작성자만 수정/삭제 버튼 표시 -->
             {% if request.user == course.teacher %}
                 <a href="{% url 'course:course_update' pk=course.id %}" class="btn btn-edit">수정하기</a>
@@ -120,6 +264,23 @@ body { background-color: #f5f7fa; }
                     </button>
                 </form>
             {% endif %}
+=======
+            <a href="{% url 'course:course_update' pk=course.id %}" 
+               class="btn btn-edit">
+               수정하기
+            </a>
+
+            <form method="post" 
+                  action="{% url 'course:course_delete' pk=course.id %}" 
+                  style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="btn btn-delete" 
+                        onclick="return confirm('정말 이 강의를 삭제하시겠습니까?')">
+                    삭제하기
+                </button>
+            </form>
+>>>>>>> 790692ef8e64e4750f894505ef9464ce35bc8340
         </div>
 
     </div>

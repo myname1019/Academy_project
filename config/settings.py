@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'course.apps.CourseConfig',
     'StudentPage.apps.StudentpageConfig',
     'TeacherPage.apps.TeacherpageConfig',
+    'review.apps.ReviewConfig',
 ]
 
 MIDDLEWARE = [

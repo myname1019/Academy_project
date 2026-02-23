@@ -19,5 +19,6 @@ urlpatterns = [
     # 3. TeacherPage 연결 (test 브랜치 버전 살림 + namespace 추가 권장)
     # 만약 TeacherPage/urls.py 안에 app_name이 설정되어 있다면 namespace를 빼셔도 됩니다.
     path('TeacherPage/', include('TeacherPage.urls', namespace='TeacherPage')),
+    path('review/', include('review.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
