@@ -1,54 +1,109 @@
 {% extends "board_base.html" %}
 {% block content %}
 
-    <section class="banner" style="background-color: #002c40; color: white; padding: 60px 20px; text-align: center;">
-        <div class="banner-content max-w-1200 mx-auto">
-            <h1 class="fw-bold">성장의 즐거움을 경험하세요</h1>
-            <p>업계 최고 선배들에게 배우는 실전 지식</p>
-        </div>
-    </section>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    <main class="container my-5">
-        <h2 class="fs-4 fw-bold mb-4">
-            {% if request.GET.subject %}
-                {{ request.GET.subject }} 강의 목록 📚
-            {% else %}
-                전체 강의 목록 🚀
-            {% endif %}
-        </h2>
-        
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            
-            {% if course_list %}
-                {% for course in course_list %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-0" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'" onclick="location.href='/course/{{ course.id }}/'">
-                        
-                        {% if course.image %}
-                            <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.subject }}" style="aspect-ratio: 16/10; object-fit: cover;">
-                        {% else %}
-                            <div class="card-img-top bg-light text-secondary d-flex align-items-center justify-content-center fw-bold" style="aspect-ratio: 16/10;">
-                                {{ course.subject }}
-                            </div>
-                        {% endif %}
-                        
-                        <div class="card-body p-3">
-                            <h5 class="card-title fs-6 fw-bold text-truncate mb-2">{{ course.subject }}</h5>
-                            <p class="card-text text-muted small mb-2">{{ course.author }}</p>
-                            <p class="card-text fw-bold m-0" style="color: #6c5ce7;">
-                                {% if course.price > 0 %}₩{{ course.price }}{% else %}무료{% endif %}
-                            </p>
+<style>
+    /* 배너 높이 유지 및 기본 설정 */
+    .swiper { width: 100%; height: 250px; }
+    .swiper-slide {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: white; text-align: center; padding: 60px 20px;
+    }
+
+    /* 팩트체크: 배너마다 화면(배경색)과 글자가 달라야 함 */
+    .slide-1 { background-color: #002c40; }
+    .slide-2 { background-color: #6c5ce7; }
+    .slide-3 { background-color: #00b894; }
+    .slide-4 { background-color: #d63031; }
+    .slide-5 { background-color: #2d3436; }
+
+    /* 페이지 번호(점) 색상 변경 */
+    .swiper-pagination-bullet { background: white !important; }
+</style>
+
+<section class="banner swiper mySwiper">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide slide-1">
+            <h1 class="fw-bold">성장의 즐거움을 경험하세요</h1>
+            <p>업계 최고 선배들에게 배우는 실전 지식 🚀</p>
+        </div>
+        <div class="swiper-slide slide-2">
+            <h1 class="fw-bold">파이썬 마스터 코스</h1>
+            <p>기초부터 실전 장고 웹 개발까지 한 번에! 🐍</p>
+        </div>
+        <div class="swiper-slide slide-3">
+            <h1 class="fw-bold">신규 회원 가입 이벤트</h1>
+            <p>지금 가입하면 첫 강의 50% 할인 쿠폰 증정 🎁</p>
+        </div>
+        <div class="swiper-slide slide-4">
+            <h1 class="fw-bold">실시간 1:1 멘토링</h1>
+            <p>모르는 문제는 현직자에게 바로 물어보세요 💬</p>
+        </div>
+        <div class="swiper-slide slide-5">
+            <h1 class="fw-bold">TikiTaka 커뮤니티</h1>
+            <p>함께 공부하고 소통하며 동반 성장하는 공간 🤝</p>
+        </div>
+    </div>
+    <div class="swiper-pagination"></div>
+</section>
+
+<main class="container my-5">
+    <h2 class="fs-4 fw-bold mb-4">
+        {% if request.GET.subject %}
+            {{ request.GET.subject }} 강의 목록 📚
+        {% else %}
+            전체 강의 목록 🚀
+        {% endif %}
+    </h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% if course_list %}
+            {% for course in course_list %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'" onclick="location.href='/course/{{ course.id }}/'">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.subject }}" style="aspect-ratio: 16/10; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-light text-secondary d-flex align-items-center justify-content-center fw-bold" style="aspect-ratio: 16/10;">
+                            {{ course.subject }}
                         </div>
+                    {% endif %}
+                    <div class="card-body p-3">
+                        <h5 class="card-title fs-6 fw-bold text-truncate mb-2">{{ course.subject }}</h5>
+                        <p class="card-text text-muted small mb-2">{{ course.author }}</p>
+                        <p class="card-text fw-bold m-0" style="color: #6c5ce7;">
+                            {% if course.price > 0 %}₩{{ course.price }}{% else %}무료{% endif %}
+                        </p>
                     </div>
                 </div>
-                {% endfor %}
-            {% else %}
-                <div class="col-12 text-center text-muted py-5">
-                    등록된 강의가 없습니다.
-                </div>
-            {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center text-muted py-5">
+                등록된 강의가 없습니다.
+            </div>
+        {% endif %}
+    </div>
+</main>
 
-        </div>
-    </main>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        loop: true,               // 무한 반복
+        autoplay: {
+            delay: 2000,          // 포인트: 2초마다 전환
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        // 포인트: fade를 지우고 기본 슬라이드(옆으로 밀기) 적용
+        speed: 800,               // 넘어가는 속도 (0.8초 동안 부드럽게 밀림)
+    });
+</script>
 
 {% endblock %}
+
+#dk
