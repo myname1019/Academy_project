@@ -15,9 +15,9 @@
             color: #333;
         }
 
-        /* 2. HEADER (GNB) - course3의 세련된 디자인 채택 */
+        /* 2. HEADER (GNB) - 중간 보라색으로 변경 */
         .navbar {
-            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            background-color: #877cf3; /* 연보라와 진보라의 중간색 적용 */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -60,9 +60,9 @@
             border-top: 1px solid #eee;
         }
 
-        /* 5. 공통 버튼 스타일 */
+        /* 5. 공통 버튼 스타일 - 보라색 테마로 통일 */
         .btn-primary {
-            background: #4e73df;
+            background: #877cf3; /* 버튼 기본색도 중간 보라색으로 적용 */
             color: white;
             padding: 10px 20px;
             border-radius: 6px;
@@ -72,7 +72,7 @@
         }
 
         .btn-primary:hover {
-            background: #2e59d9;
+            background: #6c5ce7; /* 마우스를 올렸을 때는 이전에 만든 진보라색 활용! */
             transform: translateY(-1px);
         }
     </style>
@@ -81,7 +81,7 @@
 <body>
     <header class="navbar">
         <div class="logo">
-            🎓 <a href="{% url 'course:course_list' %}" style="margin-left: 5px;">Course Platform</a>
+            🎓 <a href="/" style="margin-left: 5px;">TiKiTaKa</a>
         </div>
 
         <nav>
