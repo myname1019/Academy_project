@@ -85,28 +85,29 @@ body { background-color: #f5f7fa; }
 
     <div class="detail-card">
 
-        <!-- 카테고리 표시 -->
         <div class="category-badge">
             {{ course.get_category_display }}
         </div>
 
         <h1 class="detail-title">{{ course.title }}</h1>
 
-        <!-- 평점 & 리뷰 & 교사 정보 -->
+        <!-- ⭐ 평균 평점 & 리뷰 개수 -->
+        {% with avg=course.avg_rating|default:0 count=course.review_count %}
         <div class="stats-row">
             <span class="stars">
                 {% for i in "12345" %}
-                    {% if forloop.counter <= course.get_average_rating %}
+                    {% if forloop.counter <= avg %}
                         ★
                     {% else %}
                         ☆
                     {% endif %}
                 {% endfor %}
-                ({{ course.get_average_rating }})
+                ({{ avg|floatformat:1 }})
             </span>
-            <span>리뷰 <strong>{{ course.get_review_count }}</strong>개</span>
-            <span>지식공유자: <strong>{{ course.teacher.username|default:"dremdeveloper" }}</strong></span>
+            <span>리뷰 <strong>{{ count }}</strong>개</span>
+            <span>지식공유자: <strong>{{ course.teacher.username }}</strong></span>
         </div>
+        {% endwith %}
 
         <div class="description-box">
             {{ course.description|linebreaks }}
@@ -116,7 +117,6 @@ body { background-color: #f5f7fa; }
             {% if course.price == 0 %} 무료 {% else %} ₩ {{ course.price }} {% endif %}
         </div>
 
-        <!-- 영상 영역: 기존처럼 여기서만 video 태그 사용 -->
         {% if course.video %}
         <div class="video-box">
             <video controls>
@@ -154,7 +154,6 @@ body { background-color: #f5f7fa; }
             <p style="color:#868e96;">아직 작성된 리뷰가 없습니다.</p>
         {% endfor %}
 
-        <!-- 버튼 영역 -->
         <div class="button-group">
             <a href="{% url 'course:course_list' %}" class="btn btn-list">목록으로</a>
 
@@ -162,7 +161,10 @@ body { background-color: #f5f7fa; }
                 <a href="{% url 'course:course_update' pk=course.id %}" class="btn btn-edit">수정하기</a>
                 <form method="post" action="{% url 'course:course_delete' pk=course.id %}" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-delete" onclick="return confirm('정말 이 강의를 삭제하시겠습니까?')">삭제하기</button>
+                    <button type="submit" class="btn btn-delete"
+                        onclick="return confirm('정말 이 강의를 삭제하시겠습니까?')">
+                        삭제하기
+                    </button>
                 </form>
             {% endif %}
         </div>
