@@ -4,7 +4,7 @@
 
 {% block content %}
 <style>
-body { background: #f5f7fa; }
+/* course3의 카드 그리드 스타일 유지 및 버튼 스타일 추가 */
 
 .course-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
 
@@ -128,7 +128,6 @@ body { background: #f5f7fa; }
         {% endfor %}
     </div>
 
-    <!-- 페이지네이션 include -->
     {% include 'course/_pagination.html' %}
 
     {% else %}
