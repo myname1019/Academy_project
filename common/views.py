@@ -1,45 +1,88 @@
-from django.shortcuts import render, redirect
-from common.forms import UserForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import Avg
 
-# 새로 분리해서 만든 모델들을 가져옵니다.
-from .models import Student, Teacher 
+from common.forms import UserForm
+from .models import Student, Teacher, CustomUser
+from review.models import Review   # ⚠ review 앱 이름 확인 (review or reviews)
 
+
+# ✅ 회원가입
 def signup(request):
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
-            # 1. DB에 CustomUser (공통 로그인 정보) 먼저 저장
-            # 폼을 저장하고, 방금 생성된 유저 객체를 'user' 변수에 담아둡니다.
-            user = form.save() 
-            
-            # 2. 방금 가입한 유저가 선택한 역할(role)이 무엇인지 폼에서 꺼내옵니다.
+            # 1. CustomUser 저장
+            user = form.save()
+
+            # 2. 역할(role) 가져오기
             role = form.cleaned_data.get('role')
-            
-            # 3. 역할에 맞춰 전용 테이블(Student 또는 Teacher)에 1:1 짝꿍 데이터 생성
+
+            # 3. 역할별 프로필 생성
             if role == 'student':
-                # Student 테이블에 user 정보를 넣어서 새로 생성
                 Student.objects.create(user=user)
             elif role == 'teacher':
-                # Teacher 테이블에 user 정보를 넣어서 새로 생성
                 Teacher.objects.create(user=user)
-            
-            # 4. 명시적 인증 과정 및 자동 로그인 (이전과 동일)
+
+            # 4. 자동 로그인
             raw_password = form.cleaned_data.get('password1')
-            auth_user = authenticate(request, username=user.username, password=raw_password)
-            
+            auth_user = authenticate(
+                request,
+                username=user.username,
+                password=raw_password
+            )
+
             if auth_user is not None:
                 login(request, auth_user)
                 return redirect('/')
+
     else:
         form = UserForm()
-        
+
     return render(request, 'common/signup.html', {'form': form})
 
+
+# ✅ 역할별 마이페이지 이동
 @login_required
 def mypage_redirect(request):
     if request.user.role == 'student':
         return redirect('/StudentPage/')   # 학생 경로에 맞게
     elif request.user.role == 'teacher':
+<<<<<<< HEAD
         return redirect('/teacher/')
+=======
+        return redirect('TeacherPage:teacher_dashboard')
+
+
+# ✅ 프로필 페이지 (자기소개 수정 + 리뷰 통계)
+@login_required
+def profile_view(request, username):
+    target_user = get_object_or_404(CustomUser, username=username)
+
+    # 자기소개 수정
+    if request.method == "POST":
+        if request.user == target_user:
+            bio = request.POST.get("bio")
+            target_user.bio = bio
+            target_user.save()
+            messages.success(request, "자기소개가 수정되었습니다.")
+            return redirect("profile", username=username)
+
+    # 리뷰 통계
+    reviews = Review.objects.filter(user=target_user)  # ⚠ Review 모델 필드 확인
+    review_count = reviews.count()
+    avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"]
+
+    if avg_rating:
+        avg_rating = round(avg_rating, 1)
+
+    context = {
+        "target_user": target_user,
+        "review_count": review_count,
+        "avg_rating": avg_rating,
+    }
+
+    return render(request, "profile.html", context)
+>>>>>>> main

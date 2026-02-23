@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TeacherPage/views.py
 
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -112,3 +113,17 @@ def delete_course(request, course_id):
         return redirect("teacherpage:dashboard")
 
     return render(request, "teacherpage/course_confirm_delete.html", {"course": course})
+=======
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def teacher_dashboard(request):
+    user = request.user  # User 객체
+    courses = user.teacher_courses.all()  # ForeignKey related_name 활용
+
+    return render(request, 'TeacherPage/dashboard.html', {
+        'target_user': user,
+        'courses': courses
+    })
+>>>>>>> main
