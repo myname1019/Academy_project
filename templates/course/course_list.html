@@ -6,10 +6,8 @@
 <style>
 /* course3의 카드 그리드 스타일 유지 및 버튼 스타일 추가 */
 
-
 .course-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
 
-/* 상단 타이틀 및 등록 버튼 영역 */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -28,7 +26,6 @@
 }
 .btn-create:hover { background-color: #00a760; }
 
-/* 카드 그리드 레이아웃 */
 .course-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -46,7 +43,6 @@
 }
 .course-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
 
-/* 썸네일 영역 */
 .thumbnail {
     height: 160px;
     background: linear-gradient(135deg, #4e73df, #1cc88a);
@@ -64,7 +60,6 @@
 .course-title a:hover { color: #4e73df; }
 .course-desc { font-size: 14px; color: #868e96; margin-bottom: 20px; line-height: 1.5; }
 
-/* 하단 푸터 (가격 및 관리자 액션) */
 .course-footer {
     padding: 15px 20px;
     background: #f8f9fc;
@@ -88,8 +83,6 @@
     border-radius: 12px; color: #868e96; font-size: 18px;
 }
 </style>
-
-
 
 <div class="course-container">
     <div class="page-header">
@@ -134,6 +127,9 @@
         </div>
         {% endfor %}
     </div>
+
+    {% include 'course/_pagination.html' %}
+
     {% else %}
         <div class="empty-box">
             아직 등록된 강의가 없습니다 🚀
