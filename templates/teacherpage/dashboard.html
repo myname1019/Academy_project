@@ -1,3 +1,4 @@
+<!-- DASHBOARD: TEMPLATE ROOT (templates/teacherpage/dashboard.html) -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -7,11 +8,12 @@
 {% block title %}{{ target_user.first_name|default:target_user.username }} 강사 대시보드{% endblock %}
 
 {% block content %}
+
 <style>
-  /* 강사 대시보드에서만 상단 네비 메뉴 숨기기 */
+  /* 강사 대시보드에서만 상단 네비 메뉴 숨기기
     .navbar nav {
         display: none;
-    }
+    } */
     
     body { background-color: #f8f9fa; color: #212529; font-family: 'Pretendard', -apple-system, sans-serif; }
     .profile-container {
@@ -122,8 +124,7 @@
         </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-            <a class="btn-outline" href="{% url 'teacherpage:course_create' %}">강의 등록</a>
-            <a class="btn-save" href="{% url 'teacherpage:dashboard' %}">새로고침</a>
+            <a class="btn-outline" href="{% url 'course:course_create' %}">강의 등록</a>
         </div>
     </div>
 
@@ -136,10 +137,6 @@
         <div class="stat-box">
             <span class="stat-label">👥 전체 수강생(중복 제외)</span>
             <p class="stat-value">{{ total_students|default:"0" }}명</p>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">💰 강의 가격 합</span>
-            <p class="stat-value">{{ total_price_sum|default:"0" }}</p>
         </div>
     </div>
 

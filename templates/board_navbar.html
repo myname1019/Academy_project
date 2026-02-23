@@ -93,12 +93,13 @@
         margin: 0 auto;
         display: flex;      /* 카테고리들도 가로로 배치 */
         justify-content: center;
+        gap: 100px;
         padding: 0 20px;
         list-style: none;   /* 앞에 붙는 불릿(점) 제거 */
     }
 
     .category-list li {
-        margin: 0 70px;
+        white-space: nowrap;
     }
 
     .category-list a {
@@ -144,12 +145,13 @@
 
     <div class="nav-bottom">
         <ul class="category-list">
-            <li><a href="/">전체</a></li>
-            <li><a href="/?subject=국어">국어</a></li>
-            <li><a href="/?subject=영어">영어</a></li>
-            <li><a href="/?subject=수학">수학</a></li>
-            <li><a href="/?subject=사회">사회</a></li>
-            <li><a href="/?subject=과학">과학</a></li>
+            <li><a href="/?show=all">전체</a></li>
+            <li><a href="/?subject=korean">국어</a></li>
+            <li><a href="/?subject=math">수학</a></li>
+            <li><a href="/?subject=english">영어</a></li>
+            <li><a href="/?subject=social">사회</a></li>
+            <li><a href="/?subject=science">과학</a></li>
+            <li><a href="/?subject=etc">기타</a></li>
         </ul>
     </div>
 </header>
