@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+
+  {% if mode == "create" %}
+    <h2 class="mb-3">강의 생성</h2>
+  {% else %}
+    <h2 class="mb-3">강의 수정</h2>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-body">
+
+      {# 파일 업로드가 있으므로 enctype 필수 #}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {# 폼 에러 표시 #}
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            입력값을 확인해주세요.
+          </div>
+        {% endif %}
+
+        <div class="mb-3">
+          <label class="form-label">강의명</label>
+          {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">설명</label>
+          {{ form.description }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">썸네일</label>
+          {{ form.thumbnail }}
+          <div class="text-muted" style="font-size: 0.9rem; margin-top: 6px;">
+            권장: 가로형 이미지(예: 300x180 비율)
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-dark">저장</button>
+          <a href="{% url 'teacherpage:dashboard' %}" class="btn btn-outline-secondary">취소</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
