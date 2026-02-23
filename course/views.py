@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from .models import Course
 from .forms import CourseForm
+from django.db.models import Avg, Count
 
 class CourseList(ListView):
     model = Course
@@ -30,11 +31,25 @@ class CourseList(ListView):
         context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
         
         return context
+    
+    def get_queryset(self):
+        return (Course.objects
+                .annotate(
+                    avg_rating=Avg('reviews__rating'),
+                    review_count=Count('reviews')
+                ))
 
 class CourseDetail(DetailView):
     model = Course
     template_name = 'course/course_detail.html'
     context_object_name = 'course'
+    
+    def get_queryset(self):
+        return (Course.objects
+                .annotate(
+                    avg_rating=Avg('reviews__rating'),
+                    review_count=Count('reviews')
+                ))
 
 class CourseCreate(CreateView):
     model = Course
