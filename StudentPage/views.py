@@ -1,29 +1,40 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Avg
 from course.models import Course
 from django.contrib.auth import get_user_model
+from review.models import Review   # ✅ 반드시 있어야 함
 
 User = get_user_model()
+
 
 @login_required
 def student_dashboard(request):
     if request.user.role != 'student':
         return redirect('home')
 
-    # POST 요청(자기소개 저장 버튼 클릭)이 들어왔을 때 처리
+    # 자기소개 저장
     if request.method == 'POST':
         new_bio = request.POST.get('bio')
-        request.user.bio = new_bio  # 현재 로그인한 유저의 bio 필드 업데이트
+        request.user.bio = new_bio
         request.user.save()
         return redirect('student_dashboard')
 
+    # 수강 중 강의
     courses = request.user.student_courses.all()
-    
-    # 템플릿에서 쓸 'target_user'를 현재 로그인한 유저(본인)로 설정해서 보냄
+
+    # ✅ 내가 작성한 리뷰 통계 (반드시 return 위에 있어야 함)
+    user_reviews = Review.objects.filter(user=request.user)
+    review_count = user_reviews.count()
+    avg_rating = user_reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+
     return render(request, 'studentpage/dashboard.html', {
         'courses': courses,
-        'target_user': request.user  
+        'target_user': request.user,
+        'review_count': review_count,
+        'avg_rating': round(avg_rating, 1),
     })
+
 
 @login_required
 def enroll_course(request, course_id):
