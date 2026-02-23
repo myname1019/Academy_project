@@ -17,7 +17,7 @@ class Course(models.Model):
 
     price = models.PositiveIntegerField()
 
-    # 🔽 카테고리 필드 추가
+    # 카테고리 필드 추가
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
