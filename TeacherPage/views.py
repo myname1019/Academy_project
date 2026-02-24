@@ -55,6 +55,7 @@ def teacher_dashboard(request):
     context = {
         "target_user": request.user,  # 템플릿 프로필 영역에서 씀
         "courses": courses,
+        "my_courses": courses,
         "total_courses": total_courses,
         "total_students": total_students,
         "total_enrollments": total_enrollments,
@@ -131,3 +132,14 @@ def delete_course(request, course_id):
         return redirect("teacherpage:dashboard")
 
     return render(request, "teacherpage/course_confirm_delete.html", {"course": course})
+
+@login_required
+@user_passes_test(is_teacher)
+def course_students(request, course_id):
+    course = get_object_or_404(Course, id=course_id, teacher=request.user)
+    students = course.students.all().order_by("username")
+
+    return render(request, "teacherpage/course_students.html", {
+        "course": course,
+        "students": students,
+    })
