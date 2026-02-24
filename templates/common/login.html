@@ -13,7 +13,6 @@
         }
         body {
             margin: 0;
-            /* 배경 이미지가 있다고 가정 */
             background-color: #f0f0f0; 
         }
 
@@ -21,7 +20,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* 반투명 검은색 */
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -84,6 +83,7 @@
             transform: translateY(-50%);
             color: #adb5bd;
             cursor: pointer;
+            user-select: none;
         }
 
         /* 로그인 버튼 */
@@ -103,7 +103,7 @@
             background-color: #584ac2;
         }
 
-        /* 서브 링크 (비밀번호 찾기 등) */
+        /* 서브 링크 */
         .sub-links {
             text-align: center;
             margin-top: 15px;
@@ -119,72 +119,91 @@
             text-decoration: underline;
         }
 
-        /* 간편 로그인 구분선 */
-        .divider {
-            display: flex;
-            align-items: center;
-            color: #adb5bd;
-            font-size: 12px;
-            margin: 30px 0 20px;
+        /* 에러 메시지 */
+        .error-msg {
+            margin: 0 0 12px;
+            color: #e03131;
+            font-size: 13px;
+            text-align: center;
         }
-        .divider::before, .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid #f1f3f5;
-        }
-        .divider span {
-            padding: 0 10px;
-        }
-
-
     </style>
 </head>
 <body>
 
     <div class="modal-overlay">
         <div class="login-box">
-            <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            <button type="button" class="close-btn" onclick="history.back();">
+
+            <!-- ✅ 닫기 버튼 하나만 유지 -->
+            <button type="button" class="close-btn" onclick="history.back();" aria-label="닫기">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            
+
             <div class="logo-area">
                 TiKiTaKa
             </div>
 
-            <form action="{% url "common:login" %}" method="POST">
-            {% csrf_token %}
-            {% include "form_errors.html" %}
+            <!-- ✅ 자동완성 최대 억제 + 실패해도 username 유지 -->
+            <form action="{% url "common:login" %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                {% include "form_errors.html" %}
+
+                {% if form.errors %}
+                    <div class="error-msg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+                {% endif %}
+
+                <!-- ✅ 브라우저 자동완성 낚아채기용 더미 -->
+                <input type="text" name="fakeusernameremembered" style="display:none">
+                <input type="password" name="fakepasswordremembered" style="display:none">
+
                 <div class="input-group">
-                    <input type="text" name='username' placeholder="Enter User ID" value="{{ form.username.value | default_if_none:'' }}" required>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter User ID"
+                        value="{{ form.username.value|default_if_none:'' }}"
+                        required
+                        autocomplete="username"
+                        autocapitalize="none"
+                        spellcheck="false"
+                    >
                 </div>
-                
+
                 <div class="input-group">
-                    <input type="password" name = 'password' placeholder="Enter User Password" value="{{ form.password.value | default_if_none:'' }}" required>
-                    <i class="fa-regular fa-eye eye-icon"></i>
+                    <input
+                        id="passwordInput"
+                        type="password"
+                        name="password"
+                        placeholder="Enter User Password"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
                 </div>
 
                 <button type="submit" class="login-btn">로그인</button>
             </form>
 
             <div class="sub-links">
-
-                <a href="{% url "common:signup" %}">회원가입</a> 
-
-            </div>
-{% comment %} 
-            <div class="divider">
-                <span>간편 로그인</span>
+                <a href="{% url "common:signup" %}">회원가입</a>
             </div>
 
-            <div class="social-login">
-                <a href="#" class="social-circle google"><i class="fa-brands fa-google"></i></a>
-                <a href="#" class="social-circle github"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="social-circle apple"><i class="fa-brands fa-apple"></i></a>
-                <a href="#" class="social-circle kakao"><i class="fa-solid fa-comment"></i></a> {% endcomment %}
-            </div>
         </div>
     </div>
+
+    <script>
+        // ✅ 비밀번호 보기 토글
+        const togglePw = document.getElementById("togglePw");
+        const pwInput = document.getElementById("passwordInput");
+
+        if (togglePw && pwInput) {
+            togglePw.addEventListener("click", () => {
+                const isHidden = pwInput.type === "password";
+                pwInput.type = isHidden ? "text" : "password";
+                togglePw.classList.toggle("fa-eye");
+                togglePw.classList.toggle("fa-eye-slash");
+            });
+        }
+    </script>
 
 </body>
 </html>
