@@ -28,3 +28,17 @@ class UserForm(UserCreationForm):
             raise forms.ValidationError("아이디는 영문, 숫자, 언더바(_), 하이픈(-)만 사용할 수 있습니다.")
             
         return username
+    
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("first_name", "email", "profile_image", "bio")
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+
+        # 자기 자신은 제외하고 검사
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("이미 사용 중인 이메일입니다.")
+
+        return email

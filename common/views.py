@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from common.forms import UserForm
 from .models import Student, Teacher, CustomUser
 from review.models import Review   # ⚠ review 앱 이름 확인 (review or reviews)
-
+from .forms import ProfileUpdateForm 
 
 # ✅ 회원가입
 def signup(request):
@@ -82,7 +82,7 @@ def profile_view(request, username):
         "avg_rating": avg_rating,
     }
 
-    return render(request, "profile.html", context)
+    return render(request, "studentpage/dashboard.html", context)
 
 @login_required
 @require_POST
@@ -98,3 +98,25 @@ def delete_account(request):
     user.delete()
 
     return redirect('/')
+
+
+@login_required
+def profile_edit(request):
+    user = request.user
+
+    if request.method == "POST":
+        form = ProfileUpdateForm(
+            request.POST,
+            request.FILES,  # 프로필 이미지 때문에 필수
+            instance=user
+        )
+        if form.is_valid():
+            form.save()
+            messages.success(request, "내 정보가 수정되었습니다.")
+            return redirect("common:profile", username=user.username)
+    else:
+        form = ProfileUpdateForm(instance=user)
+
+    return render(request, "common/profile_edit.html", {
+        "form": form
+    })

@@ -9,7 +9,7 @@
         max-width: 850px;
         margin: 40px auto;
         padding: 40px;
-        padding-bottom: 110px; /* ✅ 오른쪽 하단 탈퇴 버튼 공간 확보 */
+        padding-bottom: 110px; /* ✅ 오른쪽 하단 버튼 공간 확보 */
         background: #fff;
         border-radius: 20px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.05);
@@ -52,16 +52,31 @@
     }
     .btn-group { display: none; text-align: right; gap: 8px; }
 
-    .btn-save { background: #00c471; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-save {
+        background: #00c471; color: white; border: none;
+        padding: 10px 18px; border-radius: 10px;
+        cursor: pointer; font-weight: 800; font-size: 13px;
+        transition: 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-save:hover { filter: brightness(0.95); }
+
     .btn-cancel { background: #adb5bd; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; }
     .edit-trigger { color: #00c471; cursor: pointer; font-weight: 600; font-size: 14px; background: none; border: none; }
 
-    /* ✅ 카드 안 오른쪽 하단 고정 버튼 */
-    .delete-fixed {
+    /* ✅ 카드 안 오른쪽 하단 고정 버튼 묶음 */
+    .action-fixed {
         position: absolute;
         right: 40px;
         bottom: 35px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
     }
+
     .btn-danger {
         background: #fff;
         color: #fa5252;
@@ -173,15 +188,16 @@
         {% endif %}
     </div>
 
-    {# ✅ 카드 안 오른쪽 하단 회원탈퇴 버튼 (본인만) #}
+    {# ✅ 오른쪽 하단: 내 정보 수정(왼쪽) + 회원탈퇴(오른쪽) #}
     {% if request.user == target_user %}
-    <div class="delete-fixed">
+    <div class="action-fixed">
+        <a href="{% url 'common:profile_edit' %}" class="btn-save">내 정보 수정</a>
         <button type="button" class="btn-danger" onclick="openDeleteModal()">회원탈퇴</button>
     </div>
     {% endif %}
 </div>
 
-{# ✅ 모달은 화면 전체 overlay로 (본인만) #}
+{# ✅ 탈퇴 모달 (본인만) #}
 {% if request.user == target_user %}
 <div id="deleteOverlay" class="confirm-overlay" onclick="closeDeleteModal(event)">
     <div class="confirm-modal">
@@ -228,7 +244,6 @@
     function closeDeleteModal(e) {
         const overlay = document.getElementById('deleteOverlay');
         if (!overlay) return;
-        // 배경 클릭일 때만 닫기
         if (!e || e.target === overlay) overlay.style.display = 'none';
     }
 </script>
