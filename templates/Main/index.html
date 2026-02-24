@@ -30,7 +30,7 @@
 
 <main class="container my-5">
     {# --- [1] 전체를 눌렀거나(?show=all), 과목을 눌렀을 때(?subject=) --- #}
-    {% if request.GET.show == "all" or request.GET.subject or q %}
+    {% if request.GET.show == "all" or request.GET.subject %}
         <h2 class="fs-4 fw-bold mb-4">
             {% if request.GET.subject %}{{ request.GET.subject }} 강의 목록 📚
             {% else %}전체 강의 목록 🚀{% endif %}
