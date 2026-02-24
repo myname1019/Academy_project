@@ -136,7 +136,7 @@
 
           <div style="display:flex; gap:10px; align-items:center;">
               <span class="pill">수강생</span>
-              <a class="btn-sm" href="#">1:1 대화</a>
+              <a class="btn-sm" href="{% url 'chat:dm_room' course.id s.id %}">1:1 대화</a>
           </div>
       </div>
       {% empty %}

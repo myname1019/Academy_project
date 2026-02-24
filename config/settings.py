@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'StudentPage.apps.StudentpageConfig',
     'TeacherPage.apps.TeacherpageConfig',
     'review.apps.ReviewConfig',
+    "channels",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -135,3 +137,11 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'common.CustomUser'
+
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
