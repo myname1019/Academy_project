@@ -5,15 +5,20 @@
 
 {% block content %}
 <style>
-    .profile-container { 
-        max-width: 850px; margin: 40px auto; padding: 40px; 
-        background: #fff; border-radius: 20px; 
-        box-shadow: 0 8px 24px rgba(0,0,0,0.05); 
+    .profile-container {
+        max-width: 850px;
+        margin: 40px auto;
+        padding: 40px;
+        padding-bottom: 110px; /* ✅ 오른쪽 하단 탈퇴 버튼 공간 확보 */
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+        position: relative;    /* ✅ absolute 기준 박스 */
     }
 
     .profile-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
     .profile-info-group { display: flex; align-items: center; gap: 20px; }
-    .profile-avatar { 
+    .profile-avatar {
         width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
         border: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     }
@@ -21,7 +26,7 @@
     .profile-username { color: #868e96; font-size: 15px; margin-top: 2px; }
 
     .profile-stats { display: flex; gap: 15px; margin-bottom: 35px; }
-    .stat-box { 
+    .stat-box {
         flex: 1; padding: 20px; border: 1px solid #f1f3f5; border-radius: 12px;
         background: #fff; transition: 0.2s;
     }
@@ -34,9 +39,9 @@
         margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f1f3f5;
     }
     .section-title { font-size: 18px; font-weight: 700; }
-    
-    .bio-box { 
-        background: #f8f9fa; padding: 25px; border-radius: 12px; 
+
+    .bio-box {
+        background: #f8f9fa; padding: 25px; border-radius: 12px;
         min-height: 120px; line-height: 1.7; position: relative;
     }
     .bio-text { font-size: 16px; color: #444; white-space: pre-wrap; }
@@ -46,10 +51,69 @@
         font-size: 16px; display: none; margin-bottom: 10px; outline: none;
     }
     .btn-group { display: none; text-align: right; gap: 8px; }
-    
+
     .btn-save { background: #00c471; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
     .btn-cancel { background: #adb5bd; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; }
     .edit-trigger { color: #00c471; cursor: pointer; font-weight: 600; font-size: 14px; background: none; border: none; }
+
+    /* ✅ 카드 안 오른쪽 하단 고정 버튼 */
+    .delete-fixed {
+        position: absolute;
+        right: 40px;
+        bottom: 35px;
+    }
+    .btn-danger {
+        background: #fff;
+        color: #fa5252;
+        border: 1px solid #fa5252;
+        padding: 10px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+    .btn-danger:hover { background: #fa5252; color: #fff; }
+
+    /* ✅ 탈퇴 확인 모달 */
+    .confirm-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+    .confirm-modal {
+        width: min(420px, 92vw);
+        background: #fff;
+        border-radius: 14px;
+        padding: 24px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    }
+    .confirm-title { font-size: 18px; font-weight: 900; margin: 0 0 10px; }
+    .confirm-desc { font-size: 14px; color: #495057; margin: 0 0 20px; line-height: 1.6; }
+    .confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-ghost {
+        background: #f1f3f5;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+    }
+    .btn-ghost:hover { background: #e9ecef; }
+    .btn-danger-solid {
+        background: #fa5252;
+        color: #fff;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 900;
+    }
+    .btn-danger-solid:hover { filter: brightness(0.95); }
 </style>
 
 <div class="profile-container">
@@ -108,12 +172,41 @@
         </form>
         {% endif %}
     </div>
+
+    {# ✅ 카드 안 오른쪽 하단 회원탈퇴 버튼 (본인만) #}
+    {% if request.user == target_user %}
+    <div class="delete-fixed">
+        <button type="button" class="btn-danger" onclick="openDeleteModal()">회원탈퇴</button>
+    </div>
+    {% endif %}
 </div>
+
+{# ✅ 모달은 화면 전체 overlay로 (본인만) #}
+{% if request.user == target_user %}
+<div id="deleteOverlay" class="confirm-overlay" onclick="closeDeleteModal(event)">
+    <div class="confirm-modal">
+        <h3 class="confirm-title">정말 탈퇴하시겠어요?</h3>
+        <p class="confirm-desc">
+            탈퇴하면 계정 접근이 불가능해집니다.<br>
+            진행 중인 데이터가 삭제될 수 있습니다.
+        </p>
+
+        <form method="POST" action="{% url 'common:delete_account' %}">
+            {% csrf_token %}
+            <div class="confirm-actions">
+                <button type="button" class="btn-ghost" onclick="closeDeleteModal()">취소</button>
+                <button type="submit" class="btn-danger-solid">탈퇴하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
 
 <script>
     function showEditForm() {
         document.getElementById('bio-display').style.display = 'none';
-        document.querySelector('.edit-trigger').style.display = 'none';
+        const editBtn = document.querySelector('.edit-trigger');
+        if (editBtn) editBtn.style.display = 'none';
         document.getElementById('bio-input').style.display = 'block';
         document.getElementById('btn-group').style.display = 'flex';
         document.getElementById('bio-input').focus();
@@ -121,9 +214,22 @@
 
     function hideEditForm() {
         document.getElementById('bio-display').style.display = 'block';
-        document.querySelector('.edit-trigger').style.display = 'block';
+        const editBtn = document.querySelector('.edit-trigger');
+        if (editBtn) editBtn.style.display = 'block';
         document.getElementById('bio-input').style.display = 'none';
         document.getElementById('btn-group').style.display = 'none';
+    }
+
+    function openDeleteModal() {
+        const overlay = document.getElementById('deleteOverlay');
+        if (overlay) overlay.style.display = 'flex';
+    }
+
+    function closeDeleteModal(e) {
+        const overlay = document.getElementById('deleteOverlay');
+        if (!overlay) return;
+        // 배경 클릭일 때만 닫기
+        if (!e || e.target === overlay) overlay.style.display = 'none';
     }
 </script>
 {% endblock %}
