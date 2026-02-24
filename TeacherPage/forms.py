@@ -11,4 +11,4 @@ class TeacherCourseForm(forms.ModelForm):
     """
     class Meta:
         model = Course
-        fields = ("title", "description", "thumbnail")  # 필요하면 video 같은 필드도 추가
+        fields = ("title", "description", "thumbnail", "video", "price")  # 필요하면 video 같은 필드도 추가

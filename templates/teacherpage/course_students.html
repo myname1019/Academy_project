@@ -6,22 +6,22 @@
 {% block content %}
 
 <style>
-  body { background-color: #f8f9fa; font-family: 'Pretendard', -apple-system, sans-serif; }
+    body { background-color: #f8f9fa; font-family: 'Pretendard', -apple-system, sans-serif; }
 
-  .page-container {
-      max-width: 950px;
-      margin: 40px auto;
-      padding: 40px;
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
-  }
+    .page-container {
+        max-width: 950px;
+        margin: 40px auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
 
-  .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
   }
 
   .page-title {
@@ -118,33 +118,34 @@
 
 <div class="page-container">
 
-  <div class="page-header">
-      <div>
-          <h2 class="page-title">{{ course.title }} 수강생</h2>
-          <div class="sub-text">총 {{ students|length }}명</div>
-      </div>
-      <a class="btn-outline" href="{% url 'teacherpage:dashboard' %}">대시보드</a>
-  </div>
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">{{ course.title }} 수강생</h2>
+            <div class="sub-text">총 {{ students|length }}명</div>
+        </div>
+        <a class="btn-outline" href="{% url 'teacherpage:dashboard' %}">대시보드</a>
+    </div>
 
-  <div class="student-list">
-      {% for s in students %}
-      <div class="student-card">
-          <div class="student-info">
-              <p class="student-name">{{ s.username }}</p>
-              <span class="student-email">{{ s.email }}</span>
-          </div>
+    <div class="student-list">
+        {% for s in students %}
+        <div class="student-card">
+            <div class="student-info">
+                <p class="student-name">{{ s.first_name|default:s.username }}</p>
+                <span class="student-email">{{ s.email }}</span>
+            </div>
 
-          <div style="display:flex; gap:10px; align-items:center;">
-              <span class="pill">수강생</span>
-              <a class="btn-sm" href="{% url 'chat:dm_room' course.id s.id %}">1:1 대화</a>
-          </div>
-      </div>
-      {% empty %}
-      <div class="empty-box">
-          아직 수강생이 없습니다.
-      </div>
-      {% endfor %}
-  </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <span class="pill">수강생</span>
+                <a class="btn-sm" href="{% url 'chat:dm_room' course.id s.id %}">1:1 대화</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-box">
+            아직 수강생이 없습니다.<br>
+            학생이 수강 등록을 완료하면 여기에서 수강생 확인 및 1:1 문의가 가능해집니다.
+        </div>
+        {% endfor %}
+    </div>
 
 </div>
 
