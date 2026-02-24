@@ -2,22 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied # 💡 403 에러 발생용
 from django.db.models import Count
 
+
 from course.models import Course
 from .forms import TeacherCourseForm
 from common.permissions import is_teacher
-
+from django.contrib import messages
 
 def teacher_dashboard(request):
     """
     통합 강사 대시보드
     """
-    # 💡 1차 관문: 로그인을 안 했으면 403 에러 발생
-    if not request.user.is_authenticated:
-        raise PermissionDenied
+    # 💡 1. 비로그인 사용자이거나 강사가 아닌 경우를 한 번에 체크합니다.
+    if not request.user.is_authenticated or request.user.role != 'teacher':
         
-    # 💡 2차 관문: 강사(teacher)가 아니면 홈으로 튕겨냄
-    if not is_teacher(request.user):
-        return redirect('home')
+        messages.error(request, "강사 계정으로 로그인해야 접근할 수 있는 페이지입니다.")
+        
+        return redirect('main_page')
 
     # 내 강의 목록 + 수강생 수(Students M2M)
     courses = (
@@ -66,12 +66,11 @@ def create_course(request):
     """
     강사가 강의 생성
     """
-    # 💡 1차 관문: 비로그인 403 에러
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    # 💡 2차 관문: 강사가 아니면 홈으로 이동
-    if not is_teacher(request.user):
-        return redirect('home')
+    if not request.user.is_authenticated or request.user.role != 'teacher':
+        # 💡 2. 화면에 띄울 에러 메시지를 장전합니다.
+        messages.error(request, "강사 계정으로 로그인해야 접근할 수 있는 페이지입니다.")
+        # 💡 3. 메인 페이지로 돌려보냅니다.
+        return redirect('main_page')
 
     if request.method == "POST":
         form = TeacherCourseForm(request.POST, request.FILES)
@@ -91,10 +90,11 @@ def edit_course(request, course_id):
     강사가 본인 강의 수정
     """
     # 💡 권한 검사
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if not is_teacher(request.user):
-        return redirect('home')
+    if not request.user.is_authenticated or request.user.role != 'teacher':
+        # 💡 2. 화면에 띄울 에러 메시지를 장전합니다.
+        messages.error(request, "강사 계정으로 로그인해야 접근할 수 있는 페이지입니다.")
+        # 💡 3. 메인 페이지로 돌려보냅니다.
+        return redirect('main_page')
 
     course = get_object_or_404(Course, id=course_id, teacher=request.user)
 
@@ -118,10 +118,11 @@ def delete_course(request, course_id):
     강사가 본인 강의 삭제
     """
     # 💡 권한 검사
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if not is_teacher(request.user):
-        return redirect('home')
+    if not request.user.is_authenticated or request.user.role != 'teacher':
+        # 💡 2. 화면에 띄울 에러 메시지를 장전합니다.
+        messages.error(request, "강사 계정으로 로그인해야 접근할 수 있는 페이지입니다.")
+        # 💡 3. 메인 페이지로 돌려보냅니다.
+        return redirect('main_page')
 
     course = get_object_or_404(Course, id=course_id, teacher=request.user)
 
