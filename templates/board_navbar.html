@@ -176,9 +176,9 @@
         <ul class="category-list">
             <li>
                 <div class="dropdown">
-                    <a href="/?show=all" class="dropbtn">전체</a>
+                    <a href="/?show=all" class="dropbtn">학원안내</a>
                     <ul class="dropdown-content">
-                        <li><a href="/board/notice/">공지사항</a></li>
+                        <li><a href="{% url 'Board:notice_list' %}">공지사항</a></li>
                         <li><a href="/board/community/">게시판</a></li>
                     </ul>
                 </div>
