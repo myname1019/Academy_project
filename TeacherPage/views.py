@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied # 💡 403 에러 발생용
 from django.db.models import Count
-
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from course.models import Course
 from .forms import TeacherCourseForm
