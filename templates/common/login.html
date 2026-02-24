@@ -153,8 +153,8 @@
             </div>
 
             <form action="{% url "common:login" %}" method="POST">
-              {% csrf_token %}
-              {% include "form_errors.html" %}
+            {% csrf_token %}
+            {% include "form_errors.html" %}
                 <div class="input-group">
                     <input type="text" name='username' placeholder="Enter User ID" value="{{ form.username.value | default_if_none:'' }}" required>
                 </div>
