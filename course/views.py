@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from .models import Course
 from .forms import CourseForm
 from django.db.models import Avg, Count
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 class CourseList(ListView):
@@ -59,7 +61,7 @@ class CourseDetail(DetailView):
         )
 
 
-class CourseCreate(CreateView):
+class CourseCreate(LoginRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
     template_name = 'course/course_form.html'
@@ -70,7 +72,8 @@ class CourseCreate(CreateView):
         return super().form_valid(form)
 
 
-class CourseUpdate(UpdateView):
+# 💡 해결: LoginRequiredMixin이 포함된 버전을 사용합니다.
+class CourseUpdate(LoginRequiredMixin, UpdateView):
     model = Course
     form_class = CourseForm
     template_name = 'course/course_form.html'
@@ -83,6 +86,8 @@ class CourseUpdate(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
 
+# 💡 해결: @login_required 데코레이터가 포함된 버전을 사용합니다.
+@login_required
 def course_delete(request, pk):
     course = get_object_or_404(Course, pk=pk)
     if course.teacher != request.user:
