@@ -192,8 +192,6 @@
                         <span class="pill">수강생: {{ course.student_count|default:"0" }}명</span>
                         {% if course.video %}
                             <span class="pill">영상: 등록됨</span>
-                        {% else %}
-                            <span class="pill">영상: 없음</span>
                         {% endif %}
                         <span class="pill">등록일: {{ course.created_at|date:"Y-m-d" }}</span>
                     </div>

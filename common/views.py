@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
+from django.views.decorators.http import require_POST
 
 from common.forms import UserForm
 from .models import Student, Teacher, CustomUser
@@ -82,3 +83,18 @@ def profile_view(request, username):
     }
 
     return render(request, "profile.html", context)
+
+@login_required
+@require_POST
+def delete_account(request):
+    user = request.user
+
+    # (선택) 소프트 삭제가 더 안전
+    # user.is_active = False
+    # user.save(update_fields=["is_active"])
+
+    # 하드 삭제
+    logout(request)
+    user.delete()
+
+    return redirect('/')
