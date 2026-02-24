@@ -5,6 +5,7 @@ from .models import Course
 from .forms import CourseForm
 from django.db.models import Avg, Count
 
+
 class CourseList(ListView):
     model = Course
     template_name = 'course/course_list.html'
@@ -25,31 +26,38 @@ class CourseList(ListView):
         end_page = min(start_page + 4, total_pages)
 
         context['custom_page_range'] = range(start_page, end_page + 1)
-        
+
         # 이전/다음 그룹 점프 로직
         context['prev_group_start'] = start_page - 5 if start_page > 1 else None
         context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
-        
+
         return context
-    
+
     def get_queryset(self):
-        return (Course.objects
-                .annotate(
-                    avg_rating=Avg('reviews__rating'),
-                    review_count=Count('reviews')
-                ))
+        return (
+            Course.objects
+            .annotate(
+                avg_rating=Avg('reviews__rating'),
+                review_count=Count('reviews')
+            )
+            .order_by('-created_at')  # ✅ 최신순 정렬 명시
+        )
+
 
 class CourseDetail(DetailView):
     model = Course
     template_name = 'course/course_detail.html'
     context_object_name = 'course'
-    
+
     def get_queryset(self):
-        return (Course.objects
-                .annotate(
-                    avg_rating=Avg('reviews__rating'),
-                    review_count=Count('reviews')
-                ))
+        return (
+            Course.objects
+            .annotate(
+                avg_rating=Avg('reviews__rating'),
+                review_count=Count('reviews')
+            )
+        )
+
 
 class CourseCreate(CreateView):
     model = Course
@@ -60,6 +68,7 @@ class CourseCreate(CreateView):
     def form_valid(self, form):
         form.instance.teacher = self.request.user
         return super().form_valid(form)
+
 
 class CourseUpdate(UpdateView):
     model = Course
@@ -72,6 +81,7 @@ class CourseUpdate(UpdateView):
         if course.teacher != request.user:
             return redirect('course:course_detail', pk=course.pk)
         return super().dispatch(request, *args, **kwargs)
+
 
 def course_delete(request, pk):
     course = get_object_or_404(Course, pk=pk)
