@@ -14,7 +14,6 @@ class CourseList(ListView):
     context_object_name = 'courses'
     paginate_by = 12
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paginator = context['paginator']
@@ -48,7 +47,6 @@ class CourseDetail(DetailView):
     model = Course
     template_name = 'course/course_detail.html'
     context_object_name = 'course'
-
 
     def get_queryset(self):
         return (

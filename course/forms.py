@@ -1,17 +1,19 @@
 from django import forms
 from .models import Course
 
+
 class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        fields = ['title', 'description', 'price', 'category', 'video']
+        fields = ['title', 'description', 'price', 'category', 'thumbnail', 'video']  # ✅ thumbnail 추가
 
         labels = {
             'title': '강의 제목',
             'description': '강의 설명',
             'price': '수강료',
             'category': '카테고리',
+            'thumbnail': '강의 썸네일',  
             'video': '강의 영상',
         }
 
@@ -29,8 +31,10 @@ class CourseForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '수강료 입력'
             }),
-            # 선택 드롭다운
             'category': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'thumbnail': forms.ClearableFileInput(attrs={ 
                 'class': 'form-control'
             }),
             'video': forms.ClearableFileInput(attrs={
