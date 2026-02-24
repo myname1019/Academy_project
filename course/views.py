@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
+from django.db.models import Avg, Count
+from django.core.exceptions import PermissionDenied # 💡 403 에러 발생용
+
 from .models import Course
 from .forms import CourseForm
-from django.db.models import Avg, Count
 
 
 class CourseList(ListView):
@@ -20,14 +22,11 @@ class CourseList(ListView):
         current_page = page_obj.number
         total_pages = paginator.num_pages
 
-        # 5개씩 페이지 묶음 계산
         page_group = (current_page - 1) // 5
         start_page = page_group * 5 + 1
         end_page = min(start_page + 4, total_pages)
 
         context['custom_page_range'] = range(start_page, end_page + 1)
-
-        # 이전/다음 그룹 점프 로직
         context['prev_group_start'] = start_page - 5 if start_page > 1 else None
         context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
 
@@ -40,7 +39,7 @@ class CourseList(ListView):
                 avg_rating=Avg('reviews__rating'),
                 review_count=Count('reviews')
             )
-            .order_by('-created_at')  # ✅ 최신순 정렬 명시
+            .order_by('-created_at')
         )
 
 
@@ -65,6 +64,12 @@ class CourseCreate(CreateView):
     template_name = 'course/course_form.html'
     success_url = reverse_lazy('course:course_list')
 
+    # 💡 3. CourseCreate: 비로그인 유저 접근 방지
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.teacher = self.request.user
         return super().form_valid(form)
@@ -76,17 +81,33 @@ class CourseUpdate(UpdateView):
     template_name = 'course/course_form.html'
     success_url = reverse_lazy('course:course_list')
 
+    # 💡 4. CourseUpdate: 비로그인 방지 + 본인(작성자) 확인 로직 병합
     def dispatch(self, request, *args, **kwargs):
+        # 1차 관문: 로그인을 안 했으면 403 에러
+        if not request.user.is_authenticated:
+            raise PermissionDenied
+            
         course = self.get_object()
+        
+        # 2차 관문: 로그인은 했지만 본인이 올린 강의가 아니면 상세 페이지로 튕겨냄
         if course.teacher != request.user:
             return redirect('course:course_detail', pk=course.pk)
+            
         return super().dispatch(request, *args, **kwargs)
 
 
+# 💡 5. course_delete (함수형 뷰)
 def course_delete(request, pk):
+    # 1차 관문: 로그인을 안 했으면 403 에러
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
     course = get_object_or_404(Course, pk=pk)
+    
+    # 2차 관문: 로그인은 했지만 본인이 올린 강의가 아니면 상세 페이지로 튕겨냄
     if course.teacher != request.user:
         return redirect('course:course_detail', pk=pk)
+        
     if request.method == "POST":
         course.delete()
         return redirect('course:course_list')

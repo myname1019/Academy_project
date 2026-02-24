@@ -1,14 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied # 💡 403 에러를 위해 추가
 from django.contrib import messages
 from course.models import Course
 from .models import Review
 from .forms import ReviewForm
 
-
 # 🔥 리뷰 작성
-@login_required
 def review_create(request, course_id):
+    # 💡 1차 관문: 비로그인 유저 접근 차단 (403 에러)
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
     course = get_object_or_404(Course, id=course_id)
 
     # 이미 리뷰 작성했는지 체크
@@ -34,11 +36,14 @@ def review_create(request, course_id):
 
 
 # 🔥 리뷰 수정
-@login_required
 def review_update(request, pk):
+    # 💡 1차 관문: 비로그인 유저 접근 차단
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
     review = get_object_or_404(Review, pk=pk)
 
-    # 본인만 수정 가능
+    # 💡 2차 관문: 본인만 수정 가능 (기존 로직 유지 - 훌륭합니다!)
     if review.user != request.user:
         messages.error(request, "본인의 리뷰만 수정할 수 있습니다.")
         return redirect('course:course_detail', pk=review.course.id)
@@ -59,11 +64,14 @@ def review_update(request, pk):
 
 
 # 🔥 리뷰 삭제
-@login_required
 def review_delete(request, pk):
+    # 💡 1차 관문: 비로그인 유저 접근 차단
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
     review = get_object_or_404(Review, pk=pk)
 
-    # 본인만 삭제 가능
+    # 💡 2차 관문: 본인만 삭제 가능
     if review.user != request.user:
         messages.error(request, "본인의 리뷰만 삭제할 수 있습니다.")
         return redirect('course:course_detail', pk=review.course.id)

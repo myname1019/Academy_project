@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied # 💡 403 에러를 위해 추가
 from django.db.models import Avg
 from course.models import Course
 from django.contrib.auth import get_user_model
@@ -8,10 +8,14 @@ from review.models import Review   # ✅ 반드시 있어야 함
 User = get_user_model()
 
 
-@login_required
 def student_dashboard(request):
+    # 💡 1차 관문: 로그인을 안 했으면 403 에러 발생
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    # 💡 2차 관문: 로그인은 했지만 학생(student)이 아니면 홈으로 튕겨냄
     if request.user.role != 'student':
-        return redirect('home')
+        return redirect('home') # (URL name이 'home'인지 본인의 urls.py를 꼭 확인해 주세요!)
 
     # 자기소개 저장
     if request.method == 'POST':
@@ -36,8 +40,12 @@ def student_dashboard(request):
     })
 
 
-@login_required
 def enroll_course(request, course_id):
+    # 💡 1차 관문: 로그인을 안 했으면 403 에러 발생
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    # 💡 2차 관문: 로그인은 했지만 학생(student)이 아니면 홈으로 튕겨냄
     if request.user.role != 'student':
         return redirect('home')
 

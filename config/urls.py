@@ -10,7 +10,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # 메인 (수정했던 main_page 함수 사용)
-    path("", views.main_page, name="main_page"),
+    
+    path("",include("Main.urls")),
 
     # 게시판
     path("Board/", include("Board.urls")),
