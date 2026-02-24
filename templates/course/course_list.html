@@ -4,7 +4,7 @@
 
 {% block content %}
 <style>
-/* course3의 카드 그리드 스타일 유지 및 버튼 스타일 추가 */
+/* 기존 스타일 유지 */
 
 .course-container { max-width: 1200px; margin: 60px auto; padding: 0 20px; }
 
@@ -70,14 +70,6 @@
 }
 .price { font-weight: bold; color: #4e73df; font-size: 16px; }
 
-.admin-actions a { color: #868e96; text-decoration: none; font-size: 13px; margin-right: 8px; }
-.admin-actions a:hover { color: #495057; }
-.btn-delete {
-    background: none; border: none; color: #fa5252;
-    cursor: pointer; padding: 0; font-size: 13px; font-weight: 500;
-}
-.btn-delete:hover { text-decoration: underline; }
-
 .empty-box {
     text-align: center; padding: 80px; background: white;
     border-radius: 12px; color: #868e96; font-size: 18px;
@@ -114,14 +106,6 @@
             <div class="course-footer">
                 <div class="price">
                     {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
-                </div>
-                
-                <div class="admin-actions">
-                    <a href="{% url 'course:course_update' pk=course.id %}">수정</a>
-                    <form action="{% url 'course:course_delete' pk=course.id %}" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-delete">삭제</button>
-                    </form>
                 </div>
             </div>
         </div>

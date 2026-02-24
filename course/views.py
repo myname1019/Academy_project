@@ -7,11 +7,12 @@ from django.db.models import Avg, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
+
 class CourseList(ListView):
     model = Course
     template_name = 'course/course_list.html'
     context_object_name = 'courses'
-    paginate_by = 12
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,31 +28,38 @@ class CourseList(ListView):
         end_page = min(start_page + 4, total_pages)
 
         context['custom_page_range'] = range(start_page, end_page + 1)
-        
+
         # 이전/다음 그룹 점프 로직
         context['prev_group_start'] = start_page - 5 if start_page > 1 else None
         context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
-        
+
         return context
-    
+
     def get_queryset(self):
-        return (Course.objects
-                .annotate(
-                    avg_rating=Avg('reviews__rating'),
-                    review_count=Count('reviews')
-                ))
+        return (
+            Course.objects
+            .annotate(
+                avg_rating=Avg('reviews__rating'),
+                review_count=Count('reviews')
+            )
+            .order_by('-created_at')  # ✅ 최신순 정렬 명시
+        )
+
 
 class CourseDetail(DetailView):
     model = Course
     template_name = 'course/course_detail.html'
     context_object_name = 'course'
-    
+
     def get_queryset(self):
-        return (Course.objects
-                .annotate(
-                    avg_rating=Avg('reviews__rating'),
-                    review_count=Count('reviews')
-                ))
+        return (
+            Course.objects
+            .annotate(
+                avg_rating=Avg('reviews__rating'),
+                review_count=Count('reviews')
+            )
+        )
+
 
 class CourseCreate(LoginRequiredMixin, CreateView):
     model = Course
@@ -63,6 +71,8 @@ class CourseCreate(LoginRequiredMixin, CreateView):
         form.instance.teacher = self.request.user
         return super().form_valid(form)
 
+
+# 💡 해결: LoginRequiredMixin이 포함된 버전을 사용합니다.
 class CourseUpdate(LoginRequiredMixin, UpdateView):
     model = Course
     form_class = CourseForm
@@ -75,6 +85,8 @@ class CourseUpdate(LoginRequiredMixin, UpdateView):
             return redirect('course:course_detail', pk=course.pk)
         return super().dispatch(request, *args, **kwargs)
 
+
+# 💡 해결: @login_required 데코레이터가 포함된 버전을 사용합니다.
 @login_required
 def course_delete(request, pk):
     course = get_object_or_404(Course, pk=pk)
