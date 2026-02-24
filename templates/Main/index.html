@@ -122,12 +122,19 @@
                 <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h3 class="fs-5 fw-bold m-0">📢 공지사항</h3>
-                        <a href="/Board/notice/" class="text-muted small text-decoration-none">더보기 +</a>
+                        <a href="{% url 'Board:notice_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li class="py-2 border-bottom"><a href="#" class="text-decoration-none text-dark">TikiTaka 커뮤니티 오픈 안내</a></li>
-                        <li class="py-2 border-bottom"><a href="#" class="text-decoration-none text-dark">강의 시청 시 주의사항 (필독)</a></li>
-                        <li class="py-2"><a href="#" class="text-decoration-none text-dark">1월 신규 강의 라인업 공개</a></li>
+                        {% for post in notices %}
+                            <li class="py-2 border-bottom">
+                                <a href="#" class="text-decoration-none text-dark d-flex justify-content-between">
+                                    <span>{{ post.title }}</span>
+                                    <span class="text-muted small">{{ post.created_at|date:"m-d" }}</span>
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="py-2 text-muted small">등록된 공지사항이 없습니다.</li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
@@ -135,13 +142,20 @@
             <div class="col-md-6">
                 <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="fs-5 fw-bold m-0">💬 최근 게시글</h3>
-                        <a href="/Board/free/" class="text-muted small text-decoration-none">더보기 +</a>
+                        <h3 class="fs-5 fw-bold m-0">💬 게시글</h3>
+                        <a href="{% url 'Board:community_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li class="py-2 border-bottom"><a href="#" class="text-decoration-none text-dark">파이썬 공부 같이해요! (열공)</a></li>
-                        <li class="py-2 border-bottom"><a href="#" class="text-decoration-none text-dark">장고 view 질문 있습니다.. ㅜㅜ</a></li>
-                        <li class="py-2"><a href="#" class="text-decoration-none text-dark">현직 개발자 멘토링 후기</a></li>
+                        {% for post in communities %}
+                            <li class="py-2 border-bottom">
+                                <a href="#" class="text-decoration-none text-dark d-flex justify-content-between">
+                                    <span>{{ post.title }}</span>
+                                    <span class="text-muted small">{{ post.author }}</span>
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="py-2 text-muted small">등록된 게시글이 없습니다.</li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

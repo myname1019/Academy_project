@@ -176,20 +176,20 @@
         <ul class="category-list">
             <li>
                 <div class="dropdown">
-                    <a href="/?show=all" class="dropbtn">학원안내</a>
+                    <a href="{% url 'Board:notice_list' %}" class="dropbtn">학원안내</a>
                     <ul class="dropdown-content">
                         <li><a href="{% url 'Board:notice_list' %}">공지사항</a></li>
-                        <li><a href="/board/community/">게시판</a></li>
+                        <li><a href="{% url 'Board:community_list' %}">게시판</a></li>
                     </ul>
                 </div>
             </li>
             <li><a href="/?show=all">전체</a></li>
-            <li><a href="/?subject=korean">국어</a></li>
-            <li><a href="/?subject=math">수학</a></li>
-            <li><a href="/?subject=english">영어</a></li>
-            <li><a href="/?subject=social">사회</a></li>
-            <li><a href="/?subject=science">과학</a></li>
-            <li><a href="/?subject=etc">기타</a></li>
+            <li><a href="/?subject=국어">국어</a></li>
+            <li><a href="/?subject=수학">수학</a></li>
+            <li><a href="/?subject=영어">영어</a></li>
+            <li><a href="/?subject=사회">사회</a></li>
+            <li><a href="/?subject=과학">과학</a></li>
+            <li><a href="/?subject=기타">기타</a></li>
         </ul>
     </div>
 </header>
