@@ -1,7 +1,5 @@
-# TeacherPage/views.py
-
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied # 💡 403 에러 발생용
 from django.db.models import Count
 
 from course.models import Course
@@ -9,13 +7,17 @@ from .forms import TeacherCourseForm
 from common.permissions import is_teacher
 
 
-@login_required
-@user_passes_test(is_teacher)
 def teacher_dashboard(request):
     """
     통합 강사 대시보드
-    - 프로필(자기소개 bio) + 강의관리 + 통계 + 썸네일 카드
     """
+    # 💡 1차 관문: 로그인을 안 했으면 403 에러 발생
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+        
+    # 💡 2차 관문: 강사(teacher)가 아니면 홈으로 튕겨냄
+    if not is_teacher(request.user):
+        return redirect('home')
 
     # 내 강의 목록 + 수강생 수(Students M2M)
     courses = (
@@ -60,14 +62,17 @@ def teacher_dashboard(request):
     return render(request, "teacherpage/dashboard.html", context)
 
 
-@login_required
-@user_passes_test(is_teacher)
 def create_course(request):
     """
     강사가 강의 생성
-    - teacher는 자동으로 request.user로 저장
-    - 썸네일 업로드(request.FILES) 지원
     """
+    # 💡 1차 관문: 비로그인 403 에러
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    # 💡 2차 관문: 강사가 아니면 홈으로 이동
+    if not is_teacher(request.user):
+        return redirect('home')
+
     if request.method == "POST":
         form = TeacherCourseForm(request.POST, request.FILES)
         if form.is_valid():
@@ -81,12 +86,16 @@ def create_course(request):
     return render(request, "teacherpage/course_form.html", {"form": form, "mode": "create"})
 
 
-@login_required
-@user_passes_test(is_teacher)
 def edit_course(request, course_id):
     """
     강사가 본인 강의 수정
     """
+    # 💡 권한 검사
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    if not is_teacher(request.user):
+        return redirect('home')
+
     course = get_object_or_404(Course, id=course_id, teacher=request.user)
 
     if request.method == "POST":
@@ -104,14 +113,16 @@ def edit_course(request, course_id):
     )
 
 
-@login_required
-@user_passes_test(is_teacher)
 def delete_course(request, course_id):
     """
     강사가 본인 강의 삭제
-    - GET: 확인 화면
-    - POST: 실제 삭제
     """
+    # 💡 권한 검사
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    if not is_teacher(request.user):
+        return redirect('home')
+
     course = get_object_or_404(Course, id=course_id, teacher=request.user)
 
     if request.method == "POST":
