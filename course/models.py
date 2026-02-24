@@ -39,8 +39,6 @@ class Course(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="teacher_courses",
-        null=True,
-        blank=True,
     )
 
     # 수강생들 (ManyToMany)

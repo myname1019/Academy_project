@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from .models import Course
 from .forms import CourseForm
 from django.db.models import Avg, Count
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 class CourseList(ListView):
     model = Course
@@ -51,7 +53,7 @@ class CourseDetail(DetailView):
                     review_count=Count('reviews')
                 ))
 
-class CourseCreate(CreateView):
+class CourseCreate(LoginRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
     template_name = 'course/course_form.html'
@@ -61,7 +63,7 @@ class CourseCreate(CreateView):
         form.instance.teacher = self.request.user
         return super().form_valid(form)
 
-class CourseUpdate(UpdateView):
+class CourseUpdate(LoginRequiredMixin, UpdateView):
     model = Course
     form_class = CourseForm
     template_name = 'course/course_form.html'
@@ -73,6 +75,7 @@ class CourseUpdate(UpdateView):
             return redirect('course:course_detail', pk=course.pk)
         return super().dispatch(request, *args, **kwargs)
 
+@login_required
 def course_delete(request, pk):
     course = get_object_or_404(Course, pk=pk)
     if course.teacher != request.user:
