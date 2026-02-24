@@ -7,33 +7,43 @@ class MainPageView(ListView):
     model = Course
     template_name = 'Main/index.html'
     context_object_name = 'course_list'
-    paginate_by = 8  # 💡 한 페이지에 보여줄 강의 수 (4열이니까 8개씩 보여주면 딱 맞습니다)
+    paginate_by = 8
 
+    # 💡 1. 여기서 필터링이 제대로 되는지 확인!
     def get_queryset(self):
+        # 기본적으로 모든 강의를 최신순으로 가져옵니다.
         queryset = Course.objects.all().order_by('-created_at')
+        
+        # 주소창에 ?subject=python 같은 값이 있는지 확인합니다.
         subject = self.request.GET.get('subject')
         
+        # 💡 만약 과목이 선택되었다면, 해당 카테고리만 필터링합니다!
         if subject:
-            queryset = queryset.filter(category=subject)
+            queryset = queryset.filter(category=subject) # (모델의 필드 이름이 category가 맞는지 확인)
+            
         return queryset
 
+    # 💡 2. 페이지네이션과 화면 표시용 데이터
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # 1. 과목 이름 템플릿으로 넘기기
+        # 과목 이름 템플릿으로 넘기기
         subject = self.request.GET.get('subject')
         if subject:
-            category_dict = dict(Course.CATEGORY_CHOICES)
-            context['subject_display'] = category_dict.get(subject, subject)
+            # 모델에 CATEGORY_CHOICES가 있다면 한글 이름을 가져옵니다.
+            try:
+                category_dict = dict(Course.CATEGORY_CHOICES)
+                context['subject_display'] = category_dict.get(subject, subject)
+            except AttributeError:
+                context['subject_display'] = subject
 
-        # 2. 💡 커스텀 그룹 페이지네이션 계산 로직
+        # 커스텀 그룹 페이지네이션 계산 로직
         page_obj = context.get('page_obj')
         if page_obj:
             paginator = context['paginator']
             current_page = page_obj.number
             total_pages = paginator.num_pages
 
-            # 5개씩 페이지 묶음 계산 (1~5, 6~10 ...)
             page_group = (current_page - 1) // 5
             start_page = page_group * 5 + 1
             end_page = min(start_page + 4, total_pages)
