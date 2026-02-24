@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 <style>
+    /* Swiper 스타일 */
     .swiper { width: 100%; height: 250px; }
     .swiper-slide {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -15,6 +16,28 @@
     .slide-4 { background-color: #d63031; }
     .slide-5 { background-color: #2d3436; }
     .swiper-pagination-bullet { background: white !important; }
+
+    /* 💡 커스텀 페이지네이션 스타일 추가 */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 40px;
+        gap: 10px;
+    }
+    .page-link-custom {
+        color: #555;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+    .page-link-custom:hover { background-color: #f1f3f5; color: #6c5ce7; }
+    .page-link-custom.active { background-color: #6c5ce7; color: white; }
+    .page-link-custom.disabled { color: #ccc; cursor: not-allowed; }
+    .page-link-custom.disabled:hover { background-color: transparent; color: #ccc; }
+    .page-divider { color: #dee2e6; }
 </style>
 
 <section class="banner swiper mySwiper">
@@ -37,27 +60,60 @@
         </h2>
         
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-    {% if course_list %}
-        {% for course in course_list %}
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0" style="cursor: pointer;" onclick="location.href='/course/{{ course.id }}/'">
-                {% if course.thumbnail %}
-                    <img src="{{ course.thumbnail.url }}" class="card-img-top" style="aspect-ratio: 16/10; object-fit: cover;">
-                {% else %}
-                    <div class="card-img-top bg-light text-secondary d-flex align-items-center justify-content-center fw-bold" style="aspect-ratio: 16/10;">{{ course.get_category_display }}</div>
-                {% endif %}
-                <div class="card-body p-3">
-                    <h5 class="card-title fs-6 fw-bold text-truncate mb-2">{{ course.title }}</h5>
-                    <p class="card-text text-muted small mb-2">{{ course.teacher }}</p>
-                    <p class="card-text fw-bold m-0" style="color: #6c5ce7;">{% if course.price > 0 %}₩{{ course.price }}{% else %}무료{% endif %}</p>
+            {% if course_list %}
+                {% for course in course_list %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0" style="cursor: pointer;" onclick="location.href='/course/{{ course.id }}/'">
+                        {% if course.thumbnail %}
+                            <img src="{{ course.thumbnail.url }}" class="card-img-top thumb" alt="{{ course.title }} 썸네일">
+                        {% else %}
+                            <div class="card-img-top bg-light text-secondary d-flex align-items-center justify-content-center fw-bold" style="aspect-ratio: 16/10;">{{ course.get_category_display }}</div>
+                        {% endif %}
+                        <div class="card-body p-3">
+                            <h5 class="card-title fs-6 fw-bold text-truncate mb-2">{{ course.title }}</h5>
+                            <p class="card-text text-muted small mb-2">{{ course.teacher }}</p>
+                            <p class="card-text fw-bold m-0" style="color: #6c5ce7;">{% if course.price > 0 %}₩{{ course.price }}{% else %}무료{% endif %}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center text-muted py-5">등록된 강의가 없습니다.</div>
+            {% endif %}
         </div>
-        {% endfor %}
-    {% else %}
-        <div class="col-12 text-center text-muted py-5">등록된 강의가 없습니다.</div>
-    {% endif %}
-</div>
+
+        {# 💡 페이지네이션 추가 (강의 목록이 있을 때만 표시) #}
+        {% if is_paginated %}
+        <div class="pagination-container">
+            {% if prev_group_start %}
+                <a href="?page={{ prev_group_start }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom" title="{{ prev_group_start }}페이지로 이동">
+                    &laquo; 이전
+                </a>
+            {% else %}
+                <span class="page-link-custom disabled">&laquo; 이전</span>
+            {% endif %}
+
+            <span class="page-divider">|</span>
+
+            {% for i in custom_page_range %}
+                {% if page_obj.number == i %}
+                    <span class="page-link-custom active">{{ i }}</span>
+                {% else %}
+                    <a href="?page={{ i }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+
+            <span class="page-divider">|</span>
+
+            {% if next_group_start %}
+                <a href="?page={{ next_group_start }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom" title="{{ next_group_start }}페이지로 이동">
+                    다음 &raquo;
+                </a>
+            {% else %}
+                <span class="page-link-custom disabled">다음 &raquo;</span>
+            {% endif %}
+        </div>
+        {% endif %}
 
     {# --- [2] 아무것도 안 눌렀을 때만 게시판 노출 --- #}
     {% else %}
@@ -103,4 +159,3 @@
     });
 </script>
 {% endblock %}
-#dk
