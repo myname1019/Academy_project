@@ -206,7 +206,7 @@
       {% if course.thumbnail %}
         <img class="thumb" src="{{ course.thumbnail.url }}" alt="{{ course.title }} 썸네일">
       {% else %}
-        <div class="thumb-fallback">🎬 {{ course.title|truncatechars:14 }}</div>
+        <img class="thumb" src="{% static 'images/default_thumbnail.png' %}" alt="기본 썸네일">
       {% endif %}
     </div>
   </div>
