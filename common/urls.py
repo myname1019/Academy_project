@@ -19,4 +19,5 @@ urlpatterns = [
         ),
         name='password_change'
     ),
+    path('find_username/', views.find_username, name='find_username'),
 ]
