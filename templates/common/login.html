@@ -35,13 +35,29 @@
         letter-spacing: -1px;
     }
 
-    .input-group { margin-bottom: 20px; }
+    /* 💡 input-group에 position: relative를 주어야 눈 아이콘이 input 안에 예쁘게 들어갑니다 */
+    .input-group { 
+        margin-bottom: 20px; 
+        position: relative; 
+    }
+    
     .input-group input {
         width: 100%;
+        box-sizing: border-box; /* 패딩 때문에 삐져나가는 것 방지 */
         padding: 15px;
         border: 1px solid #ddd;
         border-radius: 8px;
         font-size: 15px;
+    }
+
+    /* 💡 비밀번호 보기(눈) 아이콘 스타일 */
+    .eye-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #888;
     }
 
     .login-btn {
@@ -55,15 +71,27 @@
         font-size: 16px;
         cursor: pointer;
         transition: 0.3s;
+        margin-bottom: 20px; /* 버튼 아래 여백 추가 */
     }
 
     .login-btn:hover { background-color: #584ac2; }
+
+    /* 서브 링크 정렬 */
+    .sub-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
 
     .sub-links a {
         color: #888;
         text-decoration: none;
         font-size: 14px;
     }
+
+    .sub-links a:hover { color: #6c5ce7; }
 
     /* 닫기 버튼 (나가기) */
     .close-btn {
@@ -86,27 +114,73 @@
 
         <div class="logo-area">TiKiTaKa</div>
 
-        <form action="{% url 'common:login' %}" method="POST">
+        <form action="{% url 'common:login' %}" method="POST" autocomplete="off">
             {% csrf_token %}
             
             {% if form.errors %}
-                <p class="text-danger small text-center mb-3">아이디나 비밀번호를 다시 확인해 주세요.</p>
+                <p class="text-danger small text-center mb-3">아이디 또는 비밀번호가 올바르지 않습니다.</p>
             {% endif %}
 
+            <input type="text" name="fakeusernameremembered" style="display:none">
+            <input type="password" name="fakepasswordremembered" style="display:none">
+
             <div class="input-group">
-                <input type="text" name="username" placeholder="아이디" required>
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="아이디를 입력하세요"
+                    value="{{ form.username.value|default_if_none:'' }}"
+                    required
+                    autocomplete="username"
+                    autocapitalize="none"
+                    spellcheck="false"
+                >
             </div>
 
             <div class="input-group">
-                <input type="password" name="password" placeholder="비밀번호" required>
+                <input
+                    id="passwordInput"
+                    type="password"
+                    name="password"
+                    placeholder="비밀번호를 입력하세요"
+                    required
+                    autocomplete="current-password"
+                >
+                <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
             </div>
 
             <button type="submit" class="login-btn">로그인</button>
         </form>
 
-        <div class="sub-links text-center mt-4">
-            <a href="{% url 'common:signup' %}">아직 회원이 아니신가요? <b>회원가입</b></a>
+        <div class="sub-links">
+            <a href="{% url 'common:find_username' %}">아이디 찾기</a>
+            <span style="color: #ddd;">|</span>
+            <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
+        </div>
+
+        <div class="text-center" style="font-size: 14px; color: #888;">
+            아직 회원이 아니신가요? 
+            <a href="{% url 'common:signup' %}" style="color: #6c5ce7; font-weight: bold; text-decoration: none;">회원가입</a>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const togglePw = document.getElementById('togglePw');
+        const passwordInput = document.getElementById('passwordInput');
+
+        if (togglePw && passwordInput) {
+            togglePw.addEventListener('click', function() {
+                // type이 password면 text로, text면 password로 바꿉니다.
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // 폰트어썸 아이콘 모양을 바꿉니다 (눈 감기/뜨기)
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+    });
+</script>
 {% endblock %}
