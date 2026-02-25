@@ -35,10 +35,10 @@ def notice_list(request):
         notices = []
     
     # 2. 템플릿(HTML)으로 데이터 보따리(Context) 전달
-    return render(request, 'notice_list.html', {'notice_list': notices})
+    return render(request, 'board/notice_list.html', {'notice_list': notices})
 
 def community_list(request):
-    return render(request, 'community_list.html')
+    return render(request, 'board/community_list.html')
 # ✅ 새 기능: 관리자 전용 글쓰기 진입로
 def notice_create(request):
     if not request.user.is_staff:
@@ -58,7 +58,7 @@ def notice_create(request):
             )
             return redirect('Board:notice_list') # 저장 후 목록으로 이동
 
-    return render(request, 'notice_form.html') # 버튼 안 눌렀을 땐 입력창 보여주기
+    return render(request, 'board/notice_form.html') # 버튼 안 눌렀을 땐 입력창 보여주기
 
 # Board/views.py 맨 밑에 추가
 def notice_detail(request, post_id):
