@@ -38,7 +38,7 @@
                 {% for post in notice_list %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td><a href="{% url 'Board:notice_detail' post.id %}" class="text-decoration-none text-dark">{{ post.title }}</a></td>
+                <td><a href="#" class="text-decoration-none text-dark">{{ post.title }}</a></td>
                 <td>{{ post.created_at|date:"Y-m-d" }}</td>
             </tr>
             {% empty %}
