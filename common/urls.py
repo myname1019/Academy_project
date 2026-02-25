@@ -2,6 +2,8 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from common import views 
 
+from .forms import CustomPasswordResetForm
+
 app_name = 'common'
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='common/login.html'), name='login'),
@@ -24,7 +26,8 @@ urlpatterns = [
     path('password_reset/', auth_views.PasswordResetView.as_view(
         template_name='common/password_reset.html',
         email_template_name='common/password_reset_email.html',
-        success_url=reverse_lazy('common:password_reset_done')  # 👈 💡 메일 보내고 갈 곳 지정!
+        success_url=reverse_lazy('common:password_reset_done'),  # 👈 💡 메일 보내고 갈 곳 지정!
+        form_class=CustomPasswordResetForm
     ), name='password_reset'),
     
     # 2. 이메일 전송 완료 안내 화면
