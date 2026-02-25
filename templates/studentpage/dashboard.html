@@ -20,10 +20,6 @@
                 <p class="profile-username">@{{ target_user.username }}</p>
             </div>
         </div>
-
-        {% if request.user != target_user %}
-            <button class="btn-save btn-follow">🔔 팔로우</button>
-        {% endif %}
     </div>
 
     <div class="profile-stats">
@@ -40,45 +36,25 @@
 
     <div class="section-header">
         <span class="section-title">자기소개</span>
-        {% if request.user == target_user %}
-            <button class="edit-trigger" type="button" onclick="showEditForm()">수정하기</button>
-        {% endif %}
     </div>
 
     <div class="bio-box">
-        <div id="bio-display">
-            {% if target_user.bio %}
-                <div class="bio-text">{{ target_user.bio }}</div>
-            {% else %}
-                <p class="bio-empty">아직 소개글이 없습니다. 자신을 소개해 보세요!</p>
-            {% endif %}
-        </div>
-
-        {% if request.user == target_user %}
-        <form method="POST">
-            {% csrf_token %}
-            <textarea name="bio" id="bio-input" class="bio-textarea" rows="5">{{ target_user.bio }}</textarea>
-            <div id="btn-group" class="btn-group">
-                <button type="submit" class="btn-save">저장하기</button>
-                <button type="button" class="btn-cancel" onclick="hideEditForm()">취소</button>
-            </div>
-        </form>
+        {% if target_user.bio %}
+            <div class="bio-text">{{ target_user.bio }}</div>
+        {% else %}
+            <p class="bio-empty">아직 소개글이 없습니다. 자신을 소개해 보세요!</p>
         {% endif %}
     </div>
 
-    {# ✅ 오른쪽 하단: 내 정보 수정 + 비밀번호 변경 + 회원탈퇴 #}
     {% if request.user == target_user %}
     <div class="action-fixed">
         <a href="{% url 'common:profile_edit' %}" class="btn-save">내 정보 수정</a>
-
         <a href="{% url 'common:password_change' %}" class="btn-outline">비밀번호 변경</a>
-
         <button type="button" class="btn-danger" onclick="openDeleteModal()">회원탈퇴</button>
     </div>
     {% endif %}
 </div>
 
-{# ✅ 탈퇴 모달 (본인만) #}
 {% if request.user == target_user %}
 <div id="deleteOverlay" class="confirm-overlay">
     <div class="confirm-modal">
