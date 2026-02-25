@@ -5,7 +5,8 @@
     <div class="row">
         <div class="col-md-3 border-end">
             <h4 class="fw-bold mb-3">학원안내</h4>
-            <hr class="mb-4"> <ul class="list-unstyled">
+            <hr class="mb-4">
+            <ul class="list-unstyled">
                 <li class="mb-3">
                     <a href="{% url 'Board:notice_list' %}" class="text-decoration-none text-dark fw-bold">
                         ● 공지사항
@@ -22,31 +23,37 @@
         <div class="col-md-9 ps-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="fw-bold mb-0">공지사항</h3>
-                
                 {% if user.is_staff %}
                     <a href="{% url 'Board:notice_create' %}" class="btn btn-dark">공지사항 작성</a>
                 {% endif %}
             </div>
+            
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
                         <th>번호</th>
                         <th>제목</th>
-                        <th>날짜</th>
+                        <th>작성자</th> <th>날짜</th>
                     </tr>
                 </thead>
-                {% for post in notice_list %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td><a href="#" class="text-decoration-none text-dark">{{ post.title }}</a></td>
-                <td>{{ post.created_at|date:"Y-m-d" }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3" class="text-center text-muted">등록된 공지사항이 없습니다.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>               
+                <tbody>
+                    {% for post in notice_list %}
+                    <tr>
+                        <td>{{ forloop.count }}</td>
+                        <td class="text-start">
+                            <a href="#" class="text-decoration-none text-dark">{{ post.title }}</a>
+                        </td>
+                        <td><span class="badge bg-secondary">관리자</span></td> 
+                        <td>{{ post.created_at|date:"Y-m-d" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-5">등록된 공지사항이 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

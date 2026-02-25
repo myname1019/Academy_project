@@ -1,209 +1,112 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 팝업</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* 기본 설정 */
-        * {
-            box-sizing: border-box;
-            font-family: 'Pretendard', sans-serif;
-        }
-        body {
-            margin: 0;
-            background-color: #f0f0f0; 
-        }
+{% extends "board_base.html" %}
 
-        /* 모달 배경 (어둡게 덮는 부분) */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
+{% block content %}
+<style>
+    /* 상단 메뉴나 푸터 등을 제외한 메인 영역을 흰색으로 덮기 */
+    #login-page-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff; /* 완전 흰색 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999; /* 모든 것보다 위에 위치 */
+    }
 
-        /* 로그인 하얀색 박스 */
-        .login-box {
-            background: #fff;
-            width: 400px;
-            padding: 40px 30px;
-            border-radius: 8px;
-            position: relative;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
+    .login-box {
+        background: #fff;
+        width: 380px;
+        padding: 40px;
+        border: 1px solid #eee; /* 살짝 테두리 */
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        position: relative;
+    }
 
-        /* 닫기 버튼 */
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: #888;
-            cursor: pointer;
-        }
+    .logo-area {
+        text-align: center;
+        color: #6c5ce7;
+        font-size: 28px;
+        font-weight: 900;
+        margin-bottom: 30px;
+        letter-spacing: -1px;
+    }
 
-        /* 로고 영역 */
-        .logo-area {
-            text-align: center;
-            color: #6c5ce7;
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 30px;
-        }
+    .input-group { margin-bottom: 20px; }
+    .input-group input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+    }
 
-        /* 입력 폼 공통 */
-        .input-group {
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            font-size: 15px;
-            outline: none;
-        }
-        .input-group input:focus {
-            border-color: #6c5ce7;
-        }
+    .login-btn {
+        width: 100%;
+        background-color: #6c5ce7;
+        color: #fff;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
 
-        /* 비밀번호 보기 아이콘 */
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #adb5bd;
-            cursor: pointer;
-            user-select: none;
-        }
+    .login-btn:hover { background-color: #584ac2; }
 
-        /* 로그인 버튼 */
-        .login-btn {
-            width: 100%;
-            background-color: #6c5ce7;
-            color: #fff;
-            border: none;
-            padding: 15px;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .login-btn:hover {
-            background-color: #584ac2;
-        }
+    .sub-links a {
+        color: #888;
+        text-decoration: none;
+        font-size: 14px;
+    }
 
-        /* 서브 링크 */
-        .sub-links {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #868e96;
-        }
-        .sub-links a {
-            color: #868e96;
-            text-decoration: none;
-            margin: 0 5px;
-        }
-        .sub-links a:hover {
-            text-decoration: underline;
-        }
+    /* 닫기 버튼 (나가기) */
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #ccc;
+        cursor: pointer;
+    }
+</style>
 
-        /* 에러 메시지 */
-        .error-msg {
-            margin: 0 0 12px;
-            color: #e03131;
-            font-size: 13px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
+<div id="login-page-wrapper">
+    <div class="login-box">
+        <button type="button" class="close-btn" onclick="location.href='{% url 'Board:community_list' %}'">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
 
-    <div class="modal-overlay">
-        <div class="login-box">
+        <div class="logo-area">TiKiTaKa</div>
 
-            <!-- ✅ 닫기 버튼 하나만 유지 -->
-            <button type="button" class="close-btn" onclick="history.back();" aria-label="닫기">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+        <form action="{% url 'common:login' %}" method="POST">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <p class="text-danger small text-center mb-3">아이디나 비밀번호를 다시 확인해 주세요.</p>
+            {% endif %}
 
-            <div class="logo-area">
-                TiKiTaKa
+            <div class="input-group">
+                <input type="text" name="username" placeholder="아이디" required>
             </div>
 
-            <!-- ✅ 자동완성 최대 억제 + 실패해도 username 유지 -->
-            <form action="{% url "common:login" %}" method="POST" autocomplete="off">
-                {% csrf_token %}
-                {% include "form_errors.html" %}
-
-                {% if form.errors %}
-                    <div class="error-msg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
-                {% endif %}
-
-                <!-- ✅ 브라우저 자동완성 낚아채기용 더미 -->
-                <input type="text" name="fakeusernameremembered" style="display:none">
-                <input type="password" name="fakepasswordremembered" style="display:none">
-
-                <div class="input-group">
-                    <input
-                        type="text"
-                        name="username"
-                        placeholder="Enter User ID"
-                        value="{{ form.username.value|default_if_none:'' }}"
-                        required
-                        autocomplete="username"
-                        autocapitalize="none"
-                        spellcheck="false"
-                    >
-                </div>
-
-                <div class="input-group">
-                    <input
-                        id="passwordInput"
-                        type="password"
-                        name="password"
-                        placeholder="Enter User Password"
-                        required
-                        autocomplete="current-password"
-                    >
-                    <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
-                </div>
-
-                <button type="submit" class="login-btn">로그인</button>
-            </form>
-
-            <div class="sub-links">
-                <a href="{% url "common:signup" %}">회원가입</a>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="비밀번호" required>
             </div>
 
+            <button type="submit" class="login-btn">로그인</button>
+        </form>
+
+        <div class="sub-links text-center mt-4">
+            <a href="{% url 'common:signup' %}">아직 회원이 아니신가요? <b>회원가입</b></a>
         </div>
     </div>
-
-    <script>
-        // ✅ 비밀번호 보기 토글
-        const togglePw = document.getElementById("togglePw");
-        const pwInput = document.getElementById("passwordInput");
-
-        if (togglePw && pwInput) {
-            togglePw.addEventListener("click", () => {
-                const isHidden = pwInput.type === "password";
-                pwInput.type = isHidden ? "text" : "password";
-                togglePw.classList.toggle("fa-eye");
-                togglePw.classList.toggle("fa-eye-slash");
-            });
-        }
-    </script>
-
-</body>
-</html>
+</div>
+{% endblock %}

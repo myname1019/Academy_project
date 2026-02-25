@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-3 border-end">
             <h4 class="fw-bold mb-3">학원안내</h4>
-            <hr class="mb-4">
+            <hr class="mb-4"> 
             <ul class="list-unstyled">
                 <li class="mb-3">
                     <a href="{% url 'Board:notice_list' %}" class="text-decoration-none text-secondary">
@@ -21,9 +21,15 @@
         </div>
 
         <div class="col-md-9 ps-5">
-            <h3 class="fw-bold mb-4">자유 게시판</h3>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">게시판</h3>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'Board:community_create' %}" class="btn btn-dark">글쓰기</a>
+                {% endif %}
+            </div>
+
             <table class="table table-hover">
-                <thead class="table-light">   <!-- 여기 table-dark → table-light 로 변경 -->
+                <thead class="table-light">
                     <tr>
                         <th>번호</th>
                         <th>제목</th>
@@ -32,17 +38,22 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for post in community_list %}
                     <tr>
-                        <td>1</td>
-                        <td>게시판 테스트 글입니다.</td>
-                        <td>운영자</td>
-                        <td>2026-02-24</td>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="text-start">
+                            <a href="#" class="text-decoration-none text-dark">{{ post.title }}</a>
+                        </td>
+                        <td>{{ post.author.username }}</td> 
+                        <td>{{ post.created_at|date:"Y-m-d" }}</td>
                     </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-5">등록된 게시글이 없습니다.</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
-            <div class="text-end">
-                <a href="#" class="btn btn-primary">글쓰기</a>
-            </div>
         </div>
     </div>
 </div>
