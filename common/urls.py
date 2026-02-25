@@ -2,7 +2,7 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from common import views 
 
-from .forms import CustomPasswordResetForm
+from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 
 app_name = 'common'
 urlpatterns = [
@@ -38,7 +38,8 @@ urlpatterns = [
     # 3. 새 비밀번호 입력 화면
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
         template_name='common/password_reset_confirm.html',
-        success_url=reverse_lazy('common:password_reset_complete')  # 👈 💡 비번 바꾸고 갈 곳 지정!
+        success_url=reverse_lazy('common:password_reset_complete'),  # 👈 💡 비번 바꾸고 갈 곳 지정!
+        form_class=CustomSetPasswordForm
     ), name='password_reset_confirm'),
     
     # 4. 새 비밀번호 설정 완료 안내 화면
