@@ -9,7 +9,6 @@ class MainPageView(ListView):
     context_object_name = 'course_list'
     paginate_by = 8
 
-    # 💡 1. 여기서 필터링이 제대로 되는지 확인!
     def get_queryset(self):
         # 기본적으로 모든 강의를 최신순으로 가져옵니다.
         queryset = Course.objects.all().order_by('-created_at')
@@ -17,40 +16,54 @@ class MainPageView(ListView):
         # 주소창에 ?subject=python 같은 값이 있는지 확인합니다.
         subject = self.request.GET.get('subject')
         
-        # 💡 만약 과목이 선택되었다면, 해당 카테고리만 필터링합니다!
+        # 과목이 선택되었다면, 해당 카테고리만 필터링합니다.
         if subject:
-            queryset = queryset.filter(category=subject) # (모델의 필드 이름이 category가 맞는지 확인)
+            queryset = queryset.filter(category=subject)
             
         return queryset
 
-    # 💡 2. 페이지네이션과 화면 표시용 데이터
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
         # 과목 이름 템플릿으로 넘기기
         subject = self.request.GET.get('subject')
         if subject:
-            # 모델에 CATEGORY_CHOICES가 있다면 한글 이름을 가져옵니다.
             try:
                 category_dict = dict(Course.CATEGORY_CHOICES)
                 context['subject_display'] = category_dict.get(subject, subject)
             except AttributeError:
                 context['subject_display'] = subject
 
-        # 커스텀 그룹 페이지네이션 계산 로직
+        # ✅ 스마트 페이지네이션 로직 적용
         page_obj = context.get('page_obj')
         if page_obj:
             paginator = context['paginator']
             current_page = page_obj.number
             total_pages = paginator.num_pages
 
+            # 5페이지 단위 그룹 계산
             page_group = (current_page - 1) // 5
             start_page = page_group * 5 + 1
             end_page = min(start_page + 4, total_pages)
-
             context['custom_page_range'] = range(start_page, end_page + 1)
-            context['prev_group_start'] = start_page - 5 if start_page > 1 else None
-            context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
+
+            # 스마트 이전 타겟
+            prev_group_start = start_page - 5 if start_page > 1 else None
+            if prev_group_start:
+                context['prev_target'] = prev_group_start
+            elif page_obj.has_previous():
+                context['prev_target'] = page_obj.previous_page_number()
+            else:
+                context['prev_target'] = None
+
+            # 스마트 다음 타겟
+            next_group_start = start_page + 5 if start_page + 5 <= total_pages else None
+            if next_group_start:
+                context['next_target'] = next_group_start
+            elif page_obj.has_next():
+                context['next_target'] = page_obj.next_page_number()
+            else:
+                context['next_target'] = None
 
         return context
 
@@ -61,8 +74,7 @@ class SearchPageView(ListView):
     template_name = 'Main/search.html'
     context_object_name = 'course_list'
 
-
-    # 💡 검색어 필터링 로직
+    # ✅ 검색어 필터링 로직 (완벽 복구)
     def get_queryset(self):
         queryset = Course.objects.all().order_by('-created_at')
         q = self.request.GET.get('q', '')
@@ -70,7 +82,7 @@ class SearchPageView(ListView):
         if q:
             queryset = queryset.filter(title__icontains=q)
         else:
-            # 검색어가 없으면 빈 리스트 반환
+            # 💡 검색어가 없으면 빈 리스트 반환 (기존 로직 유지)
             queryset = Course.objects.none() 
         return queryset
 
