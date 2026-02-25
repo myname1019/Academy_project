@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}내 정보 수정{% endblock %}
+
+{% block content %}
+<style>
+  .edit-container{
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  }
+
+  .header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 22px;
+  }
+
+  .title{
+    font-size: 22px;
+    font-weight: 900;
+    margin: 0;
+    color: #212529;
+  }
+
+  .sub{
+    margin: 6px 0 0;
+    color:#868e96;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .form-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 820px){
+    .form-grid{ grid-template-columns: 1fr; }
+  }
+
+  .input-group{ margin-bottom: 6px; }
+  .input-group label{
+    display:block;
+    font-size: 13px;
+    font-weight: 800;
+    color:#495057;
+    margin-bottom: 8px;
+  }
+  .input-group input,
+  .input-group textarea{
+    width:100%;
+    padding: 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    background: #fff;
+  }
+  .input-group input:focus,
+  .input-group textarea:focus{
+    border-color:#00c471;
+  }
+
+  .help{
+    margin-top: 6px;
+    color:#868e96;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .error{
+    margin-top: 6px;
+    color:#e03131;
+    font-size: 12.5px;
+    font-weight: 800;
+  }
+
+  .avatar-row{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    margin-bottom: 18px;
+    padding: 18px;
+    border: 1px solid #f1f3f5;
+    border-radius: 14px;
+    background: #f8f9fa;
+  }
+  .avatar{
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: #fff;
+  }
+
+  .btn-row{
+    display:flex;
+    justify-content:flex-end;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .btn-ghost{
+    background:#f1f3f5;
+    border:none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor:pointer;
+    font-weight: 900;
+    color:#495057;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .btn-ghost:hover{ background:#e9ecef; }
+
+  .btn-primary{
+    background:#00c471;
+    border:none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor:pointer;
+    font-weight: 900;
+    color:#fff;
+  }
+  .btn-primary:hover{ filter: brightness(0.95); }
+</style>
+
+<div class="edit-container">
+  <div class="header-row">
+    <div>
+      <h1 class="title">내 정보 수정</h1>
+      <p class="sub">프로필 이미지 / 이름 / 이메일 / 자기소개를 수정할 수 있어요.</p>
+    </div>
+
+    <a class="btn-ghost" href="{% url 'common:profile' request.user.username %}">← 돌아가기</a>
+  </div>
+
+  <div class="avatar-row">
+    <img class="avatar"
+         src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
+         alt="프로필 이미지">
+    <div style="flex:1;">
+      <div style="font-weight:900; font-size:16px; color:#212529;">@{{ request.user.username }}</div>
+      <div style="color:#868e96; font-weight:700; font-size:13px; margin-top:4px;">
+        이미지를 바꾸면 저장 버튼을 눌러야 반영돼요.
+      </div>
+    </div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-grid">
+      <div class="input-group">
+        <label>이름</label>
+        {{ form.first_name }}
+        {% for e in form.first_name.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label>이메일</label>
+        {{ form.email }}
+        {% for e in form.email.errors %}<div class="error">{{ e }}</div>{% endfor %}
+        <div class="help">이미 사용 중인 이메일이면 저장되지 않습니다.</div>
+      </div>
+
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>프로필 이미지</label>
+        {{ form.profile_image }}
+        {% for e in form.profile_image.errors %}<div class="error">{{ e }}</div>{% endfor %}
+        <div class="help">jpg/png 업로드를 권장합니다.</div>
+      </div>
+
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>자기소개</label>
+        {{ form.bio }}
+        {% for e in form.bio.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn-ghost" href="{% url 'common:profile' request.user.username %}">취소</a>
+      <button type="submit" class="btn-primary">저장하기</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

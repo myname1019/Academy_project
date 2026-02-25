@@ -135,3 +135,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'common.CustomUser'
+from django.contrib.messages import constants as messages_constants
+# Message Storage Configuration - Uses session instead of cookies
+# This prevents messages from being consumed by browser prefetch requests
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

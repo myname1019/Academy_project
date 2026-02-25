@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.db.models import Avg, Count
 from django.core.exceptions import PermissionDenied # 💡 403 에러 발생용
 
+from django.contrib import messages
 from .models import Course
 from .forms import CourseForm
 
@@ -67,7 +68,8 @@ class CourseCreate(CreateView):
     # 💡 3. CourseCreate: 비로그인 유저 접근 방지
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            raise PermissionDenied
+            messages.error(request, "로그인 후 이용할 수 있는 페이지입니다.")
+            return redirect('main_page')  # 💡 로그인 페이지로 보내려면 'common:login' 등으로 변경하세요!
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -83,9 +85,10 @@ class CourseUpdate(UpdateView):
 
     # 💡 4. CourseUpdate: 비로그인 방지 + 본인(작성자) 확인 로직 병합
     def dispatch(self, request, *args, **kwargs):
-        # 1차 관문: 로그인을 안 했으면 403 에러
+        # 1차 관문: 로그인을 안 했으면 팝업 띄우고 메인으로
         if not request.user.is_authenticated:
-            raise PermissionDenied
+            messages.error(request, "로그인 후 이용할 수 있는 페이지입니다.")
+            return redirect('main_page')
             
         course = self.get_object()
         
@@ -100,15 +103,19 @@ class CourseUpdate(UpdateView):
 def course_delete(request, pk):
     # 1차 관문: 로그인을 안 했으면 403 에러
     if not request.user.is_authenticated:
-        raise PermissionDenied
+        messages.error(request, "로그인 후 이용할 수 있는 페이지입니다.")
+        return redirect('main_page')
 
     course = get_object_or_404(Course, pk=pk)
     
     # 2차 관문: 로그인은 했지만 본인이 올린 강의가 아니면 상세 페이지로 튕겨냄
     if course.teacher != request.user:
+        messages.error(request, "본인이 작성한 강의만 삭제할 수 있습니다.")
         return redirect('course:course_detail', pk=pk)
         
     if request.method == "POST":
         course.delete()
+        messages.success(request, "강의가 성공적으로 삭제되었습니다.") # 💡 삭제 성공 팝업 (선택사항)
         return redirect('course:course_list')
+    
     return redirect('course:course_detail', pk=pk)
