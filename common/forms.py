@@ -3,6 +3,7 @@ import re
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model # 기본 User 대신 우리가 세팅한 모델을 불러오는 안전한 방법
+from django.contrib.auth.forms import PasswordResetForm
 
 User = get_user_model()
 
@@ -42,3 +43,23 @@ class ProfileUpdateForm(forms.ModelForm):
             raise forms.ValidationError("이미 사용 중인 이메일입니다.")
 
         return email
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    # 💡 기존 이메일 칸에 더해서 '아이디' 입력 칸을 새로 추가합니다.
+    username = forms.CharField(
+        label="아이디",
+        max_length=150,
+    )
+
+    # 💡 이메일을 보낼 유저를 찾는 핵심 함수를 가로채서 수정합니다!
+    def get_users(self, email):
+        # 1. 일단 원래 장고 방식대로 이메일이 일치하는 유저들을 가져옵니다.
+        active_users = super().get_users(email)
+        
+        # 2. 사용자가 화면에 입력한 아이디(username)를 가져옵니다.
+        input_username = self.cleaned_data.get('username')
+        
+        # 3. 이메일도 맞고, 아이디도 똑같은 유저만 걸러서(필터링) 돌려줍니다!
+        # 만약 아이디가 다르면 아무에게도 메일을 보내지 않게 됩니다.
+        return (user for user in active_users if user.username == input_username)
