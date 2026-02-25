@@ -19,12 +19,33 @@ class CourseList(ListView):
         page_obj = context['page_obj']
         current_page = page_obj.number
         total_pages = paginator.num_pages
+        
+        # 5페이지 단위 그룹 계산
         page_group = (current_page - 1) // 5
         start_page = page_group * 5 + 1
         end_page = min(start_page + 4, total_pages)
+        
         context['custom_page_range'] = range(start_page, end_page + 1)
-        context['prev_group_start'] = start_page - 5 if start_page > 1 else None
-        context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
+        
+        # [스마트 페이징 로직 적용]
+        # 1. 이전 버튼 목적지: 이전 그룹 시작점이 있으면 거기로, 없으면 바로 전 페이지로
+        prev_group_start = start_page - 5 if start_page > 1 else None
+        if prev_group_start:
+            context['prev_target'] = prev_group_start
+        elif page_obj.has_previous():
+            context['prev_target'] = page_obj.previous_page_number()
+        else:
+            context['prev_target'] = None
+
+        # 2. 다음 버튼 목적지: 다음 그룹 시작점이 있으면 거기로, 없으면 바로 다음 페이지로
+        next_group_start = start_page + 5 if start_page + 5 <= total_pages else None
+        if next_group_start:
+            context['next_target'] = next_group_start
+        elif page_obj.has_next():
+            context['next_target'] = page_obj.next_page_number()
+        else:
+            context['next_target'] = None
+            
         return context
 
     def get_queryset(self):
@@ -51,11 +72,9 @@ class CourseDetail(DetailView):
             )
         )
 
-    # 💡 [추가] 수강생 여부 확인 로직
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            # 현재 로그인한 유저가 이 강의의 수강생 목록에 있는지 확인
             context['is_enrolled'] = self.object.students.filter(id=self.request.user.id).exists()
         return context
 
