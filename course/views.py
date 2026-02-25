@@ -85,9 +85,16 @@ class CourseCreate(CreateView):
     success_url = reverse_lazy('course:course_list')
 
     def dispatch(self, request, *args, **kwargs):
+        # 1️⃣ 로그인 안 했으면 차단
         if not request.user.is_authenticated:
             messages.error(request, "로그인 후 이용할 수 있는 페이지입니다.")
             return redirect('main_page')
+
+        # 2️⃣ 학생이면 차단 (ohu 브랜치 로직 채택)
+        if request.user.role != "teacher":
+            messages.error(request, "선생님 계정만 강의 생성이 가능합니다.")
+            return redirect('course:course_list')
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -121,4 +128,88 @@ def course_delete(request, pk):
         course.delete()
         messages.success(request, "강의가 성공적으로 삭제되었습니다.")
         return redirect('course:course_list')
+    
     return redirect('course:course_detail', pk=pk)
+
+# ===== 여기서부터 ohu 브랜치에서 추가된 대시보드 뷰입니다 =====
+
+class MyTeachingCourseList(ListView):
+    model = Course
+    template_name = "course/course_board_list.html"
+    context_object_name = "courses"
+    paginate_by = 10
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, "로그인 후 이용할 수 있는 페이지입니다.")
+            return redirect("main_page")
+
+        if request.user.role != "teacher":
+            messages.error(request, "선생님 계정만 접근 가능합니다.")
+            return redirect("course:course_list")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Course.objects.filter(teacher=self.request.user).order_by("-created_at", "-id")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "내 강의 목록"
+        context["mode"] = "teacher"
+
+        page_obj = context.get("page_obj")
+        courses = context.get("courses", [])
+
+        if page_obj:
+            total = page_obj.paginator.count
+            start0 = page_obj.start_index() - 1  # 0-based
+            context["course_rows"] = [
+                (total - (start0 + i), course)
+                for i, course in enumerate(courses)
+            ]
+        else:
+            context["course_rows"] = []
+
+        return context
+
+
+class MyEnrolledCourseList(ListView):
+    model = Course
+    template_name = "course/course_board_list.html"
+    context_object_name = "courses"
+    paginate_by = 10
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, "로그인 후 이용할 수 있는 페이지입니다.")
+            return redirect("main_page")
+
+        if request.user.role != "student":
+            messages.error(request, "학생 계정만 접근 가능합니다.")
+            return redirect("course:course_list")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return self.request.user.student_courses.all().order_by("-created_at", "-id")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "내 수강 목록"
+        context["mode"] = "student"
+
+        page_obj = context.get("page_obj")
+        courses = context.get("courses", [])
+
+        if page_obj:
+            total = page_obj.paginator.count
+            start0 = page_obj.start_index() - 1  # 0-based
+            context["course_rows"] = [
+                (total - (start0 + i), course)
+                for i, course in enumerate(courses)
+            ]
+        else:
+            context["course_rows"] = []
+
+        return context
