@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from common import views 
 
@@ -11,4 +11,12 @@ urlpatterns = [
     path("profile/edit/", views.profile_edit, name="profile_edit"),
     path("profile/<str:username>/", views.profile_view, name="profile"),
     path("delete/", views.delete_account, name="delete_account"),
+    path(
+        'password/change/',
+        auth_views.PasswordChangeView.as_view(
+            template_name='common/password_change.html',
+            success_url=reverse_lazy('common:mypage')
+        ),
+        name='password_change'
+    ),
 ]
