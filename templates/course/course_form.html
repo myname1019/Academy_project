@@ -1,69 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}
+{% load static %} {% block title %}
     {% if object %}강의 수정{% else %}강의 등록{% endif %}
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'course/css/course_form.css' %}">
+{% endblock %}
+
 {% block content %}
-<style>
-/* course3의 세련된 폼 디자인 CSS 유지 */
-body { background: #f5f7fa; }
 
-.form-wrapper { max-width: 750px; margin: 70px auto; padding: 0 20px; }
-.form-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
-.form-title { font-size: 24px; font-weight: 700; margin-bottom: 30px; color: #212529; }
-
-/* 폼 입력창 스타일링 */
-.form-card input,
-.form-card textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 18px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    transition: 0.2s;
-    box-sizing: border-box; /* 패딩이 너비를 초과하지 않게 설정 */
-}
-
-.form-card input:focus,
-.form-card textarea:focus {
-    border-color: #4e73df;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(78,115,223,0.1);
-}
-
-/* 라벨(제목, 설명 등) 스타일링 */
-.form-card label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #495057;
-}
-
-/* 버튼 및 취소 링크 정렬 */
-.button-group { display: flex; gap: 15px; align-items: center; margin-top: 30px; }
-
-.submit-btn {
-    background: #4e73df;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.2s;
-}
-.submit-btn:hover { background: #2e59d9; }
-
-.cancel-link {
-    text-decoration: none;
-    color: #868e96;
-    font-weight: 500;
-    font-size: 15px;
-}
-.cancel-link:hover { color: #495057; text-decoration: underline; }
-</style>
 
 <div class="form-wrapper">
     <div class="form-card">
