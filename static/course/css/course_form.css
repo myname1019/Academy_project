@@ -1,0 +1,30 @@
+/* course/static/course/css/course_form.css */
+body { background: #f5f7fa; }
+.form-wrapper { max-width: 750px; margin: 70px auto; padding: 0 20px; }
+.form-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+.form-title { font-size: 24px; font-weight: 700; margin-bottom: 30px; color: #212529; }
+.form-card input,
+.form-card textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+.form-card input:focus,
+.form-card textarea:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78,115,223,0.1);
+}
+.form-card label { display: block; font-weight: 600; margin-bottom: 8px; color: #495057; }
+.button-group { display: flex; gap: 15px; align-items: center; margin-top: 30px; }
+.submit-btn {
+    background: #4e73df; color: white; border: none; padding: 12px 24px;
+    border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background-color 0.2s;
+}
+.submit-btn:hover { background: #2e59d9; }
+.cancel-link { text-decoration: none; color: #868e96; font-weight: 500; font-size: 15px; }
+.cancel-link:hover { color: #495057; text-decoration: underline; }
