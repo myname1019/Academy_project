@@ -38,19 +38,24 @@
                 </thead>
                 <tbody>
                     {% for post in notice_list %}
-                    <tr>
-                        <td>{{ forloop.revcounter }}</td>
-                        <td class="text-start">
-                            <a href="#" class="text-decoration-none text-dark">{{ post.title }}</a>
-                        </td>
-                        <td><span class="badge bg-secondary">관리자</span></td> 
-                        <td>{{ post.created_at|date:"Y-m-d" }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted py-5">등록된 공지사항이 없습니다.</td>
-                    </tr>
-                    {% endfor %}
+    <tr>
+        <td>{{ forloop.revcounter }}</td> 
+        
+        <td class="text-start">
+            <a href="{% url 'Board:notice_detail' post.id %}" class="text-decoration-none text-dark">
+                {{ post.title }}
+            </a>
+        </td>
+        
+        <td><span class="badge bg-secondary">관리자</span></td> 
+        
+        <td>{{ post.created_at|date:"Y-m-d" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4" class="text-center text-muted py-5">등록된 공지사항이 없습니다.</td>
+    </tr>
+    {% endfor %}
                 </tbody>
             </table>
         </div>

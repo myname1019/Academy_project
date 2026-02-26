@@ -63,9 +63,13 @@ def notice_create(request):
     return render(request, 'board/notice_form.html')
 
 def notice_detail(request, post_id):
-    from django.http import HttpResponse
-    return HttpResponse(f"{post_id}번 공지사항 상세 페이지 준비 중입니다.")
-
+    # category가 'notice'이면서 전달받은 post_id와 일치하는 글을 가져옵니다.
+    # 만약 해당 글이 없으면 404 에러 페이지를 보여줍니다.
+    notice = get_object_or_404(Post, id=post_id, category='notice')
+    
+    return render(request, 'board/notice_detail.html', {
+        'notice': notice
+    })
 @login_required(login_url='common:login')
 def community_create(request):
     if request.method == "POST":
