@@ -1,140 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
-{% load socialaccount %}
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 팝업</title>
+    <title>로그인</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* 기본 설정 */
-        * {
-            box-sizing: border-box;
-            font-family: 'Pretendard', sans-serif;
-        }
-        body {
-            margin: 0;
-            background-color: #f0f0f0; 
-        }
-
-        /* 모달 배경 (어둡게 덮는 부분) */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        /* 로그인 하얀색 박스 */
-        .login-box {
-            background: #fff;
-            width: 400px;
-            padding: 40px 30px;
-            border-radius: 8px;
-            position: relative;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-
-        /* 닫기 버튼 */
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: #888;
-            cursor: pointer;
-        }
-
-        /* 로고 영역 */
-        .logo-area {
-            text-align: center;
-            color: #6c5ce7;
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 30px;
-        }
-
-        /* 입력 폼 공통 */
-        .input-group {
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            font-size: 15px;
-            outline: none;
-        }
-        .input-group input:focus {
-            border-color: #6c5ce7;
-        }
-
-        /* 비밀번호 보기 아이콘 */
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #adb5bd;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        /* 로그인 버튼 */
-        .login-btn {
-            width: 100%;
-            background-color: #6c5ce7;
-            color: #fff;
-            border: none;
-            padding: 15px;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .login-btn:hover {
-            background-color: #584ac2;
-        }
-
-        /* 서브 링크 */
-        .sub-links {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #868e96;
-        }
-        .sub-links a {
-            color: #868e96;
-            text-decoration: none;
-            margin: 0 5px;
-        }
-        .sub-links a:hover {
-            text-decoration: underline;
-        }
-
-        /* 에러 메시지 */
-        .error-msg {
-            margin: 0 0 12px;
-            color: #e03131;
-            font-size: 13px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'common/auth_modal.css' %}">
 </head>
 <body>
 
     <div class="modal-overlay">
         <div class="login-box">
 
-            <!-- ✅ 닫기 버튼 하나만 유지 -->
             <button type="button" class="close-btn" onclick="history.back();" aria-label="닫기">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -143,8 +21,7 @@
                 TiKiTaKa
             </div>
 
-            <!-- ✅ 자동완성 최대 억제 + 실패해도 username 유지 -->
-            <form action="{% url "common:login" %}" method="POST" autocomplete="off">
+            <form action="{% url 'common:login' %}" method="POST" autocomplete="off">
                 {% csrf_token %}
                 {% include "form_errors.html" %}
 
@@ -152,7 +29,6 @@
                     <div class="error-msg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
                 {% endif %}
 
-                <!-- ✅ 브라우저 자동완성 낚아채기용 더미 -->
                 <input type="text" name="fakeusernameremembered" style="display:none">
                 <input type="password" name="fakepasswordremembered" style="display:none">
 
@@ -181,17 +57,12 @@
                     <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <a href="{% provider_login_url 'kakao' %}" style="display: block; width: 100%; text-align: center; background-color: #FEE500; color: #191919; padding: 12px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px;">
-                        💬 카카오로 1초 만에 시작하기
-                    </a>
-                </div>
 
                 <button type="submit" class="login-btn">로그인</button>
             </form>
 
             <div class="sub-links">
-                <a href="{% url "common:signup" %}">회원가입</a>
+                <a href="{% url 'common:signup' %}">회원가입</a>
                 <a href="{% url 'common:find_username' %}">아이디 찾기</a>
                 <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
             </div>
@@ -200,7 +71,7 @@
     </div>
 
     <script>
-        // ✅ 비밀번호 보기 토글
+        // 비밀번호 보기 토글 스크립트
         const togglePw = document.getElementById("togglePw");
         const pwInput = document.getElementById("passwordInput");
 
