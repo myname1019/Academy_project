@@ -4,7 +4,7 @@
 {% block title %}{{ target_user.first_name|default:target_user.username }}님의 프로필{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'common/profile.css' %}">
+<link rel="stylesheet" href="{% static 'common/css/dashboard.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -128,5 +128,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'common/profile.js' %}"></script>
+<script src="{% static 'common/js/dashboard.js' %}"></script>
 {% endblock %}
