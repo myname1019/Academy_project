@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from .models import Course
 from .forms import CourseForm
+from django.core.paginator import Paginator
 
 class CourseList(ListView):
     model = Course
@@ -58,6 +59,8 @@ class CourseList(ListView):
             .order_by('-created_at')
         )
 
+from django.core.paginator import Paginator  # ✅ 추가
+
 class CourseDetail(DetailView):
     model = Course
     template_name = 'course/course_detail.html'
@@ -74,8 +77,18 @@ class CourseDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # ✅ 기존 is_enrolled 유지 (그대로)
         if self.request.user.is_authenticated:
             context['is_enrolled'] = self.object.students.filter(id=self.request.user.id).exists()
+        else:
+            context['is_enrolled'] = False  # ✅ 추가(템플릿에서 안전)
+
+        # ✅ 리뷰 5개씩 페이징만 추가(핵심)
+        reviews = self.object.reviews.all().order_by('-created_at', '-id')
+        paginator = Paginator(reviews, 3)
+        context['reviews_page'] = paginator.get_page(self.request.GET.get('rpage'))
+
         return context
 
 class CourseCreate(CreateView):
