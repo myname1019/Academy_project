@@ -44,6 +44,35 @@ def signup(request):
 
     return render(request, 'common/signup.html', {'form': form})
 
+# ✅ 소셜 로그인 유저를 위한 역할 선택 뷰
+@login_required
+def social_signup_role(request):
+    user = request.user
+    
+    # [입구 컷] 이미 가입된 사람이면 버튼 보여주지 말고 바로 전용 페이지로 보냄
+    # 어댑터가 하려던 일을 여기서 대신 하는 겁니다.
+    if Student.objects.filter(user=user).exists():
+        return redirect('/StudentPage/') # 학생 대시보드로
+    
+    if Teacher.objects.filter(user=user).exists():
+        # 아까 404 났던 경로 수정: /teacher/ 가 실제 경로입니다.
+        return redirect('/teacher/') 
+
+    # --- 아래는 프로필이 없는 신규 유저만 보게 되는 내용 ---
+    if request.method == "POST":
+        role = request.POST.get('role')
+        if role == 'student':
+            user.role = 'student'
+            user.save()
+            Student.objects.get_or_create(user=user)
+            return redirect('/StudentPage/')
+        elif role == 'teacher':
+            user.role = 'teacher'
+            user.save()
+            Teacher.objects.get_or_create(user=user)
+            return redirect('/teacher/')
+
+    return render(request, 'common/social_signup_role.html')
 
 # ✅ 역할별 마이페이지 이동
 @login_required

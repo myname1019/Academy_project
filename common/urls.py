@@ -19,4 +19,7 @@ urlpatterns = [
         ),
         name='password_change'
     ),
+    # common/urls.py 내부 urlpatterns 리스트에 추가
+path('social-signup-role/', views.social_signup_role, name='social_signup_role'),
 ]
+

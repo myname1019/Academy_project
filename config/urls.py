@@ -30,6 +30,9 @@ urlpatterns = [
 
     # 리뷰 앱
     path("review/", include("review.urls")),
+
+    # 소셜 로그인
+    path('accounts/', include('allauth.urls')),
 ]
 
 # 개발환경(DEBUG=True)에서만 미디어 파일 서빙 (안전한 방식)

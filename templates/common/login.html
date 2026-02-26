@@ -1,3 +1,4 @@
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -103,6 +104,41 @@
             background-color: #584ac2;
         }
 
+        /* 소셜 로그인 버튼 컨테이너 */
+        .social-login-buttons {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        /* 소셜 로그인 버튼 스타일 */
+        .btn-social {
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-google {
+            background-color: #db4437;
+        }
+        .btn-google:hover {
+            background-color: #a3362a;
+        }
+        .btn-kakao {
+            background-color: #fee500;
+            color: #3c1e1e;
+        }
+        .btn-kakao:hover {
+            background-color: #d4bf00;
+        }
+
         /* 서브 링크 */
         .sub-links {
             text-align: center;
@@ -133,7 +169,6 @@
     <div class="modal-overlay">
         <div class="login-box">
 
-            <!-- ✅ 닫기 버튼 하나만 유지 -->
             <button type="button" class="close-btn" onclick="history.back();" aria-label="닫기">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -142,8 +177,12 @@
                 TiKiTaKa
             </div>
 
-            <!-- ✅ 자동완성 최대 억제 + 실패해도 username 유지 -->
-            <form action="{% url "common:login" %}" method="POST" autocomplete="off">
+            <div class="social-login-buttons">
+                <a href="/accounts/google/login/?process=login" class="btn-social btn-google">Google로 로그인하기</a>
+                <a href="/accounts/kakao/login/?process=login" class="btn-social btn-kakao">Kakao로 로그인하기</a>
+            </div>
+
+            <form action="{% url 'common:login' %}" method="POST" autocomplete="off">
                 {% csrf_token %}
                 {% include "form_errors.html" %}
 
@@ -151,7 +190,6 @@
                     <div class="error-msg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
                 {% endif %}
 
-                <!-- ✅ 브라우저 자동완성 낚아채기용 더미 -->
                 <input type="text" name="fakeusernameremembered" style="display:none">
                 <input type="password" name="fakepasswordremembered" style="display:none">
 
@@ -184,14 +222,14 @@
             </form>
 
             <div class="sub-links">
-                <a href="{% url "common:signup" %}">회원가입</a>
+                <a href="{% url 'common:signup' %}">회원가입</a>
             </div>
 
         </div>
     </div>
 
     <script>
-        // ✅ 비밀번호 보기 토글
+        // 비밀번호 보기 토글
         const togglePw = document.getElementById("togglePw");
         const pwInput = document.getElementById("passwordInput");
 

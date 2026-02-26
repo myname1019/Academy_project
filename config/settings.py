@@ -44,7 +44,18 @@ INSTALLED_APPS = [
     'StudentPage.apps.StudentpageConfig',
     'TeacherPage.apps.TeacherpageConfig',
     'review.apps.ReviewConfig',
+
+    "django.contrib.sites",
+
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.kakao",
 ]
+
+SITE_ID = 2
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -54,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -139,3 +151,19 @@ from django.contrib.messages import constants as messages_constants
 # Message Storage Configuration - Uses session instead of cookies
 # This prevents messages from being consumed by browser prefetch requests
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# settings.py
+SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
+
+SOCIALACCOUNT_AUTO_SIGNUP = False
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# 기존 '/' 에서 우리가 만든 선택 페이지로 경로 변경
+LOGIN_REDIRECT_URL = '/common/social-signup-role/' 
+
+# 로그아웃은 그대로 유지
+LOGOUT_REDIRECT_URL = '/'

@@ -1,4 +1,5 @@
 {% extends "board_base.html" %}
+{% load socialaccount %}
 
 {% block content %}
 <style>
@@ -27,8 +28,31 @@
     }
     
     .title-text {
-        text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 30px; color: #212529;
+        text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #212529;
     }
+
+    /* 소셜 로그인 버튼 스타일 */
+    .social-login-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .btn-social {
+        width: 100%;
+        padding: 12px 0;
+        border-radius: 4px;
+        text-align: center;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .btn-google { background-color: #db4437; }
+    .btn-google:hover { background-color: #a3362a; }
+    .btn-kakao { background-color: #fee500; color: #3c1e1e; }
+    .btn-kakao:hover { background-color: #d4bf00; }
 
     /* 입력 폼 디자인 */
     .input-group { margin-bottom: 15px; }
@@ -54,21 +78,21 @@
 
 <div class="modal-overlay">
     <div class="signup-box">
-        
-        <button type="button" class="close-btn" onclick="history.back();">
-        <i class="fa-solid fa-xmark"></i>
-        </button>
 
-        <button type="button" class="close-btn" onclick="history.back();" style="font-size: 28px; line-height: 1;">
-            &times;
-        </button>
+        <button type="button" class="close-btn" onclick="history.back();">&times;</button>
         
         <div class="logo-area">TiKiTaKa</div>
         <div class="title-text">회원가입</div>
-        
+
+        <div class="social-login-buttons">
+            <a href="/accounts/google/login/?process=login" class="btn-social btn-google">Google로 회원가입하기</a>
+            <a href="/accounts/kakao/login/?process=login" class="btn-social btn-kakao">Kakao로 회원가입하기</a>
+        </div>
+
         <form action="{% url 'common:signup' %}" method="POST">
             {% csrf_token %}
-            {% include "form_errors.html" %} <div class="input-group">
+            {% include "form_errors.html" %}
+            <div class="input-group">
                 <label>가입 유형</label>
                 <select name="role" required>
                     <option value="student">학생으로 가입 (수강생)</option>
@@ -98,6 +122,7 @@
 
             <button type="submit" class="signup-btn">가입하기</button>
         </form>
+
     </div>
 </div>
 {% endblock %}
