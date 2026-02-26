@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'StudentPage.apps.StudentpageConfig',
     'TeacherPage.apps.TeacherpageConfig',
     'review.apps.ReviewConfig',
+    "channels",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -136,6 +138,14 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'common.CustomUser'
+
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 from django.contrib.messages import constants as messages_constants
 # Message Storage Configuration - Uses session instead of cookies
 # This prevents messages from being consumed by browser prefetch requests
