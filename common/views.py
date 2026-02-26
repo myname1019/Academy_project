@@ -123,7 +123,7 @@ def profile_edit(request):
 
 User = get_user_model()
 
-def find_username(request):
+def find_username(request): # 이메일로 아이디 찾기
     if request.method == 'POST':
         email = request.POST.get('email')
         users = User.objects.filter(email=email)
