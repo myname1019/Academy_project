@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from common.forms import UserForm
 from .models import Student, Teacher, CustomUser
 from review.models import Review   # ⚠ review 앱 이름 확인 (review or reviews)
-
+from .forms import ProfileUpdateForm 
 
 # ✅ 회원가입
 def signup(request):
@@ -82,7 +82,7 @@ def profile_view(request, username):
         "avg_rating": avg_rating,
     }
 
-    return render(request, "profile.html", context)
+    return render(request, "studentpage/dashboard.html", context)
 
 @login_required
 @require_POST
@@ -98,3 +98,46 @@ def delete_account(request):
     user.delete()
 
     return redirect('/')
+
+
+@login_required
+def profile_edit(request):
+    user = request.user
+
+    if request.method == "POST":
+        form = ProfileUpdateForm(
+            request.POST,
+            request.FILES,  # 프로필 이미지 때문에 필수
+            instance=user
+        )
+        if form.is_valid():
+            form.save()
+            messages.success(request, "내 정보가 수정되었습니다.")
+            return redirect("common:profile", username=user.username)
+    else:
+        form = ProfileUpdateForm(instance=user)
+
+    return render(request, "common/profile_edit.html", {
+        "form": form
+    })
+
+User = get_user_model()
+
+def find_username(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        users = User.objects.filter(email=email)
+        if users.exists():
+            user = users.first()
+            username = user.username
+            masked_username = username
+            return render(request, 'common/find_username.html', {
+                'username': masked_username, 
+                'email': email
+            })
+        else:
+            messages.error(request, "해당 이메일로 가입된 계정이 없습니다.")
+            return redirect('common:find_username')
+            
+    # GET 요청일 때 (처음 페이지에 접속했을 때)
+    return render(request, 'common/find_username.html')

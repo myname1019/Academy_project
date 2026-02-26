@@ -8,7 +8,6 @@ urlpatterns = [
     path("", views.teacher_dashboard, name="dashboard"),
 
     # 강의 CRUD
-    path("course/create/", views.create_course, name="course_create"),
     path("course/<int:course_id>/edit/", views.edit_course, name="course_edit"),
     path("course/<int:course_id>/delete/", views.delete_course, name="course_delete"),
 

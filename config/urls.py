@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 from Main import views  # 메인 페이지 뷰 사용
 
 urlpatterns = [

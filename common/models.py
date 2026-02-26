@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 
 # 1. 공통 로그인 테이블 (출입문)
 class CustomUser(AbstractUser):
@@ -9,6 +10,9 @@ class CustomUser(AbstractUser):
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student', verbose_name="가입 유형")
     bio = models.TextField(blank=True, null=True, verbose_name="자기소개")
+
+    # ✅ 추가
+    profile_image = models.ImageField(upload_to="profile/", blank=True, null=True, verbose_name="프로필 이미지")
 # 2. 학생 전용 테이블 따로 만들기
 class Student(models.Model):
     # CustomUser 테이블과 1:1로 연결! (유저가 삭제되면 학생 정보도 같이 삭제됨)
@@ -30,3 +34,17 @@ class Teacher(models.Model):
     
     def __str__(self):
         return f"{self.user.username} (선생님)"
+
+class PasswordHistory(models.Model):
+    # 어떤 유저의 비밀번호 기록인지 연결
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='password_histories')
+    # 암호화된 비밀번호 저장 (장고의 해시값은 보통 128자를 넘지 않습니다)
+    password_hash = models.CharField(max_length=128)
+    # 언제 변경했던 비밀번호인지 기록
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at'] # 최신 변경일 순으로 정렬
+
+    def __str__(self):
+        return f"{self.user.username}님의 비밀번호 변경 기록 ({self.created_at.strftime('%Y-%m-%d')})"

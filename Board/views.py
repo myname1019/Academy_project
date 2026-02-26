@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404
 # 만약 아래 줄에서 에러가 난다면, models.py에 Post 모델을 아직 안 만드신 거예요!
 try:
     from .models import Post
@@ -26,7 +27,41 @@ def board_list(request):
     })
 
 def notice_list(request):
-    return render(request, 'notice_list.html')
+    # 1. DB에서 공지사항(category='notice')만 최신순으로 가져오기
+    if Post:
+        # 필터링해서 가져온 데이터를 'notice_list'라는 이름으로 템플릿에 전달
+        notices = Post.objects.filter(category='notice').order_by('-created_at')
+    else:
+        notices = []
+    
+    # 2. 템플릿(HTML)으로 데이터 보따리(Context) 전달
+    return render(request, 'board/notice_list.html', {'notice_list': notices})
 
 def community_list(request):
-    return render(request, 'community_list.html')
+    return render(request, 'board/community_list.html')
+# ✅ 새 기능: 관리자 전용 글쓰기 진입로
+def notice_create(request):
+    if not request.user.is_staff:
+        raise Http404()
+
+    # [등록하기] 버튼을 눌렀을 때만 실행되는 저장 로직
+    if request.method == "POST":
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        
+        if Post:
+            Post.objects.create(
+                title=title,
+                content=content,
+                category='notice',
+                author=request.user
+            )
+            return redirect('Board:notice_list') # 저장 후 목록으로 이동
+
+    return render(request, 'board/notice_form.html') # 버튼 안 눌렀을 땐 입력창 보여주기
+
+# Board/views.py 맨 밑에 추가
+def notice_detail(request, post_id):
+    # 임시로 글 번호만 띄워봅니다.
+    from django.http import HttpResponse
+    return HttpResponse(f"{post_id}번 공지사항 상세 페이지 준비 중입니다.")

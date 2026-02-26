@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}내 정보 수정{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'common/profile_edit.css' %}">
+{% endblock %}
+{% block content %}
+
+
+<div class="edit-container">
+  <div class="header-row">
+    <div>
+      <h1 class="title">내 정보 수정</h1>
+      <p class="sub">프로필 이미지 / 이름 / 이메일 / 자기소개를 수정할 수 있어요.</p>
+    </div>
+    <a class="btn-ghost" href="{% url 'common:profile' request.user.username %}">← 돌아가기</a>
+  </div>
+
+  <div class="avatar-row">
+    <img class="avatar"
+         src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
+         alt="프로필 이미지">
+    <div style="flex:1;">
+      <div style="font-weight:900; font-size:16px; color:#212529;">@{{ request.user.username }}</div>
+      <div style="color:#868e96; font-weight:700; font-size:13px; margin-top:4px;">
+        이미지를 바꾸면 저장 버튼을 눌러야 반영돼요.
+      </div>
+    </div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-grid">
+      <div class="input-group">
+        <label>이름</label>
+        {{ form.first_name }}
+        {% for e in form.first_name.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="input-group">
+        <label>이메일</label>
+        {{ form.email }}
+        {% for e in form.email.errors %}<div class="error">{{ e }}</div>{% endfor %}
+        <div class="help">이미 사용 중인 이메일이면 저장되지 않습니다.</div>
+      </div>
+
+      {# ✅ 프로필 이미지 (B 방식: 직접 렌더링) #}
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>프로필 이미지</label>
+
+        <div class="filebox">
+          <div class="filebox-top">
+            <div class="help" style="margin:0;">
+              jpg/png 업로드를 권장합니다.
+            </div>
+
+            {% if request.user.profile_image %}
+              <div class="file-actions">
+                <a class="mini-btn"
+                   href="{{ request.user.profile_image.url }}"
+                   target="_blank" rel="noopener">
+                  현재 이미지 보기
+                </a>
+
+                <label class="clear-check">
+                  <input type="checkbox" name="profile_image-clear">
+                  이미지 제거
+                </label>
+              </div>
+            {% endif %}
+          </div>
+
+          <input type="file" name="profile_image" accept="image/*">
+
+          {% for e in form.profile_image.errors %}
+            <div class="error">{{ e }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>자기소개</label>
+        {{ form.bio }}
+        {% for e in form.bio.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <a class="btn-ghost" href="{% url 'common:profile' request.user.username %}">취소</a>
+      <button type="submit" class="btn-primary">저장하기</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
