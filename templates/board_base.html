@@ -22,28 +22,27 @@
     {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% if messages %}
-        <script>
-            // 여러 개의 메시지가 있을 수 있으니 반복문으로 처리합니다
-            {% for message in messages %}
-                
-                // 장고의 태그(danger, success 등)를 팝업창 아이콘(error, success 등)으로 변환
+        {% for message in messages %}
+            <script>
+                // 스크립트 태그 안에는 순수 JS만 남깁니다.
                 let iconType = 'info';
                 let msgTag = '{{ message.tags }}';
-                
+                let msgText = '{{ message }}';
+
                 if (msgTag.includes('danger')) { iconType = 'error'; }
                 else if (msgTag.includes('success')) { iconType = 'success'; }
                 else if (msgTag.includes('warning')) { iconType = 'warning'; }
 
-                // 예쁜 팝업창 띄우기!
                 Swal.fire({
                     icon: iconType,
                     title: '알림',
-                    text: '{{ message }}',
-                    confirmButtonColor: '#6c5ce7', // TikiTaka 보라색 테마에 맞춤!
+                    text: msgText,
+                    confirmButtonColor: '#6c5ce7',
                     confirmButtonText: '확인'
                 });
-                
-            {% endfor %}
+            </script>
+        {% endfor %}
+    {% endif %}
         </script>
     {% endif %}
 
