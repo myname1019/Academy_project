@@ -47,6 +47,13 @@
                 <span class="btn btn-ghost">관리 중인 강의</span>
             {% elif is_enrolled %}
                 <span class="btn btn-ghost" style="color:#00c471; background:#e6fcf5;">✅ 수강 중</span>
+                
+                {# 수강 중인 학생만 강사에게 DM 시작 가능 #}
+                <a href="{% url 'chat:dm_room' course.id course.teacher.id %}"
+                  class="btn btn-ghost"
+                  style="border:1px solid #00c471; color:#00c471; background:#fff;">
+                  1:1 대화
+                </a>
             {% else %}
                 <a href="{% url 'StudentPage:enroll_course' course.id %}" 
                   class="btn btn-primary" 
