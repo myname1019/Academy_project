@@ -177,3 +177,47 @@
   margin-top:14px;
   flex-wrap:wrap;
 }
+
+.review-delete-btn {
+  background: transparent;
+  border: none;
+  color: #fa5252;
+  font-weight: 900;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.review-delete-btn:hover {
+  text-decoration: underline;
+}
+
+.review-controls{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+
+.review-edit-btn{
+  text-decoration:none;
+  font-weight:900;
+  font-size:13px;
+  color:#4e73df;
+}
+
+.review-edit-btn:hover{
+  text-decoration:underline;
+}
+
+.review-delete-btn{
+  background:transparent;
+  border:none;
+  color:#fa5252;
+  font-weight:900;
+  cursor:pointer;
+  font-size:13px;
+  padding:0;
+}
+
+.review-delete-btn:hover{
+  text-decoration:underline;
+}

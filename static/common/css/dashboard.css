@@ -2,7 +2,7 @@
     max-width: 850px;
     margin: 40px auto;
     padding: 40px;
-    padding-bottom: 110px; /* 오른쪽 하단 버튼 공간 확보 */
+    padding-bottom: 110px;
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.05);
@@ -43,20 +43,51 @@
     margin-top: 2px;
 }
 
-/* 통계 */
-.profile-stats {
-    display: flex;
-    gap: 15px;
+/* =========================
+   통계 (작성한 수강평 / 평균 평점)
+   ========================= */
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* ✅ 좌우 동일 너비 */
+    gap: 16px;
     margin-bottom: 35px;
 }
 
+/* 모바일 1열 */
+@media (max-width: 768px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 링크 카드 전체 클릭 가능 + 밑줄 제거 */
+.stat-box-link,
+.stat-box-link:visited,
+.stat-box-link:hover,
+.stat-box-link:active {
+    text-decoration: none !important;
+    color: inherit !important;
+    display: block;
+}
+
+/* 클릭 시 초록 포커스 라인 제거 */
+.stat-box-link:focus,
+.stat-box-link:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .stat-box {
-    flex: 1;
-    padding: 20px;
+    padding: 14px 18px;          /* ⬅ 여백 줄임 */
     border: 1px solid #f1f3f5;
     border-radius: 12px;
     background: #fff;
     transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: unset;           /* ⬅ 최소높이 제거 */
 }
 
 .stat-box:hover {
@@ -64,21 +95,25 @@
     transform: translateY(-3px);
 }
 
+.stat-box-link:hover .stat-box {
+    border-color: #00c471;
+    transform: translateY(-3px);
+}
+
 .stat-label {
-    color: #868e96;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 12px;             /* ⬅ 살짝 줄임 */
+    margin-bottom: 4px;
 }
 
 .stat-value {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 16px;             /* ⬅ 살짝 줄임 */
     margin: 0;
 }
 
-/* 섹션 헤더 */
+/* =========================
+   섹션 헤더
+   ========================= */
+
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -93,7 +128,10 @@
     font-weight: 700;
 }
 
-/* 자기소개 */
+/* =========================
+   자기소개
+   ========================= */
+
 .bio-box {
     background: #f8f9fa;
     padding: 25px;
@@ -114,25 +152,10 @@
     text-align: center;
 }
 
-.bio-textarea {
-    width: 100%;
-    border: 1px solid #00c471;
-    border-radius: 8px;
-    padding: 15px;
-    font-size: 16px;
-    display: none;
-    margin-bottom: 10px;
-    outline: none;
-    box-sizing: border-box;
-}
+/* =========================
+   버튼들
+   ========================= */
 
-.btn-group {
-    display: none;
-    justify-content: flex-end;
-    gap: 8px;
-}
-
-/* 버튼들 */
 .btn-save {
     background: #00c471;
     color: white;
@@ -149,46 +172,11 @@
     justify-content: center;
 }
 
-.btn-save:hover { filter: brightness(0.95); }
-
-.btn-cancel {
-    background: #adb5bd;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 6px;
-    cursor: pointer;
+.btn-save:hover {
+    filter: brightness(0.95);
 }
 
-.edit-trigger {
-    color: #00c471;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    background: none;
-    border: none;
-}
-
-/* 팔로우 버튼(기존 inline을 클래스화) */
-.btn-follow {
-    background: white;
-    color: #00c471;
-    border: 1px solid #00c471;
-}
-
-/* 우하단 액션 버튼 묶음 */
-.action-fixed {
-    position: absolute;
-    right: 40px;
-    bottom: 35px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-/* 비밀번호 변경 버튼 */
-.btn-outline{
+.btn-outline {
     background:#fff;
     color:#877cf3;
     border:1px solid #877cf3;
@@ -209,7 +197,6 @@
     color:#fff;
 }
 
-/* 회원탈퇴 버튼 */
 .btn-danger {
     background: #fff;
     color: #fa5252;
@@ -222,9 +209,26 @@
     transition: 0.2s;
 }
 
-.btn-danger:hover { background: #fa5252; color: #fff; }
+.btn-danger:hover {
+    background: #fa5252;
+    color: #fff;
+}
 
-/* 탈퇴 확인 모달 */
+/* 우하단 버튼 묶음 */
+.action-fixed {
+    position: absolute;
+    right: 40px;
+    bottom: 35px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* =========================
+   탈퇴 모달
+   ========================= */
+
 .confirm-overlay {
     position: fixed;
     inset: 0;
@@ -271,7 +275,9 @@
     font-weight: 700;
 }
 
-.btn-ghost:hover { background: #e9ecef; }
+.btn-ghost:hover {
+    background: #e9ecef;
+}
 
 .btn-danger-solid {
     background: #fa5252;
@@ -283,4 +289,6 @@
     font-weight: 900;
 }
 
-.btn-danger-solid:hover { filter: brightness(0.95); }
+.btn-danger-solid:hover {
+    filter: brightness(0.95);
+}
