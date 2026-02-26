@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied  # 💡 403 에러를 위해 추가
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Avg
 
 from course.models import Course
 from .models import Review
@@ -123,3 +126,23 @@ def review_delete(request, pk):
     review.delete()
     messages.success(request, "리뷰가 삭제되었습니다.")
     return redirect("course:course_detail", pk=course.id)
+
+@login_required
+def my_reviews(request):
+    qs = (
+        Review.objects
+        .filter(user=request.user)
+        .select_related("course")   # ✅ 강의 정보 같이 가져오기
+        .order_by("-created_at", "-id")
+    )
+
+    paginator = Paginator(qs, 4)  # 한 페이지 10개(원하면 바꿔)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    context = {
+        "page_obj": page_obj,
+        "reviews": page_obj,
+        "review_count": qs.count(),
+        "avg_rating": qs.aggregate(avg=Avg("rating"))["avg"],
+    }
+    return render(request, "review/my_reviews.html", context)
