@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+{% load socialaccount %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -180,12 +181,18 @@
                     <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
                 </div>
 
+                <div style="margin-top: 20px;">
+                    <a href="{% provider_login_url 'kakao' %}" style="display: block; width: 100%; text-align: center; background-color: #FEE500; color: #191919; padding: 12px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px;">
+                        💬 카카오로 1초 만에 시작하기
+                    </a>
+                </div>
+
                 <button type="submit" class="login-btn">로그인</button>
             </form>
 
             <div class="sub-links">
-                <a href="{% url 'common:find_username' %}">아이디 찾기</a>
                 <a href="{% url "common:signup" %}">회원가입</a>
+                <a href="{% url 'common:find_username' %}">아이디 찾기</a>
                 <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
             </div>
 
