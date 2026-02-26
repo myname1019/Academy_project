@@ -36,6 +36,7 @@ def notice_list(request):
         
     })
     
+@login_required(login_url='common:login')
 def community_list(request):
     # 공지사항 리스트와 똑같은 방식으로 데이터를 가져옵니다.
     if Post:
@@ -86,14 +87,14 @@ def community_create(request):
             return redirect('Board:community_list')
     return render(request, 'board/community_form.html')
 
+# Board/views.py 에 이 함수가 있는지 꼭 확인하세요!
+
 def community_detail(request, post_id):
     # 1. 일단 해당 번호의 게시글을 가져옵니다. 없으면 404 에러!
     post = get_object_or_404(Post, id=post_id, category='community')
     
-    # 2. 로그인 여부 확인 (핵심 조건!)
+    # 2. 로그인 여부 확인
     if not request.user.is_authenticated:
-        # 비로그인 유저는 리스트로 돌려보내기 (메시지는 선택사항)
-        # 만약 메시지를 쓰고 싶다면 상단에 from django.contrib import messages 추가 필요
         return render(request, 'board/community_list.html', {
             'community_list': Post.objects.filter(category='community'),
             'error_message': "로그인한 사람만 볼 수 있습니다."
@@ -101,3 +102,24 @@ def community_detail(request, post_id):
     
     # 3. 로그인했다면 상세 페이지 보여주기
     return render(request, 'board/community_detail.html', {'post': post})
+
+# 이 아래에 아까 만든 community_delete 함수가 이어져야 합니다.
+
+
+
+
+
+@login_required(login_url='common:login')
+def community_delete(request, post_id):
+    # 1. 삭제할 게시글 가져오기 (없으면 404)
+    post = get_object_or_404(Post, id=post_id, category='community')
+    
+    # 2. 권한 체크: 글쓴이 본인이거나 관리자(is_staff)인 경우만 삭제 가능
+    if request.user == post.author or request.user.is_staff:
+        post.delete()
+        return redirect('Board:community_list')
+    else:
+        # 권한이 없는 경우 (남의 글을 주소창 입력으로 지우려 할 때)
+        from django.contrib import messages
+        messages.error(request, "삭제 권한이 없습니다.")
+        return redirect('Board:community_detail', post_id=post_id)

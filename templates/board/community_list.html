@@ -42,7 +42,7 @@
                     <tr>
                         <td>{{ forloop.revcounter }}</td>
                         <td class="text-start">
-                            <a href="#" class="text-decoration-none text-dark">{{ post.title }}</a>
+                            <a href="{% url 'Board:community_detail' post.id %}" class="text-decoration-none text-dark">{{ post.title }}</a>
                         </td>
                         <td>{{ post.author.username }}</td> 
                         <td>{{ post.created_at|date:"Y-m-d" }}</td>

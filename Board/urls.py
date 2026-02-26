@@ -10,5 +10,6 @@ urlpatterns=[
   path('notice/create/', views.notice_create, name='notice_create'),
   path('notice/<int:post_id>/', views.notice_detail, name='notice_detail'),
   path('community/<int:post_id>/', views.community_detail, name='community_detail'), # 이 줄 추가!
+  path('community/delete/<int:post_id>/', views.community_delete, name='community_delete'),# 게시판글 삭제 코드
   
 ]
