@@ -20,6 +20,13 @@ class CourseList(ListView):
         page_obj = context['page_obj']
         current_page = page_obj.number
         total_pages = paginator.num_pages
+        subject = self.request.GET.get('subject')
+        
+        subject_map = {
+            'korean': '국어', 'math': '수학', 'english': '영어',
+            'social': '사회', 'science': '과학', 'etc': '기타'
+        }
+        context['subject_display'] = subject_map.get(subject)
         
         # 5페이지 단위 그룹 계산
         page_group = (current_page - 1) // 5
@@ -46,18 +53,41 @@ class CourseList(ListView):
             context['next_target'] = page_obj.next_page_number()
         else:
             context['next_target'] = None
-            
+        
+        subject = self.request.GET.get('subject')
+        subject_map = {
+            'korean': '국어',
+            'math': '수학',
+            'english': '영어',
+            'social': '사회',
+            'science': '과학',
+            'etc': '기타',
+        }
+        # {{ subject_display }}로 템플릿에서 한글 이름을 쓸 수 있게 함
+        context['subject_display'] = subject_map.get(subject)
         return context
 
     def get_queryset(self):
-        return (
-            Course.objects
-            .annotate(
-                avg_rating=Avg('reviews__rating'),
-                review_count=Count('reviews')
-            )
-            .order_by('-created_at')
-        )
+        # 1. URL에서 파라미터 가져오기
+        subject = self.request.GET.get('subject')
+        q = self.request.GET.get('q')
+
+        # 2. 기본 쿼리셋 (리뷰 등 계산 포함)
+        queryset = Course.objects.annotate(
+            avg_rating=Avg('reviews__rating'),
+            review_count=Count('reviews')
+        ).order_by('-created_at')
+
+        # 3. 과목(subject) 필터링 (핵심!)
+        if subject and subject != 'all':
+            queryset = queryset.filter(category=subject) # 모델 필드명에 주의!
+
+        if q:
+            queryset = queryset.filter(title__icontains=q)
+
+        return queryset
+    
+    
 
 from django.core.paginator import Paginator  # ✅ 추가
 
