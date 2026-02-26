@@ -1,0 +1,15 @@
+[33m9af8254[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to 9af8254
+[33m5eb46ed[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mfeature/sinaint-teacher-dashboard-fix[m[33m)[m HEAD@{1}: reset: moving to origin/main
+[33m35a9904[m HEAD@{2}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+[33m5eb46ed[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mfeature/sinaint-teacher-dashboard-fix[m[33m)[m HEAD@{3}: checkout: moving from feature/sinaint-teacher-dashboard-fix to feature/sinaint-teacher-dashboard-fix
+[33m5eb46ed[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mfeature/sinaint-teacher-dashboard-fix[m[33m)[m HEAD@{4}: reset: moving to origin/main
+[33m9af8254[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{5}: checkout: moving from feature/sinaint-teacher-dashboard-fix to feature/sinaint-teacher-dashboard-fix
+[33m9af8254[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{6}: pull origin main: updating HEAD
+[33m9af8254[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{7}: commit (merge): Resolve merge conflicts
+[33m2f24da5[m[33m ([m[1;31morigin/feature/sinaint-teacher-dashboard-fix[m[33m)[m HEAD@{8}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+[33m35a9904[m HEAD@{9}: pull origin main: Fast-forward
+[33md8ab8b6[m HEAD@{10}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+[33m2f24da5[m[33m ([m[1;31morigin/feature/sinaint-teacher-dashboard-fix[m[33m)[m HEAD@{11}: commit: Teacher Page 및 코스 모델 수정
+[33m1d60842[m HEAD@{12}: merge main: Merge made by the 'ort' strategy.
+[33m8fb9f65[m HEAD@{13}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+[33md8ab8b6[m HEAD@{14}: pull origin main: Fast-forward

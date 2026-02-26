@@ -136,9 +136,38 @@
 
             <div style="display:flex; gap:10px; align-items:center;">
                 <span class="pill">수강생</span>
-                <a class="btn-sm" href="{% url 'chat:dm_room' course.id s.id %}">1:1 대화</a>
-            </div>
-        </div>
+
+                {# 학생이 먼저 메시지를 보낸 경우에만 강사에게 1:1 버튼 표시 #}
+                {% if s.has_chat %}
+                    <div style="display:flex; align-items:center; gap:8px;">
+
+                        <a class="btn-sm"
+                            href="{% url 'chat:dm_room' course.id s.id %}">
+                            1:1 대화
+                        </a>
+
+                        {% if s.unread_count > 0 %}
+                            <span style="
+                                background:#ff4d4f;
+                                color:white;
+                                border-radius:50%;
+                                padding:4px 8px;
+                                font-size:12px;
+                                font-weight:bold;
+                                min-width:22px;
+                                text-align:center;
+                            ">
+                                {{ s.unread_count }}
+                            </span>
+                        {% endif %}
+
+                    </div>
+                {% else %}
+                    <span class="pill" style="background:#fff; color:#868e96;">
+                        문의 없음
+                    </span>
+                {% endif %}
+
         {% empty %}
         <div class="empty-box">
             아직 수강생이 없습니다.<br>

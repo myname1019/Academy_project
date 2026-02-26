@@ -1,3 +1,4 @@
+#chat/models.py
 from django.conf import settings
 from django.db import models
 from course.models import Course
@@ -27,7 +28,11 @@ class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
+    # 읽음 처리용 필드 추가
+    is_read = models.BooleanField(default=False)  # 주석: 상대방이 읽었는지 여부
+    read_at = models.DateTimeField(null=True, blank=True)  # 주석: 읽은 시간
+    
     class Meta:
         ordering = ["created_at"]
 
