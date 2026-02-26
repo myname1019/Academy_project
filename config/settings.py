@@ -149,3 +149,18 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'tikitaka260225@gmail.com' # 👈 (수정) 발송용으로 쓸 구글 이메일 주소
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # 👈 (수정) 진짜 비밀번호 말고 '앱 비밀번호'
 DEFAULT_FROM_EMAIL = f'TikiTaka 관리자 <{EMAIL_HOST_USER}>'
+
+# -----------------------------------------
+# ⏱️ 자동 로그아웃 (세션 타임아웃) 설정
+# -----------------------------------------
+
+# 1. 자동 로그아웃 될 시간 (초 단위)
+# 예: 30분 = 30 * 60 = 1800초
+SESSION_COOKIE_AGE = 43200 
+
+# 2. (⭐ 가장 중요!) 유저가 활동(클릭, 새로고침 등)을 할 때마다 타이머 리셋하기
+# 이 줄이 없으면 활동 여부와 상관없이 로그인 후 무조건 30분 뒤에 튕깁니다.
+SESSION_SAVE_EVERY_REQUEST = True
+
+# 3. (선택) 유저가 인터넷 브라우저 창(크롬 등)을 완전히 닫으면 즉시 로그아웃
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
