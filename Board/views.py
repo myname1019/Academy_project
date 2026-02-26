@@ -81,3 +81,19 @@ def community_create(request):
             )
             return redirect('Board:community_list')
     return render(request, 'board/community_form.html')
+
+def community_detail(request, post_id):
+    # 1. 일단 해당 번호의 게시글을 가져옵니다. 없으면 404 에러!
+    post = get_object_or_404(Post, id=post_id, category='community')
+    
+    # 2. 로그인 여부 확인 (핵심 조건!)
+    if not request.user.is_authenticated:
+        # 비로그인 유저는 리스트로 돌려보내기 (메시지는 선택사항)
+        # 만약 메시지를 쓰고 싶다면 상단에 from django.contrib import messages 추가 필요
+        return render(request, 'board/community_list.html', {
+            'community_list': Post.objects.filter(category='community'),
+            'error_message': "로그인한 사람만 볼 수 있습니다."
+        })
+    
+    # 3. 로그인했다면 상세 페이지 보여주기
+    return render(request, 'board/community_detail.html', {'post': post})

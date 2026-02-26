@@ -39,7 +39,7 @@
                 <tbody>
                     {% for post in notice_list %}
                     <tr>
-                        <td>{{ forloop.count }}</td>
+                        <td>{{ forloop.revcounter }}</td>
                         <td class="text-start">
                             <a href="#" class="text-decoration-none text-dark">{{ post.title }}</a>
                         </td>
