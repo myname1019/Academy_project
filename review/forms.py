@@ -18,3 +18,12 @@ class ReviewForm(forms.ModelForm):
                 'placeholder': '리뷰 내용을 작성하세요'
             }),
         }
+
+    # ✅ 공백만 입력 방지
+    def clean_content(self):
+        content = self.cleaned_data.get('content')
+
+        if not content or not content.strip():
+            raise forms.ValidationError("리뷰 내용을 입력해주세요.")
+
+        return content.strip()

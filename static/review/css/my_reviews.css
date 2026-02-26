@@ -1,0 +1,179 @@
+.review-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.review-title {
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.review-summary {
+    color: #868e96;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.review-card {
+    border: 1px solid #f1f3f5;
+    border-radius: 16px;
+    background: #fff;
+    padding: 20px;
+    transition: 0.2s;
+}
+
+.review-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.review-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.course-title {
+    font-weight: 900;
+    font-size: 17px;
+}
+
+.review-meta {
+    margin-top: 6px;
+    color: #495057;
+    font-weight: 700;
+}
+
+.divider {
+    color: #ced4da;
+    margin: 0 6px;
+}
+
+.review-content {
+    margin-top: 15px;
+    color: #495057;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+/* 버튼들 */
+
+.review-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-ghost {
+    background: #f1f3f5;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+    color: #495057;
+}
+
+.btn-ghost:hover {
+    background: #e9ecef;
+}
+
+.btn-primary {
+    background: #877cf3;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.95);
+}
+
+.btn-danger {
+    background: #fff;
+    color: #fa5252;
+    border: 1px solid #fa5252;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.btn-danger:hover {
+    background: #fa5252;
+    color: #fff;
+}
+
+.review-empty {
+    padding: 25px;
+    color: #868e96;
+    font-weight: 700;
+    background: #f8f9fa;
+    border-radius: 14px;
+    text-align: center;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .review-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .review-actions {
+        justify-content: flex-start;
+    }
+}
+
+.review-content.is-hidden { display: none; }
+
+.toggle-content{
+  margin-top: 12px;
+  background: none;
+  border: none;
+  color: #00c471;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    background: #f1f3f5;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 800;
+    color: #495057;
+}
+
+.page-btn:hover {
+    background: #e9ecef;
+}
+
+.page-info {
+    font-weight: 900;
+    color: #495057;
+    padding: 8px 12px;
+}

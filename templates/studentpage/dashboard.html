@@ -21,15 +21,17 @@
         </div>
     </div>
 
-    <div class="profile-stats">
-        <div class="stat-box">
-            <span class="stat-label">📝 작성한 수강평</span>
-            <p class="stat-value">{{ review_count|default:"0" }}개</p>
-        </div>
+    <div class="stat-grid">
+        <a href="{% url 'review:my_reviews' %}" class="stat-box-link">
+            <div class="stat-box">
+                <span class="stat-label">📝 작성한 수강평</span>
+                <p class="stat-value">{{ review_count|default:"0" }}개</p>
+            </div>
+        </a>
 
         <div class="stat-box">
             <span class="stat-label">⭐ 평균 평점</span>
-            <p class="stat-value">{{ avg_rating|default:"0" }}</p>
+            <p class="stat-value">{{ avg_rating|default:"0.0" }}</p>
         </div>
     </div>
 
