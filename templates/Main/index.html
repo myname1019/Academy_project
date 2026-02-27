@@ -209,96 +209,57 @@
 
 
 
+
     {# --- 메인 홈 화면 (공지사항 & 최근게시글) --- #}
-
     {% else %}
-
         <div class="row g-4">
-
             <div class="col-md-6">
-
                 <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
-
                     <div class="d-flex justify-content-between align-items-center mb-3">
-
                         <h3 class="fs-5 fw-bold m-0">공지사항</h3>
-
                         <a href="{% url 'Board:notice_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
-
                     </div>
-
                     <ul class="list-unstyled mb-0">
-
-                        {% for post in notices %}
-
+                        {# ✅ [수정] notices -> recent_notices 로 변경 #}
+                        {% for post in recent_notices %}
                             <li class="py-2 border-bottom">
-
-                                <a href="#" class="text-decoration-none text-dark d-flex justify-content-between">
-
-                                    <span>{{ post.title }}</span>
-
+                                {# ✅ [수정] 클릭 시 게시글 상세페이지로 이동 (Board 앱의 post_detail URL 기준) #}
+                                <a href="{% url 'Board:notice_detail' post.id %}" class="text-decoration-none text-dark d-flex justify-content-between">
+                                    <span class="text-truncate" style="max-width: 80%;">{{ post.title }}</span>
                                     <span class="text-muted small">{{ post.created_at|date:"m-d" }}</span>
-
                                 </a>
-
                             </li>
-
                         {% empty %}
-
                             <li class="py-2 text-muted small">등록된 공지사항이 없습니다.</li>
-
                         {% endfor %}
-
                     </ul>
-
                 </div>
-
             </div>
-
-
 
             <div class="col-md-6">
-
                 <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
-
                     <div class="d-flex justify-content-between align-items-center mb-3">
-
                         <h3 class="fs-5 fw-bold m-0">게시글</h3>
-
                         <a href="{% url 'Board:community_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
-
                     </div>
-
                     <ul class="list-unstyled mb-0">
-
-                        {% for post in communities %}
-
+                        {# ✅ [수정] communities -> recent_posts 로 변경 #}
+                        {% for post in recent_posts %}
                             <li class="py-2 border-bottom">
-
-                                <a href="#" class="text-decoration-none text-dark d-flex justify-content-between">
-
-                                    <span>{{ post.title }}</span>
-
-                                    <span class="text-muted small">{{ post.author }}</span>
-
+                                {# ✅ [수정] 클릭 시 게시글 상세페이지로 이동 #}
+                                <a href="{% url 'Board:community_detail' post.id %}" class="text-decoration-none text-dark d-flex justify-content-between">
+                                    <span class="text-truncate" style="max-width: 70%;">{{ post.title }}</span>
+                                    {# ✅ [수정] 작성자(author) 이름 표시 #}
+                                    <span class="text-muted small">{{ post.author.username }}</span>
                                 </a>
-
                             </li>
-
                         {% empty %}
-
                             <li class="py-2 text-muted small">등록된 게시글이 없습니다.</li>
-
                         {% endfor %}
-
                     </ul>
-
                 </div>
-
             </div>
-
         </div>
-
     {% endif %}
 
 </main>
