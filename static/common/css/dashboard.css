@@ -3,10 +3,11 @@
     margin: 40px auto;
     padding: 40px;
     padding-bottom: 110px;
-    background: #fff;
+    background: var(--card);
     border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-soft);
     position: relative;
+    color: var(--text);
 }
 
 .profile-header {
@@ -27,7 +28,7 @@
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #eee;
+    border: 2px solid var(--border);
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
@@ -35,10 +36,11 @@
     font-size: 26px;
     font-weight: 800;
     margin: 0;
+    color: var(--text);
 }
 
 .profile-username {
-    color: #868e96;
+    color: var(--muted);
     font-size: 15px;
     margin-top: 2px;
 }
@@ -71,7 +73,7 @@
     display: block;
 }
 
-/* 클릭 시 초록 포커스 라인 제거 */
+/* 클릭 시 포커스 라인 제거 */
 .stat-box-link:focus,
 .stat-box-link:focus-visible {
     outline: none !important;
@@ -79,15 +81,16 @@
 }
 
 .stat-box {
-    padding: 14px 18px;          /* ⬅ 여백 줄임 */
-    border: 1px solid #f1f3f5;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--card);
     transition: 0.2s;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: unset;           /* ⬅ 최소높이 제거 */
+    min-height: unset;
+    color: var(--text);
 }
 
 .stat-box:hover {
@@ -101,13 +104,15 @@
 }
 
 .stat-label {
-    font-size: 12px;             /* ⬅ 살짝 줄임 */
+    font-size: 12px;
     margin-bottom: 4px;
+    color: var(--muted);
 }
 
 .stat-value {
-    font-size: 16px;             /* ⬅ 살짝 줄임 */
+    font-size: 16px;
     margin: 0;
+    color: var(--text);
 }
 
 /* =========================
@@ -120,12 +125,13 @@
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #f1f3f5;
+    border-bottom: 2px solid var(--border);
 }
 
 .section-title {
     font-size: 18px;
     font-weight: 700;
+    color: var(--text);
 }
 
 /* =========================
@@ -133,22 +139,24 @@
    ========================= */
 
 .bio-box {
-    background: #f8f9fa;
+    background: var(--soft-bg);
     padding: 25px;
     border-radius: 12px;
     min-height: 120px;
     line-height: 1.7;
     position: relative;
+    border: 1px solid var(--border);
+    color: var(--text);
 }
 
 .bio-text {
     font-size: 16px;
-    color: #444;
+    color: var(--text);
     white-space: pre-wrap;
 }
 
 .bio-empty {
-    color: #adb5bd;
+    color: var(--muted);
     text-align: center;
 }
 
@@ -177,28 +185,28 @@
 }
 
 .btn-outline {
-    background:#fff;
-    color:#877cf3;
-    border:1px solid #877cf3;
+    background: var(--card);
+    color: var(--navbar-bg);           /* 보라 포인트 */
+    border: 1px solid var(--navbar-bg);
     padding: 10px 18px;
     border-radius: 10px;
-    cursor:pointer;
+    cursor: pointer;
     font-weight: 800;
     font-size: 13px;
     transition: 0.2s;
-    text-decoration:none;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .btn-outline:hover{
-    background:#877cf3;
-    color:#fff;
+    background: var(--navbar-bg);
+    color: #fff;
 }
 
 .btn-danger {
-    background: #fff;
+    background: var(--card);
     color: #fa5252;
     border: 1px solid #fa5252;
     padding: 10px 18px;
@@ -241,21 +249,24 @@
 
 .confirm-modal {
     width: min(420px, 92vw);
-    background: #fff;
+    background: var(--card);
+    border: 1px solid var(--card-border);
     border-radius: 14px;
     padding: 24px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    color: var(--text);
 }
 
 .confirm-title {
     font-size: 18px;
     font-weight: 900;
     margin: 0 0 10px;
+    color: var(--text);
 }
 
 .confirm-desc {
     font-size: 14px;
-    color: #495057;
+    color: var(--muted);
     margin: 0 0 20px;
     line-height: 1.6;
 }
@@ -267,16 +278,17 @@
 }
 
 .btn-ghost {
-    background: #f1f3f5;
-    border: none;
+    background: var(--soft-bg);
+    border: 1px solid var(--border);
     padding: 10px 14px;
     border-radius: 10px;
     cursor: pointer;
     font-weight: 700;
+    color: var(--text);
 }
 
 .btn-ghost:hover {
-    background: #e9ecef;
+    filter: brightness(0.97);
 }
 
 .btn-danger-solid {

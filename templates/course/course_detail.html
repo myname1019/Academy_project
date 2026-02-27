@@ -55,7 +55,7 @@
                   1:1 대화
                 </a>
             {% else %}
-                <a href="{% url 'StudentPage:enroll_course' course.id %}" 
+                <a href="{% url 'studentpage:enroll_course' course.id %}" 
                   class="btn btn-primary" 
                   style="background:#00c471; border:none;"
                   onclick="return confirm('이 강의를 수강 신청하시겠습니까?');">
@@ -64,7 +64,7 @@
             {% endif %}
             <a href="{% url 'review:review_create' course.id %}" class="btn btn-primary">✍️ 리뷰 작성</a>
         {% else %}
-            <a href="{% url 'StudentPage:enroll_course' course.id %}" class="btn btn-primary">로그인 후 신청</a>
+            <a href="{% url 'studentpage:enroll_course' course.id %}" class="btn btn-primary">로그인 후 신청</a>
         {% endif %}
 
         <a href="{% url 'course:course_list' %}" class="btn btn-ghost">📚 목록</a>
@@ -106,7 +106,7 @@
           {% else %}
               <div class="video-box" style="background:#343a40; color:white; flex-direction:column; padding:20px;">
                 <p>🔒 수강생 전용 영상입니다.</p>
-                <a href="{% url 'StudentPage:enroll_course' course.id %}" style="color:#4e73df; text-decoration:underline; font-size:14px; margin-top:5px;">수강 신청하러 가기</a>
+                <a href="{% url 'studentpage:enroll_course' course.id %}" style="color:#4e73df; text-decoration:underline; font-size:14px; margin-top:5px;">수강 신청하러 가기</a>
               </div>
           {% endif %}
       {% else %}
