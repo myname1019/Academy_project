@@ -46,7 +46,16 @@ INSTALLED_APPS = [
     'review.apps.ReviewConfig',
     "channels",
     "chat",
+
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.naver",
 ]
+
+SITE_ID = 2
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -56,6 +65,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "allauth.account.middleware.AccountMiddleware",
+    'common.middleware.RoleRequiredMiddleware',
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -173,3 +185,11 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # 3. (선택) 유저가 인터넷 브라우저 창(크롬 등)을 완전히 닫으면 즉시 로그아웃
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+AUTH_USER_MODEL = 'common.CustomUser'
+SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'

@@ -1,29 +1,66 @@
 <html lang="ko">
 {% load static %}
+{% load socialaccount %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'common/css/auth_modal.css' %}">
+    <style>
+        .social-container {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .btn-google { background-color: #fff; color: #757575; border: 1px solid #ddd; }
+        .btn-naver {
+            background-color: #03C75A; /* 네이버 초록색 */
+            color: #fff;
+            border: none;
+        }
+        .divider { margin: 20px 0; text-align: center; border-bottom: 1px solid #ddd; line-height: 0.1em; }
+        .divider span { background: #fff; padding: 0 10px; color: #888; font-size: 14px; }
+    </style>
 </head>
-
 
 <div class="modal-overlay">
     <div class="signup-box">
         
         <button type="button" class="close-btn" onclick="history.back();">
-        <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-xmark"></i>
         </button>
-
-
         
         <div class="logo-area">TiKiTaKa</div>
         <div class="title-text">회원가입</div>
+
+        <div class="social-container">
+            <a href="/accounts/google/login/?process=login" class="social-btn btn-google">
+                <img src="{% static 'common/img/google_logo.png' %}" width="18" style="margin-right:10px;"> Google로 간편하게 시작
+            </a>
+            <a href="/accounts/naver/login/?process=login" class="social-btn btn-naver">
+                <img src="{% static 'common/img/naver_logo.png' %}" width="18" style="margin-right:10px;"> 네이버로 간편하게 시작
+            </a>
+        </div>
+
+        <div class="divider"><span>또는 직접 입력</span></div>
         
         <form action="{% url 'common:signup' %}" method="POST">
             {% csrf_token %}
-            {% include "form_errors.html" %} <div class="input-group">
+            {% include "form_errors.html" %} 
+            
+            <div class="input-group">
                 <label>가입 유형</label>
                 <select name="role" required>
                     <option value="student">학생으로 가입 (수강생)</option>
@@ -33,7 +70,7 @@
 
             <div class="input-group">
                 <label>아이디</label>
-                <input type="text" name="username" placeholder="아이디는 영문, 숫자, 언더바(_), 하이픈(-)만 사용할 수 있습니다." required>
+                <input type="text" name="username" placeholder="영문, 숫자, _, - 조합" required>
             </div>
 
             <div class="input-group">
@@ -55,3 +92,4 @@
         </form>
     </div>
 </div>
+</html>
