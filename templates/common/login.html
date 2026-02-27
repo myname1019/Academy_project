@@ -44,9 +44,9 @@
             color: #757575;
             border: 1px solid #ddd;
         }
-        .btn-kakao {
-            background-color: #FEE500;
-            color: #3c1e1e;
+        .btn-naver {
+            background-color: #03C75A; /* 네이버 초록색 */
+            color: #fff;
             border: none;
         }
         .social-btn img, .social-btn i {
@@ -90,10 +90,10 @@
             
             <div class="social-container">
                 <a href="/accounts/google/login/?process=login" class="social-btn btn-google">
-                    <img src="{% static 'common/img/google_logo.png' %}" width="18" style="margin-right:10px;"> 구글로 간편 가입
+                    <img src="{% static 'common/img/google_logo.png' %}" width="18" style="margin-right:10px;"> Google로 간편하게 시작
                 </a>
-                <a href="/accounts/kakao/login/?process=login" class="social-btn btn-kakao">
-                    <i class="fa-solid fa-comment" style="margin-right:10px;"></i> 카카오로 간편 가입
+                <a href="/accounts/naver/login/?process=login" class="social-btn btn-naver">
+                    <img src="{% static 'common/img/naver_logo.png' %}" width="18" style="margin-right:10px;"> Naver로 간편하게 시작
                 </a>
             </div>
 

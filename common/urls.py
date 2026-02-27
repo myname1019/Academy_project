@@ -5,7 +5,9 @@ from common import views
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 from django.urls import path, include
 
+
 app_name = 'common'
+
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='common/login.html'), name='login'), # 로그인 페이지 연결
     path('logout/', auth_views.LogoutView.as_view(), name='logout'), # 로그아웃 페이지 연결 (로그아웃 후 리다이렉트는 settings.py에서 LOGOUT_REDIRECT_URL로 설정)
@@ -52,4 +54,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),  # 소셜 로그인 URL 포함
 
     path('social-signup-role/', views.social_signup_role, name='social_signup_role'),
+
+
 ]
