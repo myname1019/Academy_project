@@ -256,3 +256,31 @@ class MyEnrolledCourseList(ListView):
             context["course_rows"] = []
 
         return context
+    
+# course/views.py (맨 아래에 추가)
+from .forms import CourseForm, LessonForm # 💡 LessonForm 꼭 임포트!
+
+def lesson_add(request, course_id):
+    # 어떤 강의에 영상을 추가할지 찾습니다.
+    course = get_object_or_404(Course, id=course_id)
+
+    # 🚨 보안 1차 관문: 강사 본인만 영상 추가 가능
+    if request.user != course.teacher:
+        messages.error(request, "본인의 강의에만 영상을 추가할 수 있습니다.")
+        return redirect('course:course_detail', pk=course.id)
+
+    if request.method == 'POST':
+        form = LessonForm(request.POST, request.FILES)
+        if form.is_valid():
+            lesson = form.save(commit=False)
+            lesson.course = course # 💡 방금 찾은 강의(Course)와 이 영상(Lesson)을 연결!
+            lesson.save()
+            messages.success(request, f"'{lesson.title}' 영상이 추가되었습니다.")
+            return redirect('course:course_detail', pk=course.id)
+    else:
+        form = LessonForm()
+
+    return render(request, 'course/lesson_form.html', {
+        'form': form,
+        'course': course
+    })

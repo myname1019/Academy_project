@@ -97,6 +97,45 @@
     </div>
   </div>
 
+  <div class="card curriculum-section" style="margin-top: 18px;">
+      <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f3f5; padding-bottom: 15px; margin-bottom: 20px;">
+          <span>📚 커리큘럼</span>
+          
+          {% if request.user == course.teacher %}
+              <a href="{% url 'course:lesson_add' course.id %}" class="btn btn-primary" style="background: #6c5ce7; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px; text-decoration: none; color: white;">
+                  + 영상 추가하기
+              </a>
+          {% endif %}
+      </div>
+
+      {% if course.lessons.all %}
+          <div class="lesson-list" style="display: flex; flex-direction: column; gap: 10px;">
+              {% for lesson in course.lessons.all %}
+                  <div class="lesson-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; transition: 0.2s;">
+                      <div style="display: flex; align-items: center; gap: 15px;">
+                          <span style="display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center; background: #e5e0ff; color: #6c5ce7; border-radius: 50%; font-weight: bold; font-size: 14px;">
+                              {{ lesson.order }}
+                          </span>
+                          <span style="font-weight: 600; font-size: 16px; color: #343a40;">{{ lesson.title }}</span>
+                      </div>
+                      
+                      {% if is_enrolled or request.user == course.teacher %}
+                          <a href="#" class="btn-play" style="padding: 6px 15px; border: 1px solid #00c471; color: #00c471; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; background: white;">
+                              ▶ 영상 보기
+                          </a>
+                      {% else %}
+                          <span style="color: #adb5bd; font-size: 13px;">🔒 수강생 전용</span>
+                      {% endif %}
+                  </div>
+              {% endfor %}
+          </div>
+      {% else %}
+          <div style="text-align: center; padding: 40px 0; color: #868e96;">
+              <p style="margin: 0; font-size: 15px;">아직 등록된 커리큘럼 영상이 없습니다.</p>
+          </div>
+      {% endif %}
+  </div>
+
   <!-- 하단: 영상 + 리뷰 (2열) -->
   <div class="page-grid" style="margin-top:18px;">
     <div class="card">

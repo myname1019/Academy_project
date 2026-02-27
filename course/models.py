@@ -56,3 +56,19 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Lesson(models.Model):
+    # 어떤 강의에 속한 영상인지 연결 (1:N 관계)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
+    
+    title = models.CharField(max_length=200, verbose_name="영상 제목")
+    video = models.FileField(upload_to='course/videos/%Y/%m/%d/', verbose_name="영상 파일")
+    
+    # 영상 재생 순서 (예: 1강, 2강...)
+    order = models.PositiveIntegerField(default=0, verbose_name="순서")
+    
+    class Meta:
+        ordering = ['order']  # 숫자가 작은 순서대로 자동 정렬
+
+    def __str__(self):
+        return f"{self.course.title} - {self.title}"
