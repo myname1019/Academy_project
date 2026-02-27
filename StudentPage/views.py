@@ -25,7 +25,8 @@ def student_dashboard(request):
         new_bio = request.POST.get('bio')
         request.user.bio = new_bio
         request.user.save()
-        return redirect('student_dashboard')
+        messages.success(request, "자기소개가 저장되었습니다.")
+        return redirect('studentpage:student_dashboard')
 
     # 수강 중 강의
     courses = request.user.student_courses.all()
@@ -62,4 +63,23 @@ def enroll_course(request, course_id):
         # 💡 성공적으로 신청되었을 때 초록색 체크 팝업 띄우기! (SweetAlert2의 success 아이콘으로 뜹니다)
         messages.success(request, f"'{course.title}' 수강 신청이 완료되었습니다!")
 
-    return redirect('StudentPage:student_dashboard')
+    return redirect('studentpage:student_dashboard')
+
+
+def course_checkout(request, course_id):
+    # 1. 로그인/학생 여부 확인
+    if not request.user.is_authenticated or request.user.role != 'student':
+        messages.error(request, "학생 계정만 결제할 수 있습니다.")
+        return redirect('main_page')
+
+    course = get_object_or_404(Course, id=course_id)
+
+    # 2. 이미 수강 중인지 한 번 더 체크 (결제창 진입 방지)
+    if request.user in course.students.all():
+        messages.warning(request, "이미 수강 중인 강의입니다.")
+        return redirect('studentpage:student_dashboard')
+
+    # 3. 결제 창 템플릿 띄워주기
+    return render(request, 'studentpage/checkout.html', {
+        'course': course
+    })

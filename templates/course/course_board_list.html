@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 10px auto;">
+  <h2 style="font-weight:900; margin: 0 0 16px;">{{ page_title }}</h2>
+
+  <div style="background:#fff; border:1px solid #f1f3f5; border-radius:14px; overflow:hidden;">
+    <div style="display:flex; gap:12px; padding:14px 16px; background:#f8f9fa; font-weight:800; color:#495057;">
+      <div style="width:90px;">번호</div>
+      <div style="flex:1;">강의명</div>
+      <div style="width:140px; text-align:right;">상세</div>
+    </div>
+
+    {% if course_rows %}
+      {% for no, c in course_rows %}
+        <div style="display:flex; gap:12px; padding:14px 16px; border-top:1px solid #f1f3f5; align-items:center;">
+          <div style="width:90px; color:#868e96; font-weight:800;">
+            {{ no }}
+          </div>
+
+          <div style="flex:1; font-weight:900;">
+            {{ c.title }}
+          </div>
+
+          <div style="width:140px; text-align:right;">
+            <a class="btn-primary" href="{% url 'course:course_detail' c.pk %}">보기</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="padding:18px; color:#868e96; font-weight:700;">
+        목록이 비어있습니다.
+      </div>
+    {% endif %}
+  </div>
+
+  {% if is_paginated %}
+    <div style="display:flex; justify-content:center; gap:8px; margin-top:18px; flex-wrap:wrap;">
+      {% if page_obj.has_previous %}
+        <a class="btn-primary" href="?page={{ page_obj.previous_page_number }}">이전</a>
+      {% endif %}
+
+      <span style="display:inline-flex; align-items:center; font-weight:900; color:#495057; padding:10px 12px;">
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+        <a class="btn-primary" href="?page={{ page_obj.next_page_number }}">다음</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
