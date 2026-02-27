@@ -1,4 +1,3 @@
-<!-- DASHBOARD: TEMPLATE ROOT (templates/teacherpage/dashboard.html) -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -151,18 +150,6 @@
         font-weight: 700;
     }
 
-    .btn-outline {
-        background: white;
-        color: #00c471;
-        border: 1px solid #00c471;
-        padding: 10px 18px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-block;
-    }
-
     .btn-gray {
         background: #adb5bd;
         color: white;
@@ -182,7 +169,6 @@
         border: none;
     }
 
-    /* 강의 카드 */
     .course-list {
         display: grid;
         grid-template-columns: 1fr;
@@ -190,20 +176,23 @@
     }
 
     .course-card {
-        border: 1px solid #f1f3f5;
-        border-radius: 14px;
+        cursor: pointer;
+        border: 2px solid #f1f3f5;
+        border-radius: 16px;
         background: #fff;
-        padding: 16px;
-        transition: 0.2s;
+        padding: 20px;
+        transition: all 0.25s ease;
         display: flex;
-        gap: 14px;
+        gap: 16px;
         align-items: center;
         justify-content: space-between;
     }
 
     .course-card:hover {
         border-color: #00c471;
-        transform: translateY(-2px);
+        background-color: rgba(0, 196, 113, 0.02);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 20px rgba(0, 196, 113, 0.08);
     }
 
     .course-left {
@@ -229,7 +218,7 @@
     .course-title {
         font-weight: 800;
         margin: 0;
-        font-size: 16px;
+        font-size: 17px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -248,7 +237,7 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 10px;
+        padding: 6px 12px;
         border-radius: 999px;
         font-size: 12px;
         background: #f8f9fa;
@@ -256,55 +245,44 @@
         color: #495057;
     }
 
-    /* 여기 중요: 아이콘/버튼 정렬을 한 줄로 맞춤 */
     .course-actions {
         display: flex;
-        align-items: center;          /* 아이콘과 버튼 높이 맞추기 */
-        gap: 8px;
+        align-items: center;
+        gap: 12px;
         flex-wrap: wrap;
         justify-content: flex-end;
     }
 
     .btn-sm {
-        padding: 8px 12px;
-        border-radius: 10px;
+        padding: 10px 16px;
+        border-radius: 12px;
         font-weight: 800;
-        font-size: 13px;
+        font-size: 14px;
         border: 1px solid #00c471;
-        background: white;
+        background: #fff;
         color: #00c471;
         cursor: pointer;
         text-decoration: none;
-        display: inline-block;
+        transition: 0.2s;
     }
 
-    .btn-danger-sm {
-        padding: 8px 12px;
-        border-radius: 10px;
-        font-weight: 800;
-        font-size: 13px;
-        border: 1px solid #343a40;
-        background: #343a40;
-        color: white;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
+    .btn-sm:hover {
+        background: #00c471;
+        color: #fff;
     }
 
-    /* 메시지 아이콘(빨간 점만 표시) */
+    /* --- [수정] 메시지 알림: 숫자 대신 빨간색 점으로 표시 --- */
     .msg-indicator {
         position: relative;
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         border: 1px solid #e9ecef;
         background: #fff;
-        border-radius: 10px;
-        font-size: 18px;
-        line-height: 1;
-        user-select: none;
+        border-radius: 12px;
+        font-size: 20px;
     }
 
     .msg-indicator.muted {
@@ -313,18 +291,19 @@
 
     .msg-indicator .dot {
         position: absolute;
-        top: 7px;
-        right: 7px;
-        width: 8px;
-        height: 8px;
+        top: 8px; /* 빨간 점 위치 조정 */
+        right: 8px;
+        width: 10px; /* 점 크기 */
+        height: 10px;
         border-radius: 50%;
-        background: #ff4d4f;
+        background: #ff4d4f; /* 빨간색 */
+        border: 2px solid #fff; /* 배경과 구분되는 테두리 */
+        box-shadow: 0 0 4px rgba(255, 77, 79, 0.4);
     }
 </style>
 
 <div class="profile-container">
 
-    <!-- 상단 프로필 -->
     <div class="profile-header">
         <div class="profile-info-group">
             <img class="profile-avatar"
@@ -337,7 +316,6 @@
         </div>
     </div>
 
-    <!-- 통계 -->
     <div class="profile-stats">
         <div class="stat-box">
             <span class="stat-label">📚 내 강의</span>
@@ -349,7 +327,6 @@
         </div>
     </div>
 
-    <!-- 자기소개(강사) -->
     <div class="section-header">
         <span class="section-title">강사 소개</span>
         {% if request.user == target_user %}
@@ -362,10 +339,9 @@
             {% if target_user.bio %}
                 <div class="bio-text">{{ target_user.bio }}</div>
             {% else %}
-                <p style="color:#adb5bd; text-align:center;">강사 소개가 아직 없습니다. 수강생에게 소개를 남겨보세요!</p>
+                <p style="color:#adb5bd; text-align:center;">강사 소개가 아직 없습니다.</p>
             {% endif %}
         </div>
-
         {% if request.user == target_user %}
         <form method="POST" action="">
             {% csrf_token %}
@@ -378,89 +354,84 @@
         {% endif %}
     </div>
 
-    <!-- 강의 관리 -->
     <div class="section-header">
         <span class="section-title">강의 관리</span>
-        <div></div>
     </div>
 
     <div class="course-list">
         {% for course in my_courses %}
-        <div class="course-card">
+        <div class="course-card" data-href="{% url 'course:course_detail' course.id %}">
             <div class="course-left">
                 {% if course.thumbnail %}
                     <img class="thumb" src="{{ course.thumbnail.url }}" alt="썸네일">
                 {% else %}
-                    <div class="thumb"></div>
+                    <div class="thumb" style="display:flex; align-items:center; justify-content:center; color:#adb5bd; font-size:11px;">No Image</div>
                 {% endif %}
 
                 <div class="course-meta">
                     <p class="course-title">{{ course.title }}</p>
                     <div class="course-sub">
-                        <span class="pill">가격: {{ course.price }}</span>
+                        <span class="pill">가격: {{ course.price|default:"-" }}</span>
                         <span class="pill">수강생: {{ course.student_count|default:"0" }}명</span>
-                        {% if course.video %}
-                            <span class="pill">영상: 등록됨</span>
-                        {% endif %}
                         <span class="pill">등록일: {{ course.created_at|date:"Y-m-d" }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 오른쪽 버튼 영역 -->
             <div class="course-actions">
-
-                {# 새 메시지 알림: 숫자 없이 빨간 점만 표시 #}
+                {# --- [수정] 점으로만 알림 표시 --- #}
                 {% if course.unread_chat_count|default:0 > 0 %}
-                    <span class="msg-indicator" title="새 메시지 있음">
+                    <div class="msg-indicator" title="새 메시지 있음">
                         💬
                         <span class="dot"></span>
-                    </span>
+                    </div>
                 {% else %}
-                    <span class="msg-indicator muted" title="새 메시지 없음">💬</span>
+                    <div class="msg-indicator muted" title="새 메시지 없음">
+                        💬
+                    </div>
                 {% endif %}
 
-                <a class="btn-sm" href="{% url 'teacherpage:course_students' course.id %}">수강생</a>
-                <a class="btn-sm" href="{% url 'course:course_update' course.id %}">수정</a>
-                <a class="btn-danger-sm" href="{% url 'course:course_delete' course.id %}">삭제</a>
+                <a class="btn-sm" 
+                   href="{% url 'teacherpage:course_students' course.id %}" 
+                   data-stop="1">
+                    수강생
+                </a>
             </div>
         </div>
         {% empty %}
-        <div class="bio-box" style="min-height:auto;">
-            <p style="margin:0; color:#868e96; text-align:center;">
-                아직 등록한 강의가 없습니다. 상단의 “강의 등록”으로 시작해보세요.
-            </p>
-        </div>
+        <p style="text-align:center; padding:40px; color:#868e96;">등록한 강의가 없습니다.</p>
         {% endfor %}
     </div>
-
 </div>
 
 <script>
     function showEditForm() {
-        const display = document.getElementById('bio-display');
-        const trigger = document.querySelector('.edit-trigger');
-        const input = document.getElementById('bio-input');
-        const btns = document.getElementById('btn-group');
-
-        if (display) display.style.display = 'none';
-        if (trigger) trigger.style.display = 'none';
-        if (input) input.style.display = 'block';
-        if (btns) btns.style.display = 'flex';
-        if (input) input.focus();
+        document.getElementById('bio-display').style.display = 'none';
+        document.querySelector('.edit-trigger').style.display = 'none';
+        document.getElementById('bio-input').style.display = 'block';
+        document.getElementById('btn-group').style.display = 'flex';
+        document.getElementById('bio-input').focus();
     }
 
     function hideEditForm() {
-        const display = document.getElementById('bio-display');
-        const trigger = document.querySelector('.edit-trigger');
-        const input = document.getElementById('bio-input');
-        const btns = document.getElementById('btn-group');
-
-        if (display) display.style.display = 'block';
-        if (trigger) trigger.style.display = 'block';
-        if (input) input.style.display = 'none';
-        if (btns) btns.style.display = 'none';
+        document.getElementById('bio-display').style.display = 'block';
+        document.querySelector('.edit-trigger').style.display = 'block';
+        document.getElementById('bio-input').style.display = 'none';
+        document.getElementById('btn-group').style.display = 'none';
     }
+
+    document.querySelectorAll('.course-card').forEach(function(card){
+        card.addEventListener('click', function(){
+            const href = card.getAttribute('data-href');
+            if (href) window.location.href = href;
+        });
+    });
+
+    document.querySelectorAll('[data-stop="1"]').forEach(function(el){
+        el.addEventListener('click', function(e){
+            e.stopPropagation();
+        });
+    });
 </script>
 
 {% endblock %}
