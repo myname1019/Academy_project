@@ -25,7 +25,8 @@ def student_dashboard(request):
         new_bio = request.POST.get('bio')
         request.user.bio = new_bio
         request.user.save()
-        return redirect('student_dashboard')
+        messages.success(request, "자기소개가 저장되었습니다.")
+        return redirect('studentpage:student_dashboard')
 
     # 수강 중 강의
     courses = request.user.student_courses.all()
