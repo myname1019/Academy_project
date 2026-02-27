@@ -6,12 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("review", "0002_auto_20260225_1122"),
+        ("Board", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="review",
+            model_name="post",
             name="id",
             field=models.BigAutoField(
                 auto_created=True, primary_key=True, serialize=False, verbose_name="ID"

@@ -4,8 +4,8 @@
 
 
 <div class="pagination-container">
-    {% if prev_target %}
-        <a href="?page={{ prev_target }}" class="page-link-custom" title="이전으로 이동">
+    {% if prev_group_start %}
+        <a href="?page={{ prev_group_start }}" class="page-link-custom" title="{{ prev_group_start }}페이지로 이동">
             &laquo; 이전
         </a>
     {% else %}
@@ -24,8 +24,8 @@
 
     <span class="page-divider">|</span>
 
-    {% if next_target %}
-        <a href="?page={{ next_target }}" class="page-link-custom" title="다음으로 이동">
+    {% if next_group_start %}
+        <a href="?page={{ next_group_start }}" class="page-link-custom" title="{{ next_group_start }}페이지로 이동">
             다음 &raquo;
         </a>
     {% else %}
