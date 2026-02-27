@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}강의 관리 시스템{% endblock %}</title>
-    <link rel="stylesheet" href="{% static '/base/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'base/css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 
@@ -25,23 +25,20 @@
                 <a href="{% url 'course:course_list' %}">강의 목록</a>
             {% endif %}
 
-            {# ✅ "진짜 마이페이지(학생/선생 대시보드)"에서는 내 페이지 링크 숨김 #}
             {% with vn=request.resolver_match.view_name %}
                 {% if user.is_authenticated %}
-                    {# 학생: studentpage 네임스페이스를 쓰는 경우 #}
                     {% if user.role == 'student' and vn != 'studentpage:student_dashboard' %}
                         <a href="{% url 'common:mypage' %}">내 페이지</a>
-
-                    {# 선생: teacherpage 대시보드 #}
                     {% elif user.role == 'teacher' and vn != 'teacherpage:dashboard' %}
                         <a href="{% url 'common:mypage' %}">내 페이지</a>
-
-                    {# 로그인했지만 role이 없거나 다른 값이면 일단 보여주기 #}
                     {% elif user.role != 'student' and user.role != 'teacher' %}
                         <a href="{% url 'common:mypage' %}">내 페이지</a>
                     {% endif %}
                 {% endif %}
             {% endwith %}
+
+            <!-- 🌙 다크모드 버튼 -->
+            <button type="button" class="theme-toggle" id="themeToggle" aria-label="다크모드 전환">🌙</button>
         </nav>
     </header>
 
@@ -65,5 +62,32 @@
     </footer>
 
     {% block extra_js %}{% endblock %}
+
+    <!-- ✅ 다크모드 토글 스크립트 -->
+    <script>
+      (function () {
+        const key = "theme";
+        const btn = document.getElementById("themeToggle");
+
+        const saved = localStorage.getItem(key);
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if (saved === "dark" || (!saved && prefersDark)) {
+          document.body.classList.add("dark");
+          if (btn) btn.textContent = "☀️";
+        } else {
+          if (btn) btn.textContent = "🌙";
+        }
+
+        if (btn) {
+          btn.addEventListener("click", () => {
+            document.body.classList.toggle("dark");
+            const isDark = document.body.classList.contains("dark");
+            localStorage.setItem(key, isDark ? "dark" : "light");
+            btn.textContent = isDark ? "☀️" : "🌙";
+          });
+        }
+      })();
+    </script>
 </body>
 </html>
