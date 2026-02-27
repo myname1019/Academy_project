@@ -27,6 +27,11 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             counter += 1
 
         user.username = username
+        
+        if user.last_name is None:
+            user.last_name = ''
+        if user.first_name is None:
+            user.first_name = ''
 
         return user
 

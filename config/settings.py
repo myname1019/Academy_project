@@ -193,3 +193,5 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = 'common.CustomUser'
 SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True

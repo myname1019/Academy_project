@@ -18,7 +18,7 @@
         <nav>
             {% if user.is_authenticated and user.role == 'teacher' %}
                 <a href="{% url 'course:my_courses' %}">내 강의 목록</a>
-                <a href="{% url 'course:course_create' %}" class="btn-primary">새 강의 등록</a>
+                <a href="{% url 'course:course_create' %}">새 강의 등록</a>
             {% elif user.is_authenticated and user.role == 'student' %}
                 <a href="{% url 'course:my_enrollments' %}">내 강의 목록</a>
             {% else %}
