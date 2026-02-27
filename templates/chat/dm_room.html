@@ -189,6 +189,43 @@
     font-size: 12px;
     text-align: right;
   }
+
+  /* 날짜 구분선 */
+.date-divider{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.date-divider::before,
+.date-divider::after{
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e9ecef;
+}
+
+.date-chip{
+  font-size: 12px;
+  font-weight: 800;
+  color: #868e96;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* 읽음 표시 */
+.read-receipt{
+  font-size: 12px;
+  font-weight: 800;
+  color: #868e96;
+}
+.read-receipt.read{
+  color: #00c471;
+}
 </style>
 
 <div class="dm-wrap">
@@ -206,37 +243,53 @@
       </div>
     </div>
 
-    <div class="dm-body">
-      <div id="chatBox" class="chat-box">
-        {% for m in messages %}
-          {% if m.sender_id == user.id %}
-            <div class="msg-row me">
-              <div>
-                <div class="bubble me">{{ m.content }}</div>
-                <div class="meta me">
-                  <span class="name-badge">나</span>
-                  <span>{{ m.created_at|date:"Y-m-d H:i" }}</span>
-                </div>
-              </div>
+  <div class="dm-body">
+  <div id="chatBox" class="chat-box">
+    {% for m in messages %}
+
+      {# 날짜가 바뀌는 순간에만 구분선 출력 #}
+      {% ifchanged m.created_at|date:"Y-m-d" %}
+        <div class="date-divider">
+          <span class="date-chip">{{ m.created_at|date:"Y-m-d" }}</span>
+        </div>
+      {% endifchanged %}
+
+      {% if m.sender_id == user.id %}
+        <div class="msg-row me">
+          <div>
+            <div class="bubble me">{{ m.content }}</div>
+
+            <div class="meta me">
+              <span>{{ m.created_at|date:"H:i" }}</span>
+
+              {# 읽음 체크: 내 메시지에만 표시 #}
+              {% if m.is_read %}
+                <span class="read-receipt read">읽음</span>
+              {% else %}
+                <span class="read-receipt">안읽음</span>
+              {% endif %}
             </div>
-          {% else %}
-            <div class="msg-row other">
-              <div>
-                <div class="bubble other">{{ m.content }}</div>
-                <div class="meta">
-                  <span class="name-badge">상대</span>
-                  <span>{{ m.created_at|date:"Y-m-d H:i" }}</span>
-                </div>
-              </div>
-            </div>
-          {% endif %}
-        {% empty %}
-          <div style="padding:18px; color:#868e96; text-align:center;">
-            아직 메시지가 없습니다. 첫 문의를 남겨보세요.
           </div>
-        {% endfor %}
+        </div>
+      {% else %}
+        <div class="msg-row other">
+          <div>
+            <div class="bubble other">{{ m.content }}</div>
+
+            <div class="meta">
+              <span>{{ m.created_at|date:"H:i" }}</span>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+    {% empty %}
+      <div style="padding:18px; color:#868e96; text-align:center;">
+        아직 메시지가 없습니다. 첫 문의를 남겨보세요.
       </div>
-    </div>
+    {% endfor %}
+  </div>
+</div>
 
     <div class="dm-footer">
       <form method="POST" action="">

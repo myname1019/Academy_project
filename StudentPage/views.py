@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.paginator import Paginator  # 💡 페이징을 위해 추가
+from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from course.models import Course
 from django.contrib.auth import get_user_model
 from review.models import Review
 from django.contrib import messages
+from chat.models import Conversation, Message
 
 User = get_user_model()
+
 
 def student_dashboard(request):
     # 1차 관문: 로그인을 안 했으면 팝업 띄우고 튕겨냄
@@ -30,21 +32,36 @@ def student_dashboard(request):
 
     # ✅ 수강 중 강의 가져오기 및 페이징 처리
     all_courses = request.user.student_courses.all().order_by('-id')
-    paginator = Paginator(all_courses, 6) # 한 페이지에 6개씩 노출
+    paginator = Paginator(all_courses, 6)  # 한 페이지에 6개씩 노출
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # 내가 작성한 리뷰 통계
+    # ✅ 내가 작성한 리뷰 통계
     user_reviews = Review.objects.filter(user=request.user)
     review_count = user_reviews.count()
     avg_rating = user_reviews.aggregate(avg=Avg('rating'))['avg'] or 0
 
+    # ✅ 내가 참여한 대화방 목록
+    conversations = Conversation.objects.filter(
+        Q(teacher=request.user) | Q(student=request.user)
+    )
+
+    # ✅ 내가 받은 안읽은 메시지 개수 (내가 보낸 건 제외)
+    unread_count = Message.objects.filter(
+        conversation__in=conversations,
+        is_read=False
+    ).exclude(
+        sender=request.user
+    ).count()
+
     return render(request, 'studentpage/dashboard.html', {
-        'courses': page_obj,  # 💡 페이징 객체를 템플릿으로 전달
+        'courses': page_obj,
         'target_user': request.user,
         'review_count': review_count,
         'avg_rating': round(avg_rating, 1),
+        'unread_count': unread_count,  # 🔴 추가됨
     })
+
 
 def enroll_course(request, course_id):
     # 1차 관문: 비로그인 처리
@@ -64,5 +81,4 @@ def enroll_course(request, course_id):
         course.students.add(request.user)
         messages.success(request, f"'{course.title}' 수강 신청이 완료되었습니다!")
 
-    # 💡 네임스페이스 포함하여 리다이렉트 (오류 해결 지점)
     return redirect('StudentPage:student_dashboard')

@@ -9,17 +9,29 @@
 
 {% block content %}
 <div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-info-group">
-            <img class="profile-avatar"
-                 src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
-                 alt="프로필">
-            <div>
-                <h2 class="profile-name">{{ target_user.first_name|default:target_user.username }}</h2>
-                <p class="profile-username">@{{ target_user.username }}</p>
-            </div>
-        </div>
+  <div class="profile-header">
+    <div class="profile-info-group">
+      <img class="profile-avatar"
+           src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
+           alt="프로필">
+      <div>
+        <h2 class="profile-name">{{ target_user.first_name|default:target_user.username }}</h2>
+        <p class="profile-username">@{{ target_user.username }}</p>
+      </div>
     </div>
+
+    <div class="chat-card">
+        {% if unread_count > 0 %}
+            <span class="chat-dot"></span>
+        {% endif %}
+
+            <a href="{% url 'chat:inbox' %}" class="chat-link">
+                <div class="chat-card-inner">
+                <h4>💬 1:1 대화</h4>
+            </div>
+            </a>
+        </div>
+    </div> 
 
     <div class="profile-stats">
         <div class="stat-box">
@@ -128,5 +140,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'common/js/dashboard.js' %}"></script>
+<script src="{% static 'common/js/profile.js' %}"></script>
 {% endblock %}
