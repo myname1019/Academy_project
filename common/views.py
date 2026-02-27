@@ -172,7 +172,7 @@ def social_signup_role(request):
         elif role == 'teacher':
             Teacher.objects.get_or_create(user=user)
 
-        messages.success(request, f"{user.get_role_display()}님, 환영합니다!")
+        messages.success(request, f"{user.get_role_display()}, 환영합니다!")
         return redirect('/')
 
     return render(request, 'common/social_signup.html')
