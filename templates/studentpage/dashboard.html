@@ -12,7 +12,9 @@
     <div class="profile-header">
         <div class="profile-info-group">
             <img class="profile-avatar"
-                 src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}https://cdn.inflearn.com/public/main/profile/default_profile.png{% endif %}"
+/* review/css/my_reviews.css (theme-ready) */
+/* review/css/my_reviews.css (theme-ready) */
+                 src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}{% static 'images/default_thumbnail.png' %}{% endif %}"
                  alt="프로필">
             <div>
                 <h2 class="profile-name">{{ target_user.first_name|default:target_user.username }}</h2>
