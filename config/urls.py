@@ -3,7 +3,6 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 from Main import views  # 메인 페이지 뷰 사용
 
 urlpatterns = [
@@ -24,7 +23,7 @@ urlpatterns = [
     path("course/", include("course.urls")),
 
     # 학생 페이지
-    path("StudentPage/", include("StudentPage.urls")),
+    path("studentpage/", include("StudentPage.urls")),
 
     # 강사 페이지 (URL 주소는 소문자 'teacher/'로 깔끔하게 통일)
     path("teacher/", include("TeacherPage.urls")),
