@@ -56,16 +56,15 @@
                   1:1 대화
                 </a>
             {% else %}
-                <a href="{% url 'StudentPage:enroll_course' course.id %}" 
+                <a href="{% url 'studentpage:course_checkout' course.id %}" 
                   class="btn btn-primary" 
-                  style="background:#00c471; border:none;"
-                  onclick="return confirm('이 강의를 수강 신청하시겠습니까?');">
+                  style="background:#00c471; border:none;">
                   🚀 수강 신청하기
                 </a>
             {% endif %}
             <a href="{% url 'review:review_create' course.id %}" class="btn btn-primary">✍️ 리뷰 작성</a>
         {% else %}
-            <a href="{% url 'StudentPage:enroll_course' course.id %}" class="btn btn-primary">로그인 후 신청</a>
+            <a href="{% url 'studentpage:enroll_course' course.id %}" class="btn btn-primary">로그인 후 신청</a>
         {% endif %}
         <a href="{% url 'course:course_list' %}" class="btn btn-ghost">📚 목록</a>
 
