@@ -9,12 +9,12 @@
         
         <div class="mb-3">
             <label for="title" class="form-label fw-bold">제목</label>
-            <input type="text" name="title" id="title" class="form-control" placeholder="게시글 제목을 입력하세요" required>
+            <input type="text" name="title" id="title" class="form-control" value="{{ post.title }}" placeholder="게시글 제목을 입력하세요" required>
         </div>
 
         <div class="mb-3">
             <label for="content" class="form-label fw-bold">내용</label>
-            <textarea name="content" id="content" class="form-control" rows="12" placeholder="내용을 자유롭게 입력하세요" required></textarea>
+            <textarea name="content" id="content" class="form-control" rows="12" placeholder="내용을 자유롭게 입력하세요" required>{{ post.content }}</textarea>
         </div>
 
         <div class="text-end pt-3">

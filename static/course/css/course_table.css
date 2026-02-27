@@ -1,0 +1,75 @@
+/* course/css/course_table.css (theme-ready) */
+
+.course-table-wrap{
+  max-width: 1000px;
+  margin: 10px auto;
+  padding: 0 20px;
+  color: var(--text);
+}
+
+.course-table-title{
+  font-weight: 900;
+  margin: 0 0 16px;
+  color: var(--text);
+}
+
+.course-table{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.course-table-head{
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--soft-bg);
+  font-weight: 900;
+  color: var(--subtext);
+  border-bottom: 1px solid var(--border);
+}
+
+.course-table-row{
+  display:flex;
+  gap:12px;
+  padding:14px 16px;
+  border-top:1px solid var(--border);
+  align-items:center;
+  color: var(--text);
+}
+
+.col-no{ width: 90px; }
+.col-title{ flex: 1; }
+.col-action{ width: 140px; text-align: right; }
+
+.muted{ color: var(--muted); font-weight: 900; }
+.strong{ font-weight: 900; color: var(--text); }
+
+.course-table-empty{
+  padding: 18px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.course-table-pagination{
+  display:flex;
+  justify-content:center;
+  gap: 8px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* 페이지 정보 */
+.page-info{
+  display:inline-flex;
+  align-items:center;
+  font-weight:900;
+  color: var(--subtext);
+  padding: 10px 12px;
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}

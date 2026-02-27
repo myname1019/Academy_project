@@ -426,7 +426,7 @@
                 {% endif %}
 
                 <a class="btn-sm" href="{% url 'teacherpage:course_students' course.id %}">수강생</a>
-                <a class="btn-sm" href="{% url 'teacherpage:course_edit' course.id %}">수정</a>
+                <a class="btn-sm" href="{% url 'course:course_update' course.id %}">수정</a>
                 <a class="btn-danger-sm" href="{% url 'teacherpage:course_delete' course.id %}">삭제</a>
             </div>
         </div>

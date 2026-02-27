@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}영상 추가 - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="form-wrapper" style="max-width: 600px; margin: 50px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2 style="font-weight: 800; margin-bottom: 20px;">
+    🎬 {% if lesson %}영상 수정하기{% else %}새 영상 추가하기{% endif %}
+    </h2>
+    <p style="color: #6c5ce7; font-weight: bold; margin-bottom: 30px;">강의명: {{ course.title }}</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <button type="submit" class="btn btn-primary" style="flex: 1; padding: 12px; background: #00c471; border: none; color: white; border-radius: 8px; font-weight: bold;">
+                {% if lesson %}수정 완료{% else %}영상 업로드{% endif %}
+            </button>
+            <a href="{% url 'course:course_detail' course.id %}" class="btn btn-ghost" style="flex: 1; text-align: center; padding: 12px; background: #f8f9fa; color: #495057; border-radius: 8px; text-decoration: none;">
+                취소
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

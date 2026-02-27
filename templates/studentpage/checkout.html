@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}결제하기 - {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'StudentPage/css/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="checkout-wrapper">
+    <h2 class="checkout-title">💳 수강신청 및 결제</h2>
+    
+    <div class="checkout-grid">
+        <div class="checkout-left">
+            <div class="box-card">
+                <h3 class="box-title">주문 상품 정보</h3>
+                <div class="order-item">
+                    {% if course.thumbnail %}
+                        <img class="order-thumb" src="{{ course.thumbnail.url }}" alt="썸네일">
+                    {% else %}
+                        <div class="order-thumb" style="background-image: url('{% static 'images/default_thumbnail.png' %}'); background-size: cover;"></div>
+                    {% endif %}
+                    <div class="order-info">
+                        <h4>{{ course.title }}</h4>
+                        <p>지식공유자: {{ course.teacher.username }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box-card">
+                <h3 class="box-title">결제 수단 선택 (UI 테스트용)</h3>
+                <label class="pay-method-label">
+                    <input type="radio" name="pay_method" checked> 💳 신용/체크카드
+                </label>
+                <label class="pay-method-label">
+                    <input type="radio" name="pay_method"> 🟡 카카오페이
+                </label>
+                <label class="pay-method-label">
+                    <input type="radio" name="pay_method"> 🔵 토스페이
+                </label>
+            </div>
+        </div>
+
+        <div class="checkout-right">
+            <div class="box-card">
+                <h3 class="box-title">최종 결제 금액</h3>
+                <div class="price-row">
+                    <span>상품 금액</span>
+                    <span>{% if course.price == 0 %}무료{% else %}{{ course.price }}원{% endif %}</span>
+                </div>
+                <div class="price-row">
+                    <span>할인 금액</span>
+                    <span style="color: #ff6b6b;">- 0원</span>
+                </div>
+                
+                <div class="total-price-row">
+                    <span>총 결제 금액</span>
+                    <span>{% if course.price == 0 %}0원{% else %}{{ course.price }}원{% endif %}</span>
+                </div>
+
+                <form action="{% url 'studentpage:enroll_course' course.id %}" method="GET" style="margin-top: 30px;">
+                    <button type="submit" class="btn-pay">
+                        {% if course.price == 0 %}무료로 수강 신청하기{% else %}결제하고 수강하기{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

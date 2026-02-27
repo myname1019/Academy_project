@@ -1,326 +1,158 @@
 {% extends "board_base.html" %}
-
 {% load static %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'Main/css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'Main/css/index.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 {% endblock %}
 
 {% block content %}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-
 <section class="banner swiper mySwiper">
-
-    <div class="swiper-wrapper">
-
-        <div class="swiper-slide slide-1"><h1>성장의 즐거움을 경험하세요</h1><p>실전 지식 🚀</p></div>
-
-        <div class="swiper-slide slide-2"><h1>파이썬 마스터 코스</h1><p>🐍</p></div>
-
-        <div class="swiper-slide slide-3"><h1>신규 회원 이벤트</h1><p>🎁</p></div>
-
-        <div class="swiper-slide slide-4"><h1>실시간 1:1 멘토링</h1><p>💬</p></div>
-
-        <div class="swiper-slide slide-5"><h1>TikiTaka 커뮤니티</h1><p>🤝</p></div>
-
-    </div>
-
-    <div class="swiper-pagination"></div>
-
+  <div class="swiper-wrapper">
+    <div class="swiper-slide slide-1"><h1>성장의 즐거움을 경험하세요</h1><p>실전 지식 🚀</p></div>
+    <div class="swiper-slide slide-2"><h1>파이썬 마스터 코스</h1><p>🐍</p></div>
+    <div class="swiper-slide slide-3"><h1>신규 회원 이벤트</h1><p>🎁</p></div>
+    <div class="swiper-slide slide-4"><h1>실시간 1:1 멘토링</h1><p>💬</p></div>
+    <div class="swiper-slide slide-5"><h1>TikiTaka 커뮤니티</h1><p>🤝</p></div>
+  </div>
+  <div class="swiper-pagination"></div>
 </section>
 
-
-
 <main class="container my-5">
-
-    {# --- 전체 목록 또는 과목 선택/검색 시 --- #}
-
-    {% if request.GET.show == "all" or request.GET.subject or q %}
-
-        <h2 class="fs-4 fw-bold mb-4">
-
-            {% if request.GET.subject %}
-
-                {{ subject_display }} 강의 목록 
-            {% else %}
-
-                전체 강의 목록 
-
-            {% endif %}
-
-        </h2>
-
-        
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-
-            {% if course_list %}
-
-                {% for course in course_list %}
-
-                <div class="col">
-
-
-                    <div class="card h-100 shadow-sm border-0"
-
-                         style="cursor: pointer;"
-
-                         onclick="location.href='/course/{{ course.id }}/'">
-
-
-
-                        {# --- [기능 복구] 썸네일 체크 로직 --- #}
-
-                        {% if course.thumbnail %}
-
-                            <img src="{{ course.thumbnail.url }}"
-
-                                class="card-img-top"
-
-                                style="aspect-ratio: 16/10; object-fit: cover;">
-
-                        {% else %}
-
-                            <img src="{% static 'images/default_thumbnail.png' %}"
-
-                                class="card-img-top"
-
-                                style="aspect-ratio: 16/10; object-fit: cover;">
-
-                        {% endif %}
-
-
-
-                        <div class="card-body p-3">
-
-                            <h5 class="card-title fs-6 fw-bold text-truncate mb-2">
-
-                                {{ course.title }}
-
-                            </h5>
-
-                            <p class="card-text text-muted small mb-2">
-
-                                {{ course.teacher }}
-
-                            </p>
-
-                            <p class="card-text fw-bold m-0" style="color: #6c5ce7;">
-
-                                {% if course.price > 0 %}
-
-                                    ₩{{ course.price }}
-
-                                {% else %}
-
-                                    무료
-
-                                {% endif %}
-
-                            </p>
-
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {% endfor %}
-
-            {% else %}
-
-
-
-                <div class="col-12 text-center text-muted py-5">등록된 강의가 없습니다.</div>
-
-            {% endif %}
-
-        </div>
-
-
-
-        {# 💡 페이지네이션 추가 (강의 목록이 있을 때만 표시) #}
-
-        {% if is_paginated %}
-
-        <div class="pagination-container">
-
-            {% if prev_group_start %}
-
-                <a href="?page={{ prev_group_start }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom" title="{{ prev_group_start }}페이지로 이동">
-
-                    &laquo; 이전
-
-                </a>
-
-            {% else %}
-
-                <span class="page-link-custom disabled">&laquo; 이전</span>
-
-            {% endif %}
-
-
-
-            <span class="page-divider">|</span>
-
-
-
-            {% for i in custom_page_range %}
-
-                {% if page_obj.number == i %}
-
-                    <span class="page-link-custom active">{{ i }}</span>
-
-                {% else %}
-
-                    <a href="?page={{ i }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom">{{ i }}</a>
-
-                {% endif %}
-
-            {% endfor %}
-
-
-
-            <span class="page-divider">|</span>
-
-
-
-            {% if next_group_start %}
-
-                <a href="?page={{ next_group_start }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom" title="{{ next_group_start }}페이지로 이동">
-
-                    다음 &raquo;
-
-                </a>
-
-            {% else %}
-
-                <span class="page-link-custom disabled">다음 &raquo;</span>
-
-            {% endif %}
-
-        </div>
-
+  {% if request.GET.show == "all" or request.GET.subject or q %}
+
+    <h2 class="fs-4 fw-bold mb-4">
+      {% if request.GET.subject %}
+        {{ subject_display }} 강의 목록
+      {% else %}
+        전체 강의 목록
+      {% endif %}
+    </h2>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+      {% if course_list %}
+        {% for course in course_list %}
+          <div class="col">
+            <div class="card shadow-sm border-0 course-card"
+                 style="cursor: pointer;"
+                 onclick="location.href='/course/{{ course.id }}/'">
+
+              {% if course.thumbnail %}
+                <img src="{{ course.thumbnail.url }}" class="card-img-top course-card-img">
+              {% else %}
+                <img src="{% static 'images/default_thumbnail.png' %}" class="card-img-top course-card-img" alt="기본 썸네일">
+              {% endif %}
+
+              <div class="card-body p-3">
+                <h5 class="card-title fs-6 fw-bold text-truncate mb-2">{{ course.title }}</h5>
+                <p class="card-text text-muted small mb-2">{{ course.teacher }}</p>
+
+                <p class="card-text fw-bold m-0 price-text">
+                  {% if course.price > 0 %}
+                    ₩{{ course.price }}
+                  {% else %}
+                    무료
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12 text-center text-muted py-5">등록된 강의가 없습니다.</div>
+      {% endif %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="pagination-container">
+        {% if prev_target %}
+          <a href="?page={{ prev_target }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}"
+             class="page-link-custom" title="이전으로 이동">&laquo; 이전</a>
+        {% else %}
+          <span class="page-link-custom disabled">&laquo; 이전</span>
         {% endif %}
 
+        <span class="page-divider">|</span>
 
+        {% for i in custom_page_range %}
+          {% if page_obj.number == i %}
+            <span class="page-link-custom active">{{ i }}</span>
+          {% else %}
+            <a href="?page={{ i }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}"
+               class="page-link-custom">{{ i }}</a>
+          {% endif %}
+        {% endfor %}
 
+        <span class="page-divider">|</span>
 
-
-    {# --- 메인 홈 화면 (공지사항 & 최근게시글) --- #}
-
-    {% else %}
-
-        <div class="row g-4">
-
-            <div class="col-md-6">
-
-                <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-
-                        <h3 class="fs-5 fw-bold m-0">공지사항</h3>
-
-                        <a href="{% url 'Board:notice_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
-
-                    </div>
-
-                    <ul class="list-unstyled mb-0">
-
-                        {% for post in notices %}
-
-                            <li class="py-2 border-bottom">
-
-                                <a href="#" class="text-decoration-none text-dark d-flex justify-content-between">
-
-                                    <span>{{ post.title }}</span>
-
-                                    <span class="text-muted small">{{ post.created_at|date:"m-d" }}</span>
-
-                                </a>
-
-                            </li>
-
-                        {% empty %}
-
-                            <li class="py-2 text-muted small">등록된 공지사항이 없습니다.</li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-md-6">
-
-                <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-
-                        <h3 class="fs-5 fw-bold m-0">게시글</h3>
-
-                        <a href="{% url 'Board:community_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
-
-                    </div>
-
-                    <ul class="list-unstyled mb-0">
-
-                        {% for post in communities %}
-
-                            <li class="py-2 border-bottom">
-
-                                <a href="#" class="text-decoration-none text-dark d-flex justify-content-between">
-
-                                    <span>{{ post.title }}</span>
-
-                                    <span class="text-muted small">{{ post.author }}</span>
-
-                                </a>
-
-                            </li>
-
-                        {% empty %}
-
-                            <li class="py-2 text-muted small">등록된 게시글이 없습니다.</li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </div>
-
+        {% if next_target %}
+          <a href="?page={{ next_target }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}"
+             class="page-link-custom" title="다음으로 이동">다음 &raquo;</a>
+        {% else %}
+          <span class="page-link-custom disabled">다음 &raquo;</span>
+        {% endif %}
+      </div>
     {% endif %}
 
+  {# --- 메인 홈 화면 (공지사항 & 최근게시글) --- #}
+  {% else %}
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-bold m-0">공지사항</h3>
+                    <a href="{% url 'Board:notice_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
+                </div>
+                <ul class="list-unstyled mb-0">
+                    {# ✅ [해결] 최근 작성된 공지사항 목록 출력 및 상세 페이지 연결 #}
+                    {% for post in recent_notices %}
+                        <li class="py-2 border-bottom">
+                            <a href="{% url 'Board:notice_detail' post.id %}" class="text-decoration-none text-dark d-flex justify-content-between">
+                                <span class="text-truncate" style="max-width: 80%;">{{ post.title }}</span>
+                                <span class="text-muted small">{{ post.created_at|date:"m-d" }}</span>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="py-2 text-muted small">등록된 공지사항이 없습니다.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="p-4 border rounded-3 shadow-sm h-100 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-bold m-0">게시글</h3>
+                    <a href="{% url 'Board:community_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
+                </div>
+                <ul class="list-unstyled mb-0">
+                    {# ✅ [해결] 최근 작성된 게시글 목록 출력 및 상세 페이지 연결 #}
+                    {% for post in recent_posts %}
+                        <li class="py-2 border-bottom">
+                            <a href="{% url 'Board:community_detail' post.id %}" class="text-decoration-none text-dark d-flex justify-content-between">
+                                <span class="text-truncate" style="max-width: 70%;">{{ post.title }}</span>
+                                <span class="text-muted small">{{ post.author.username }}</span>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="py-2 text-muted small">등록된 게시글이 없습니다.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+  {% endif %}
 </main>
 
-
-
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
 <script>
-
-    var swiper = new Swiper(".mySwiper", {
-
-        loop: true,
-
-        autoplay: { delay: 2000, disableOnInteraction: false },
-
-        pagination: { el: ".swiper-pagination", clickable: true },
-
-        speed: 800,
-
-    });
-
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    autoplay: { delay: 2000, disableOnInteraction: false },
+    pagination: { el: ".swiper-pagination", clickable: true },
+    speed: 800,
+  });
 </script>
 
 {% endblock %}

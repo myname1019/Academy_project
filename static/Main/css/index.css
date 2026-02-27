@@ -1,69 +1,129 @@
+/* ============================= */
+/* ✅ index 페이지 배경/레이아웃 안정화 */
+/* ============================= */
 
-    /* Swiper 스타일 */
+html, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-    .swiper { width: 100%; height: 250px; }
+/* html에도 배경을 먹여야 "페이지 아래쪽 흰색"이 안 튐 */
+html {
+  background: var(--bg) !important;
+}
 
-    .swiper-slide {
+/* board_base(메인페이지)에서만 배경 강제 */
+body.board-layout {
+  height: auto;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
 
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
+/* main/container가 흰 배경을 깔아버리는 것 차단 */
+body.board-layout main,
+body.board-layout .container {
+  background: transparent !important;
+}
 
-        color: white; text-align: center; padding: 60px 20px;
+/* ============================= */
+/* (선택) 가격 텍스트 색 */
+/* ============================= */
+.price-text { color: #6c5ce7; }
+body.dark .price-text { color: #9b8cff; }
 
-    }
+/* ============================= */
+/* Swiper 스타일 */
+/* ============================= */
+.swiper { width: 100%; height: 250px; }
 
-    .slide-1 { background-color: #002c40; }
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+}
 
-    .slide-2 { background-color: #6c5ce7; }
+.slide-1 { background-color: #002c40; }
+.slide-2 { background-color: #6c5ce7; }
+.slide-3 { background-color: #00b894; }
+.slide-4 { background-color: #d63031; }
+.slide-5 { background-color: #2d3436; }
 
-    .slide-3 { background-color: #00b894; }
+.swiper-pagination-bullet { background: white !important; }
 
-    .slide-4 { background-color: #d63031; }
+/* ============================= */
+/* ✅ 카드 늘어남/겹침 방지 */
+/* ============================= */
 
-    .slide-5 { background-color: #2d3436; }
+.course-card{
+  height: auto !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-    .swiper-pagination-bullet { background: white !important; }
+.course-card-img{
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  flex: 0 0 auto;
+  display: block;
+}
 
+.course-card .card-body{
+  flex: 0 0 auto;
+}
 
+/* row/col 높이 계산 꼬임 방지 (✅ 핵심: stretch 금지) */
+body.board-layout .row {
+  align-items: flex-start;
+}
 
-    /* 💡 커스텀 페이지네이션 스타일 추가 */
+/* ============================= */
+/* 💡 페이지네이션 */
+/* ============================= */
 
-    .pagination-container {
+body.board-layout main.container {
+  height: auto !important;
+  min-height: 0 !important;
+  padding-bottom: 60px;
+}
 
-        display: flex;
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+  gap: 10px;
+  position: static !important;
+}
 
-        justify-content: center;
+.page-link-custom {
+  color: #555;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: 0.2s;
+}
 
-        align-items: center;
+.page-link-custom:hover { background-color: #f1f3f5; color: #6c5ce7; }
+.page-link-custom.active { background-color: #6c5ce7; color: white; }
 
-        margin-top: 40px;
+.page-link-custom.disabled { color: #ccc; cursor: not-allowed; }
+.page-link-custom.disabled:hover { background-color: transparent; color: #ccc; }
 
-        gap: 10px;
+.page-divider { color: #dee2e6; }
 
-    }
+body.dark .page-link-custom:hover {
+  background-color: rgba(255,255,255,0.08);
+  color: #9b8cff;
+}
 
-    .page-link-custom {
-
-        color: #555;
-
-        text-decoration: none;
-
-        padding: 5px 10px;
-
-        border-radius: 5px;
-
-        font-weight: 500;
-
-        transition: 0.2s;
-
-    }
-
-    .page-link-custom:hover { background-color: #f1f3f5; color: #6c5ce7; }
-
-    .page-link-custom.active { background-color: #6c5ce7; color: white; }
-
-    .page-link-custom.disabled { color: #ccc; cursor: not-allowed; }
-
-    .page-link-custom.disabled:hover { background-color: transparent; color: #ccc; }
-
-    .page-divider { color: #dee2e6; }
-
+body.dark .page-divider {
+  color: rgba(255,255,255,0.18);
+}
