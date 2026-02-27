@@ -1,69 +1,126 @@
+/* ============================= */
+/* ✅ index 페이지 배경/레이아웃 안정화 */
+/*  - 아래 흰 배경 튀는 현상 방지 */
+/* ============================= */
 
-    /* Swiper 스타일 */
+/* html에도 배경을 먹여야 "페이지 아래쪽 흰색"이 안 튐 */
+html {
+    background: var(--bg) !important;
+}
 
-    .swiper { width: 100%; height: 250px; }
+html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-    .swiper-slide {
+/* board_base(메인페이지)에서만 배경 강제 */
+body.board-layout {
+    min-height: 100vh;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+}
 
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-
-        color: white; text-align: center; padding: 60px 20px;
-
-    }
-
-    .slide-1 { background-color: #002c40; }
-
-    .slide-2 { background-color: #6c5ce7; }
-
-    .slide-3 { background-color: #00b894; }
-
-    .slide-4 { background-color: #d63031; }
-
-    .slide-5 { background-color: #2d3436; }
-
-    .swiper-pagination-bullet { background: white !important; }
+/* main/container/row가 흰 배경을 깔아버리는 것 차단 */
+body.board-layout main,
+body.board-layout .container,
+body.board-layout .row {
+    background: transparent !important;
+}
 
 
+/* ============================= */
+/* (선택) 가격 텍스트 색 */
+/* ============================= */
+.price-text { color: #6c5ce7; }
+body.dark .price-text { color: #9b8cff; }
 
-    /* 💡 커스텀 페이지네이션 스타일 추가 */
 
-    .pagination-container {
+/* ============================= */
+/* Swiper 스타일 */
+/* ============================= */
+.swiper { width: 100%; height: 250px; }
 
-        display: flex;
+.swiper-slide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 60px 20px;
+}
 
-        justify-content: center;
+.slide-1 { background-color: #002c40; }
+.slide-2 { background-color: #6c5ce7; }
+.slide-3 { background-color: #00b894; }
+.slide-4 { background-color: #d63031; }
+.slide-5 { background-color: #2d3436; }
 
-        align-items: center;
+.swiper-pagination-bullet { background: white !important; }
 
-        margin-top: 40px;
 
-        gap: 10px;
+/* ============================= */
+/* 💡 커스텀 페이지네이션 스타일 */
+/* ============================= */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    gap: 10px;
+}
 
-    }
+.page-link-custom {
+    color: #555;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: 0.2s;
+}
 
-    .page-link-custom {
+.page-link-custom:hover { background-color: #f1f3f5; color: #6c5ce7; }
+.page-link-custom.active { background-color: #6c5ce7; color: white; }
 
-        color: #555;
+.page-link-custom.disabled { color: #ccc; cursor: not-allowed; }
+.page-link-custom.disabled:hover { background-color: transparent; color: #ccc; }
 
-        text-decoration: none;
+.page-divider { color: #dee2e6; }
 
-        padding: 5px 10px;
+/* ✅ 다크모드에서 페이지네이션 hover 배경이 너무 밝지 않게 */
+body.dark .page-link-custom:hover {
+    background-color: rgba(255,255,255,0.08);
+    color: #9b8cff;
+}
 
-        border-radius: 5px;
+body.dark .page-divider {
+    color: rgba(255,255,255,0.18);
+}
 
-        font-weight: 500;
 
-        transition: 0.2s;
+/* ============================= */
+/* ✅ 카드 늘어남/겹침 방지 (핵심) */
+/* ============================= */
 
-    }
+/* 카드 자체를 flex column으로 안정화 */
+.course-card{
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 
-    .page-link-custom:hover { background-color: #f1f3f5; color: #6c5ce7; }
+/* 이미지 비율 고정 */
+.course-card-img{
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    flex: 0 0 auto;
+    display: block;
+}
 
-    .page-link-custom.active { background-color: #6c5ce7; color: white; }
-
-    .page-link-custom.disabled { color: #ccc; cursor: not-allowed; }
-
-    .page-link-custom.disabled:hover { background-color: transparent; color: #ccc; }
-
-    .page-divider { color: #dee2e6; }
-
+/* card-body가 이상하게 늘어나지 않게 */
+.course-card .card-body{
+    flex: 0 0 auto;
+}
