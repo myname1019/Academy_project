@@ -97,25 +97,77 @@
     </div>
   </div>
 
-  <!-- 하단: 영상 + 리뷰 (2열) -->
-  <div class="page-grid" style="margin-top:18px;">
-    <div class="card">
-      <div class="section-title">
-        <span>🎥 강의 영상</span>
-        {% if not course.video %}<span class="muted" style="font-weight:700; font-size:13px;">등록된 영상이 없습니다</span>{% endif %}
+  <div class="card curriculum-section" style="margin-top: 18px;">
+      <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f3f5; padding-bottom: 15px; margin-bottom: 20px;">
+          <span>📚 커리큘럼</span>
+          
+          {% if request.user == course.teacher %}
+              <a href="{% url 'course:lesson_add' course.id %}" class="btn btn-primary" style="background: #6c5ce7; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px; text-decoration: none; color: white;">
+                  + 영상 추가하기
+              </a>
+          {% endif %}
       </div>
 
-      {% if course.video %}
-      <div class="video-box">
-        <video controls>
-          <source src="{{ course.video.url }}" type="video/mp4">
-          브라우저가 비디오를 지원하지 않습니다.
-        </video>
-      </div>
+      {% if lessons_page %}
+          <div class="lesson-list" style="display: flex; flex-direction: column; gap: 10px;">
+              {% for lesson in lessons_page %}
+                  <div class="lesson-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; transition: 0.2s;">
+                      <div style="display: flex; align-items: center; gap: 15px;">
+                          <span style="display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center; background: #e5e0ff; color: #6c5ce7; border-radius: 50%; font-weight: bold; font-size: 14px;">
+                              {{ lesson.order }}
+                          </span>
+                          <span style="font-weight: 600; font-size: 16px; color: #343a40;">{{ lesson.title }}</span>
+                      </div>
+                      
+                      {% if request.user == course.teacher %}
+                          <div style="display: flex; gap: 8px; margin-right: auto; margin-left: 20px;">
+                              <a href="{% url 'course:lesson_update' lesson.id %}" style="font-size: 13px; color: #4e73df; text-decoration: none; padding: 4px 8px; background: #eef2ff; border-radius: 4px;">수정</a>
+                              <form method="post" action="{% url 'course:lesson_delete' lesson.id %}" style="margin: 0;">
+                                  {% csrf_token %}
+                                  <button type="submit" style="font-size: 13px; color: #e74a3b; background: #fdf3f2; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="return confirm('이 영상을 정말 삭제하시겠습니까?');">삭제</button>
+                              </form>
+                          </div>
+                      {% endif %}
+
+                      {% if is_enrolled or request.user == course.teacher %}
+                          <a href="{% url 'course:lesson_play' lesson.id %}" class="btn-play" style="padding: 6px 15px; border: 1px solid #00c471; color: #00c471; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; background: white;">
+                              ▶ 영상 보기
+                          </a>
+                      {% else %}
+                          <span style="color: #adb5bd; font-size: 13px;">🔒 수강생 전용</span>
+                      {% endif %}
+                  </div>
+              {% endfor %}
+          </div>
+
+          {% if lessons_page.paginator.num_pages > 1 %}
+            <div class="lesson-pagination" style="margin-top: 25px; display: flex; justify-content: center; align-items: center; gap: 15px;">
+              {% if lessons_page.has_previous %}
+                <a class="btn btn-ghost" href="?lpage={{ lessons_page.previous_page_number }}&rpage={{ request.GET.rpage|default:'1' }}" style="padding: 6px 12px; border: 1px solid #dee2e6; color: #495057; border-radius: 6px; text-decoration: none; font-size: 14px;">이전</a>
+              {% endif %}
+
+              <span class="muted" style="font-weight: 800; color: #6c5ce7;">
+                {{ lessons_page.number }} / {{ lessons_page.paginator.num_pages }}
+              </span>
+
+              {% if lessons_page.has_next %}
+                <a class="btn btn-ghost" href="?lpage={{ lessons_page.next_page_number }}&rpage={{ request.GET.rpage|default:'1' }}" style="padding: 6px 12px; border: 1px solid #dee2e6; color: #495057; border-radius: 6px; text-decoration: none; font-size: 14px;">다음</a>
+              {% endif %}
+            </div>
+          {% endif %}
+
+      {% else %}
+          <div style="text-align: center; padding: 40px 0; color: #868e96;">
+              <p style="margin: 0; font-size: 15px;">아직 등록된 커리큘럼 영상이 없습니다.</p>
+          </div>
       {% endif %}
-    </div>
+  </div>
 
-    <div class="card review-card">
+  <!-- 하단: 영상 + 리뷰 (2열) -->
+
+    
+
+    <div class="card review-card" style="margin-top: 10px; margin-bottom: 40px;">
       <div class="review-header">
         <div class="section-title" style="margin:0;">
           <span>💬 수강평</span>
@@ -218,10 +270,24 @@
         </div>
       {% endif %}
     </div>
-  </div>
+
 
 </div>
 {% endblock %}
 {% block extra_js %}
 <script src="{% static 'course/js/course_detail.js' %}"></script>
+
+<script>
+  function playLessonVideo(videoUrl, title) {
+    const videoPlayer = document.getElementById('main-video-player');
+    const playingTitle = document.getElementById('playing-title');
+
+    // 1. 비디오 소스를 클릭한 영상 주소로 바꾸고 재생!
+    videoPlayer.src = videoUrl;
+    videoPlayer.play();
+
+    // 2. 플레이어 위의 제목을 현재 영상 제목으로 변경!
+    playingTitle.innerText = "- " + title;
+  }
+</script>
 {% endblock %}
