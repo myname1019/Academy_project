@@ -63,7 +63,7 @@
             {% endif %}
             <a href="{% url 'review:review_create' course.id %}" class="btn btn-primary">✍️ 리뷰 작성</a>
         {% else %}
-            <a href="{% url 'studentpage:enroll_course' course.id %}" class="btn btn-primary">로그인 후 신청</a>
+            <a href="{% url 'common:login' %}" class="btn btn-primary">로그인 후 신청</a>
         {% endif %}
         <a href="{% url 'course:course_list' %}" class="btn btn-ghost">📚 목록</a>
 
