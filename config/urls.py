@@ -24,7 +24,7 @@ urlpatterns = [
     path("course/", include("course.urls")),
 
     # 학생 페이지
-    path("StudentPage/", include("StudentPage.urls")),
+    path("studentpage/", include("StudentPage.urls")),
 
     # 강사 페이지 (URL 주소는 소문자 'teacher/'로 깔끔하게 통일)
     path("teacher/", include("TeacherPage.urls")),

@@ -26,7 +26,7 @@ def student_dashboard(request):
         request.user.bio = new_bio
         request.user.save()
         messages.success(request, "자기소개가 저장되었습니다.")
-        return redirect('StudentPage:student_dashboard')
+        return redirect('studentpage:student_dashboard')
 
     # ✅ 수강 중 강의 가져오기 및 페이징 처리
     all_courses = request.user.student_courses.all().order_by('-id')
@@ -65,4 +65,4 @@ def enroll_course(request, course_id):
         messages.success(request, f"'{course.title}' 수강 신청이 완료되었습니다!")
 
     # 💡 네임스페이스 포함하여 리다이렉트 (오류 해결 지점)
-    return redirect('StudentPage:student_dashboard')
+    return redirect('studentpage:student_dashboard')

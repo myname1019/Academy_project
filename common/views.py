@@ -49,7 +49,7 @@ def signup(request):
 @login_required
 def mypage_redirect(request):
     if request.user.role == 'student':
-        return redirect('/StudentPage/')   # 학생 경로에 맞게
+        return redirect('studentpage:student_dashboard')   # 학생 경로에 맞게
     elif request.user.role == 'teacher':
         return redirect('teacherpage:dashboard')
 
