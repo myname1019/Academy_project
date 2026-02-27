@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}채팅함{% endblock %}
+{% block content %}
+<div style="max-width:950px;margin:40px auto;padding:24px;background:#fff;border-radius:16px;">
+  <h2 style="margin:0 0 16px 0;">채팅함</h2>
+
+  {% if conversations %}
+    <ul style="list-style:none;padding:0;margin:0;display:grid;gap:10px;">
+      {% for c in conversations %}
+        {% if user.id == c.teacher_id %}
+          {% with other=c.student %}
+          <li style="border:1px solid #eee;border-radius:12px;padding:12px;">
+            <a href="{% url 'chat:dm_room' c.course_id other.id %}" style="text-decoration:none;">
+              <b>{{ c.course.title }}</b> · {{ other.username }}
+            </a>
+          </li>
+          {% endwith %}
+        {% else %}
+          {% with other=c.teacher %}
+          <li style="border:1px solid #eee;border-radius:12px;padding:12px;">
+            <a href="{% url 'chat:dm_room' c.course_id other.id %}" style="text-decoration:none;">
+              <b>{{ c.course.title }}</b> · {{ other.username }}
+            </a>
+          </li>
+          {% endwith %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p style="color:#888;">대화가 없습니다.</p>
+  {% endif %}
+</div>
+{% endblock %}

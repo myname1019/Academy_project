@@ -1,0 +1,74 @@
+5eb46ed HEAD@{0}: checkout: moving from wip-today to feature/sinaint-teacher-dashboard-fix
+095b951 HEAD@{1}: commit: Fix Django template syntax in board_base.html
+6594a8d HEAD@{2}: checkout: moving from main to wip-today
+5eb46ed HEAD@{3}: reset: moving to origin/main
+9af8254 HEAD@{4}: checkout: moving from wip-today to main
+6594a8d HEAD@{5}: commit: wip: save today's work
+9af8254 HEAD@{6}: checkout: moving from main to wip-today
+9af8254 HEAD@{7}: reset: moving to 9af8254
+5eb46ed HEAD@{8}: reset: moving to origin/main
+35a9904 HEAD@{9}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+5eb46ed HEAD@{10}: checkout: moving from feature/sinaint-teacher-dashboard-fix to feature/sinaint-teacher-dashboard-fix
+5eb46ed HEAD@{11}: reset: moving to origin/main
+9af8254 HEAD@{12}: checkout: moving from feature/sinaint-teacher-dashboard-fix to feature/sinaint-teacher-dashboard-fix
+9af8254 HEAD@{13}: pull origin main: updating HEAD
+9af8254 HEAD@{14}: commit (merge): Resolve merge conflicts
+2f24da5 HEAD@{15}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+35a9904 HEAD@{16}: pull origin main: Fast-forward
+d8ab8b6 HEAD@{17}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+2f24da5 HEAD@{18}: commit: Teacher Page 및 코스 모델 수정
+1d60842 HEAD@{19}: merge main: Merge made by the 'ort' strategy.
+8fb9f65 HEAD@{20}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+d8ab8b6 HEAD@{21}: pull origin main: Fast-forward
+4ff2521 HEAD@{22}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+8fb9f65 HEAD@{23}: commit: 1:1 대화 창 작업본
+d040e59 HEAD@{24}: checkout: moving from feature/sinaint-teacher-dashboard-fix to feature/sinaint-teacher-dashboard-fix
+d040e59 HEAD@{25}: checkout: moving from feature/sinaint-teacher-dashboard-fix to feature/sinaint-teacher-dashboard-fix
+d040e59 HEAD@{26}: pull origin main: Fast-forward
+c677503 HEAD@{27}: commit: Teacher Page 모델 수정
+4ff2521 HEAD@{28}: merge main: Fast-forward
+e9aa47b HEAD@{29}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+4ff2521 HEAD@{30}: pull origin main: Fast-forward
+e9aa47b HEAD@{31}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+e9aa47b HEAD@{32}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+e9aa47b HEAD@{33}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+e9aa47b HEAD@{34}: merge main: Fast-forward
+03535ac HEAD@{35}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+e9aa47b HEAD@{36}: pull origin main: Fast-forward
+b30a47e HEAD@{37}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+03535ac HEAD@{38}: commit: 강사 페이지 수정본
+b30a47e HEAD@{39}: merge main: Fast-forward
+3405795 HEAD@{40}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+b30a47e HEAD@{41}: pull origin main: Fast-forward
+4f4536e HEAD@{42}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+3405795 HEAD@{43}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+4f4536e HEAD@{44}: pull origin main: Fast-forward
+790692e HEAD@{45}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+3405795 HEAD@{46}: commit (merge): Merge remote changes
+cc51509 HEAD@{47}: commit: 강사 페이지
+2e5db8a HEAD@{48}: commit: 강사 페이지 상단바에 강의 목록, 생성 제거 강사 페이지만 적용
+eba3d97 HEAD@{49}: commit: 강사 대시보드 디자인 및 기능 변경
+6b91a20 HEAD@{50}: commit: Resolve merge conflict in TeacherPage views
+2ba23af HEAD@{51}: commit (merge): Merge main branch and fix conflicts
+40650f9 HEAD@{52}: checkout: moving from main to feature/sinaint-teacher-dashboard-fix
+790692e HEAD@{53}: pull origin main: Fast-forward
+a510926 HEAD@{54}: checkout: moving from feature/sinaint-teacher-dashboard-fix to main
+40650f9 HEAD@{55}: commit: Update gitignore
+94604ee HEAD@{56}: checkout: moving from feature/main-page to feature/sinaint-teacher-dashboard-fix
+94604ee HEAD@{57}: checkout: moving from feature/main-page to feature/main-page
+94604ee HEAD@{58}: checkout: moving from feature/main-page to feature/main-page
+94604ee HEAD@{59}: commit: Add teacher dashboard and thumbnail feature
+a510926 HEAD@{60}: checkout: moving from main to feature/main-page
+a510926 HEAD@{61}: checkout: moving from feature/main-page to main
+a510926 HEAD@{62}: reset: moving to HEAD
+a510926 HEAD@{63}: checkout: moving from main to feature/main-page
+a510926 HEAD@{64}: checkout: moving from feature/main-page to main
+a510926 HEAD@{65}: checkout: moving from main to feature/main-page
+a510926 HEAD@{66}: checkout: moving from feature/main-page to main
+a510926 HEAD@{67}: checkout: moving from main to feature/main-page
+a510926 HEAD@{68}: checkout: moving from main to main
+a510926 HEAD@{69}: checkout: moving from feature/main-page to main
+a510926 HEAD@{70}: checkout: moving from main to feature/main-page
+a510926 HEAD@{71}: pull origin main: Fast-forward
+8bbbe6b HEAD@{72}: checkout: moving from main to main
+8bbbe6b HEAD@{73}: clone: from https://github.com/myname1019/Academy_project.git

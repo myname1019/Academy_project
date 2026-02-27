@@ -1,110 +1,20 @@
-{% extends "board_base.html" %}
-
-{% block content %}
-<style>
-    /* 상단 메뉴나 푸터 등을 제외한 메인 영역을 흰색으로 덮기 */
-    #login-page-wrapper {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #ffffff; /* 완전 흰색 */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999; /* 모든 것보다 위에 위치 */
-    }
-
-    .login-box {
-        background: #fff;
-        width: 380px;
-        padding: 40px;
-        border: 1px solid #eee; /* 살짝 테두리 */
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        position: relative;
-    }
-
-    .logo-area {
-        text-align: center;
-        color: #6c5ce7;
-        font-size: 28px;
-        font-weight: 900;
-        margin-bottom: 30px;
-        letter-spacing: -1px;
-    }
-
-    /* 💡 input-group에 position: relative를 주어야 눈 아이콘이 input 안에 예쁘게 들어갑니다 */
-    .input-group { 
-        margin-bottom: 20px; 
-        position: relative; 
-    }
-    
-    .input-group input {
-        width: 100%;
-        box-sizing: border-box; /* 패딩 때문에 삐져나가는 것 방지 */
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 15px;
-    }
-
-    /* 💡 비밀번호 보기(눈) 아이콘 스타일 */
-    .eye-icon {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #888;
-    }
-
-    .login-btn {
-        width: 100%;
-        background-color: #6c5ce7;
-        color: #fff;
-        border: none;
-        padding: 16px;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 16px;
-        cursor: pointer;
-        transition: 0.3s;
-        margin-bottom: 20px; /* 버튼 아래 여백 추가 */
-    }
-
-    .login-btn:hover { background-color: #584ac2; }
-
-    /* 서브 링크 정렬 */
-    .sub-links {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
-
-    .sub-links a {
-        color: #888;
-        text-decoration: none;
-        font-size: 14px;
-    }
+<!DOCTYPE html>
+<html lang="ko">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'common/css/auth_modal.css' %}">
+</head>
+<body>
 
     .sub-links a:hover { color: #6c5ce7; }
 
-    /* 닫기 버튼 (나가기) */
-    .close-btn {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: none;
-        border: none;
-        font-size: 20px;
-        color: #ccc;
-        cursor: pointer;
-    }
-</style>
+            <button type="button" class="close-btn" onclick="history.back();" aria-label="닫기">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
 <div id="login-page-wrapper">
     <div class="login-box">
@@ -137,16 +47,50 @@
                 >
             </div>
 
-            <div class="input-group">
-                <input
-                    id="passwordInput"
-                    type="password"
-                    name="password"
-                    placeholder="비밀번호를 입력하세요"
-                    required
-                    autocomplete="current-password"
-                >
-                <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
+            <form action="{% url 'common:login' %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                {% include "form_errors.html" %}
+
+                {% if form.errors %}
+                    <div class="error-msg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+                {% endif %}
+
+                <input type="text" name="fakeusernameremembered" style="display:none">
+                <input type="password" name="fakepasswordremembered" style="display:none">
+
+                <div class="input-group">
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Enter User ID"
+                        value="{{ form.username.value|default_if_none:'' }}"
+                        required
+                        autocomplete="username"
+                        autocapitalize="none"
+                        spellcheck="false"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <input
+                        id="passwordInput"
+                        type="password"
+                        name="password"
+                        placeholder="Enter User Password"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <i id="togglePw" class="fa-regular fa-eye eye-icon" title="비밀번호 보기"></i>
+                </div>
+
+
+                <button type="submit" class="login-btn">로그인</button>
+            </form>
+
+            <div class="sub-links">
+                <a href="{% url 'common:signup' %}">회원가입</a>
+                <a href="{% url 'common:find_username' %}">아이디 찾기</a>
+                <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
             </div>
 
             <button type="submit" class="login-btn">로그인</button>

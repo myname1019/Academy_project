@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %} {% block title %}아이디 찾기{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'common/css/auth_find.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="find-container">
+    <div class="find-card">
+        <h3 class="find-title">🔍 아이디 찾기</h3>
+
+        {# 💡 아이디를 찾았을 때 보여줄 결과 화면 #}
+        {% if username %}
+            <p class="text-muted mb-3" style="font-size: 15px; line-height: 1.6;">
+                입력하신 이메일(<b>{{ email }}</b>)로<br>가입된 아이디입니다.
+            </p>
+            <div class="result-box">
+                <span class="found-username">{{ username }}</span>
+            </div>
+            
+            <div class="button-group">
+                <a href="{% url 'common:login' %}" class="btn-find">로그인하러 가기</a>
+                <a href="{% url 'common:find_username' %}" class="btn-outline-custom">다시 찾기</a>
+            </div>
+
+        {# 💡 아이디 입력 폼 화면 #}
+        {% else %}
+            <form method="POST" action="{% url 'common:find_username' %}">
+                {% csrf_token %}
+                <div class="mb-3 text-start"> <label for="email" class="form-label">가입한 이메일 주소</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="example@gmail.com" required>
+                </div>
+                <button type="submit" class="btn btn-find">아이디 찾기</button>
+            </form>
+            <a href="{% url 'common:login' %}" class="back-link">로그인으로 돌아가기</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied # 💡 403 에러 발생용
 from django.contrib import messages
 from .models import Course
 from .forms import CourseForm
+from django.core.paginator import Paginator
 
 
 class CourseList(ListView):
@@ -22,26 +23,64 @@ class CourseList(ListView):
 
         current_page = page_obj.number
         total_pages = paginator.num_pages
-
+        subject = self.request.GET.get('subject')
+        
+        subject_map = {
+            'korean': '국어', 'math': '수학', 'english': '영어',
+            'social': '사회', 'science': '과학', 'etc': '기타'
+        }
+        context['subject_display'] = subject_map.get(subject)
+        
+        # 5페이지 단위 그룹 계산
         page_group = (current_page - 1) // 5
         start_page = page_group * 5 + 1
         end_page = min(start_page + 4, total_pages)
 
-        context['custom_page_range'] = range(start_page, end_page + 1)
-        context['prev_group_start'] = start_page - 5 if start_page > 1 else None
-        context['next_group_start'] = start_page + 5 if start_page + 5 <= total_pages else None
-
+        # 2. 다음 버튼 목적지: 다음 그룹 시작점이 있으면 거기로, 없으면 바로 다음 페이지로
+        next_group_start = start_page + 5 if start_page + 5 <= total_pages else None
+        if next_group_start:
+            context['next_target'] = next_group_start
+        elif page_obj.has_next():
+            context['next_target'] = page_obj.next_page_number()
+        else:
+            context['next_target'] = None
+        
+        subject = self.request.GET.get('subject')
+        subject_map = {
+            'korean': '국어',
+            'math': '수학',
+            'english': '영어',
+            'social': '사회',
+            'science': '과학',
+            'etc': '기타',
+        }
+        # {{ subject_display }}로 템플릿에서 한글 이름을 쓸 수 있게 함
+        context['subject_display'] = subject_map.get(subject)
         return context
 
     def get_queryset(self):
-        return (
-            Course.objects
-            .annotate(
-                avg_rating=Avg('reviews__rating'),
-                review_count=Count('reviews')
-            )
-            .order_by('-created_at')
-        )
+        # 1. URL에서 파라미터 가져오기
+        subject = self.request.GET.get('subject')
+        q = self.request.GET.get('q')
+
+        # 2. 기본 쿼리셋 (리뷰 등 계산 포함)
+        queryset = Course.objects.annotate(
+            avg_rating=Avg('reviews__rating'),
+            review_count=Count('reviews')
+        ).order_by('-created_at')
+
+        # 3. 과목(subject) 필터링 (핵심!)
+        if subject and subject != 'all':
+            queryset = queryset.filter(category=subject) # 모델 필드명에 주의!
+
+        if q:
+            queryset = queryset.filter(title__icontains=q)
+
+        return queryset
+    
+    
+
+from django.core.paginator import Paginator  # ✅ 추가
 
 
 class CourseDetail(DetailView):
@@ -58,6 +97,21 @@ class CourseDetail(DetailView):
             )
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # ✅ 기존 is_enrolled 유지 (그대로)
+        if self.request.user.is_authenticated:
+            context['is_enrolled'] = self.object.students.filter(id=self.request.user.id).exists()
+        else:
+            context['is_enrolled'] = False  # ✅ 추가(템플릿에서 안전)
+
+        # ✅ 리뷰 5개씩 페이징만 추가(핵심)
+        reviews = self.object.reviews.all().order_by('-created_at', '-id')
+        paginator = Paginator(reviews, 3)
+        context['reviews_page'] = paginator.get_page(self.request.GET.get('rpage'))
+
+        return context
 
 class CourseCreate(CreateView):
     model = Course
