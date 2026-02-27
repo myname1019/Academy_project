@@ -105,7 +105,6 @@
                     <a href="{% url 'Board:notice_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
                 </div>
                 <ul class="list-unstyled mb-0">
-                    {# ✅ [해결] 최근 작성된 공지사항 목록 출력 및 상세 페이지 연결 #}
                     {% for post in recent_notices %}
                         <li class="py-2 border-bottom">
                             <a href="{% url 'Board:notice_detail' post.id %}" class="text-decoration-none text-dark d-flex justify-content-between">
@@ -127,7 +126,6 @@
                     <a href="{% url 'Board:community_list' %}" class="text-muted small text-decoration-none">더보기 +</a>
                 </div>
                 <ul class="list-unstyled mb-0">
-                    {# ✅ [해결] 최근 작성된 게시글 목록 출력 및 상세 페이지 연결 #}
                     {% for post in recent_posts %}
                         <li class="py-2 border-bottom">
                             <a href="{% url 'Board:community_detail' post.id %}" class="text-decoration-none text-dark d-flex justify-content-between">
@@ -155,4 +153,7 @@
   });
 </script>
 
+<footer class="footer" style="text-align: center; margin-top: 50px; padding: 20px 0; color: #868e96; font-size: 14px; border-top: 1px solid #e9ecef;">
+    <p style="margin: 0;">&copy; 2026 My Academy | Course Management System</p>
+</footer>
 {% endblock %}
