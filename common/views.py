@@ -48,10 +48,15 @@ def signup(request):
 # ✅ 역할별 마이페이지 이동
 @login_required
 def mypage_redirect(request):
-    if request.user.role == 'student':
-        return redirect('/StudentPage/')   # 학생 경로에 맞게
-    elif request.user.role == 'teacher':
+    role = request.user.role
+
+    if role == 'student':
+        return redirect('/StudentPage/')
+    elif role == 'teacher':
         return redirect('teacherpage:dashboard')
+    else:
+        # 🔥 역할 없는 소셜 유저 보호
+        return redirect('common:social_signup_role')
 
 
 # ✅ 프로필 페이지 (자기소개 수정 + 리뷰 통계)
@@ -144,25 +149,30 @@ def find_username(request): # 이메일로 아이디 찾기
 
 @login_required
 def social_signup_role(request):
-    # 이미 프로필이 있는 유저가 접근하면 메인으로 튕겨냄
-    if Student.objects.filter(user=request.user).exists() or Teacher.objects.filter(user=request.user).exists():
+
+    # ✅ 이미 역할이 정해진 유저는 접근 차단
+    if request.user.role:
         return redirect('/')
 
     if request.method == 'POST':
         role = request.POST.get('role')
         user = request.user
-        
-        # 1. CustomUser 모델의 role 업데이트
+
+        if role not in ['student', 'teacher']:
+            messages.error(request, "잘못된 접근입니다.")
+            return redirect('/')
+
+        # 1️⃣ role 저장
         user.role = role
         user.save()
 
-        # 2. 역할별 프로필 생성 (핵심!)
+        # 2️⃣ 역할별 프로필 생성
         if role == 'student':
             Student.objects.get_or_create(user=user)
         elif role == 'teacher':
             Teacher.objects.get_or_create(user=user)
-            
-        messages.success(request, f"{user.get_role_display()}님, 환영합니다!")
-        return redirect('/') # 이제 메인으로 이동
 
-    return render(request, 'common/social_signup.html') # 만들어두신 템플릿
+        messages.success(request, f"{user.get_role_display()}님, 환영합니다!")
+        return redirect('/')
+
+    return render(request, 'common/social_signup.html')

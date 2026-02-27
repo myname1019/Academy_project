@@ -10,7 +10,13 @@ class CustomUser(AbstractUser):
         ('student', '학생'),
         ('teacher', '선생님'),
     )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='student', verbose_name="가입 유형")
+    role = models.CharField(
+    max_length=10,
+    choices=ROLE_CHOICES,
+    null=True,
+    blank=True,
+    verbose_name="가입 유형"
+)
     bio = models.TextField(blank=True, null=True, verbose_name="자기소개")
 
     # ✅ 추가
