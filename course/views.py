@@ -32,11 +32,9 @@ class CourseList(ListView):
         page_group = (current_page - 1) // 5
         start_page = page_group * 5 + 1
         end_page = min(start_page + 4, total_pages)
-        
         context['custom_page_range'] = range(start_page, end_page + 1)
         
         # [스마트 페이징 로직 적용]
-        # 1. 이전 버튼 목적지: 이전 그룹 시작점이 있으면 거기로, 없으면 바로 전 페이지로
         prev_group_start = start_page - 5 if start_page > 1 else None
         if prev_group_start:
             context['prev_target'] = prev_group_start
@@ -45,7 +43,6 @@ class CourseList(ListView):
         else:
             context['prev_target'] = None
 
-        # 2. 다음 버튼 목적지: 다음 그룹 시작점이 있으면 거기로, 없으면 바로 다음 페이지로
         next_group_start = start_page + 5 if start_page + 5 <= total_pages else None
         if next_group_start:
             context['next_target'] = next_group_start
@@ -53,44 +50,28 @@ class CourseList(ListView):
             context['next_target'] = page_obj.next_page_number()
         else:
             context['next_target'] = None
-        
-        subject = self.request.GET.get('subject')
-        subject_map = {
-            'korean': '국어',
-            'math': '수학',
-            'english': '영어',
-            'social': '사회',
-            'science': '과학',
-            'etc': '기타',
-        }
-        # {{ subject_display }}로 템플릿에서 한글 이름을 쓸 수 있게 함
-        context['subject_display'] = subject_map.get(subject)
+            
         return context
 
     def get_queryset(self):
-        # 1. URL에서 파라미터 가져오기
         subject = self.request.GET.get('subject')
         q = self.request.GET.get('q')
 
-        # 2. 기본 쿼리셋 (리뷰 등 계산 포함)
         queryset = Course.objects.annotate(
             avg_rating=Avg('reviews__rating'),
             review_count=Count('reviews')
         ).order_by('-created_at')
 
-        # 3. 과목(subject) 필터링 (핵심!)
         if subject and subject != 'all':
-            queryset = queryset.filter(category=subject) # 모델 필드명에 주의!
+            queryset = queryset.filter(category=subject)
 
         if q:
             queryset = queryset.filter(title__icontains=q)
 
         return queryset
     
-    
 
 from django.core.paginator import Paginator  # ✅ 추가
-
 class CourseDetail(DetailView):
     model = Course
     template_name = 'course/course_detail.html'
@@ -108,16 +89,21 @@ class CourseDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # ✅ 기존 is_enrolled 유지 (그대로)
+        # 1. 수강 여부 확인
         if self.request.user.is_authenticated:
             context['is_enrolled'] = self.object.students.filter(id=self.request.user.id).exists()
         else:
-            context['is_enrolled'] = False  # ✅ 추가(템플릿에서 안전)
+            context['is_enrolled'] = False 
 
-        # ✅ 리뷰 5개씩 페이징만 추가(핵심)
+        # 🚨 [여기 핵심!] 커리큘럼(영상 목록) 5개씩 페이징해서 'lessons_page'로 보냅니다!
+        lessons = self.object.lessons.all().order_by('order')
+        lesson_paginator = Paginator(lessons, 5)
+        context['lessons_page'] = lesson_paginator.get_page(self.request.GET.get('lpage'))
+
+        # 3. 기존 리뷰 3개씩 페이징 (그대로 유지)
         reviews = self.object.reviews.all().order_by('-created_at', '-id')
-        paginator = Paginator(reviews, 3)
-        context['reviews_page'] = paginator.get_page(self.request.GET.get('rpage'))
+        review_paginator = Paginator(reviews, 3)
+        context['reviews_page'] = review_paginator.get_page(self.request.GET.get('rpage'))
 
         return context
 
@@ -284,3 +270,77 @@ def lesson_add(request, course_id):
         'form': form,
         'course': course
     })
+
+# course/views.py 맨 아래 추가
+from .models import Lesson  # 상단에 Lesson 임포트 확인!
+
+def lesson_play(request, lesson_id):
+    # 1. 클릭한 영상 정보 가져오기
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    course = lesson.course
+
+    # 2. 로그인 확인
+    if not request.user.is_authenticated:
+        messages.error(request, "로그인 후 시청할 수 있습니다.")
+        return redirect('common:login')
+
+    # 3. 수강 권한 확인 (강사 본인이거나 수강 중인 학생인지)
+    is_enrolled = False
+    if request.user == course.teacher:
+        is_enrolled = True
+    elif course.students.filter(id=request.user.id).exists():
+        is_enrolled = True
+
+    if not is_enrolled:
+        messages.error(request, "수강 신청을 해야 영상을 볼 수 있습니다.")
+        return redirect('course:course_detail', pk=course.id)
+
+    # 4. 재생 전용 템플릿으로 연결!
+    return render(request, 'course/lesson_player.html', {
+        'lesson': lesson,
+        'course': course,
+    })
+
+# course/views.py 맨 아래 추가
+
+def lesson_update(request, lesson_id):
+    # 1. 수정할 영상 찾기
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    course = lesson.course
+
+    # 2. 강사 본인 확인
+    if request.user != course.teacher:
+        messages.error(request, "본인의 강의 영상만 수정할 수 있습니다.")
+        return redirect('course:course_detail', pk=course.id)
+
+    # 3. 폼 처리
+    if request.method == 'POST':
+        # 💡 기존 영상 정보(instance=lesson)를 폼에 담아서 수정합니다!
+        form = LessonForm(request.POST, request.FILES, instance=lesson)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"'{lesson.title}' 영상이 수정되었습니다.")
+            return redirect('course:course_detail', pk=course.id)
+    else:
+        form = LessonForm(instance=lesson)
+
+    return render(request, 'course/lesson_form.html', {
+        'form': form,
+        'course': course,
+        'lesson': lesson, # 💡 수정 모드인지 확인하기 위해 넘겨줍니다
+    })
+
+def lesson_delete(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    course = lesson.course
+
+    if request.user != course.teacher:
+        messages.error(request, "본인의 강의 영상만 삭제할 수 있습니다.")
+        return redirect('course:course_detail', pk=course.id)
+
+    if request.method == 'POST':
+        lesson_title = lesson.title
+        lesson.delete()
+        messages.success(request, f"'{lesson_title}' 영상이 삭제되었습니다.")
+        
+    return redirect('course:course_detail', pk=course.id)
