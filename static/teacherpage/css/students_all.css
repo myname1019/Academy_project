@@ -1,0 +1,114 @@
+.students-head{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-bottom: 18px;
+}
+
+.students-count{ font-size:14px; }
+
+.students-controls{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.students-search{
+  min-width: 260px;
+  max-width: 360px;
+  width: min(360px, 80vw);
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+}
+
+.students-search:focus{
+  border-color: #00c471;
+}
+
+.students-list{
+  display:grid;
+  gap: 12px;
+}
+
+.student-card{
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  padding: 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap: 14px;
+  transition: .2s;
+}
+
+.student-card:hover{
+  border-color:#00c471;
+  transform: translateY(-2px);
+}
+
+.student-left{ min-width:0; }
+.student-main{ min-width:0; }
+
+.student-name{
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--text);
+  display:flex;
+  gap: 8px;
+  align-items:baseline;
+  flex-wrap:wrap;
+}
+
+.student-username{ font-size: 13px; }
+
+.student-email{
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.student-courses{
+  margin-top: 10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap: 8px;
+}
+
+.pill-link{
+  text-decoration:none;
+}
+
+.pill-alert{
+  border-color:#ff4d4f !important;
+  color:#ff4d4f !important;
+}
+
+.pill-ok{
+  border-color:#00c471 !important;
+  color:#00c471 !important;
+}
+
+.student-actions{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+@media (max-width: 720px){
+  .student-card{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .student-actions{
+    justify-content:flex-start;
+  }
+}
