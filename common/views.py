@@ -16,6 +16,9 @@ User = get_user_model()
 
 # ✅ 회원가입
 def signup(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+    #def signup(request): 밑에 두줄추가로 로그인상태에서 회원가입창으로가는걸 막음
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
@@ -129,6 +132,8 @@ def profile_edit(request):
 # ===== 여기서부터 another 브랜치의 아이디 찾기 기능입니다 =====
 
 def find_username(request): # 이메일로 아이디 찾기
+    if request.user.is_authenticated:
+        return redirect('/')#똑같이 로그인창처럼 두줄추가
     if request.method == 'POST':
         email = request.POST.get('email')
         users = User.objects.filter(email=email)
