@@ -139,48 +139,70 @@
 
         </div>
 
-        
-        {# --- 💡 스마트 페이지네이션 (views.py의 prev_target, next_target 대응) --- #}
+
+
+        {# 💡 페이지네이션 추가 (강의 목록이 있을 때만 표시) #}
+
         {% if is_paginated %}
+
         <div class="pagination-container">
-            {# 이전 버튼 #}
-            {% if prev_target %}
-                <a href="?page={{ prev_target }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" 
-                   class="page-link-custom" 
-                   title="이전으로 이동">
+
+            {% if prev_group_start %}
+
+                <a href="?page={{ prev_group_start }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom" title="{{ prev_group_start }}페이지로 이동">
+
                     &laquo; 이전
+
                 </a>
+
             {% else %}
+
                 <span class="page-link-custom disabled">&laquo; 이전</span>
+
             {% endif %}
+
+
 
             <span class="page-divider">|</span>
 
-            {# 숫자 페이지 번호 #}
+
+
             {% for i in custom_page_range %}
+
                 {% if page_obj.number == i %}
+
                     <span class="page-link-custom active">{{ i }}</span>
+
                 {% else %}
-                    <a href="?page={{ i }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" 
-                       class="page-link-custom">
-                        {{ i }}
-                    </a>
+
+                    <a href="?page={{ i }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom">{{ i }}</a>
+
                 {% endif %}
+
             {% endfor %}
 
+
+
             <span class="page-divider">|</span>
 
-            {# 다음 버튼 #}
-            {% if next_target %}
-                <a href="?page={{ next_target }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" 
-                   class="page-link-custom" 
-                   title="다음으로 이동">
+
+
+            {% if next_group_start %}
+
+                <a href="?page={{ next_group_start }}{% if request.GET.show %}&show={{ request.GET.show }}{% endif %}{% if request.GET.subject %}&subject={{ request.GET.subject }}{% endif %}" class="page-link-custom" title="{{ next_group_start }}페이지로 이동">
+
                     다음 &raquo;
+
                 </a>
+
             {% else %}
+
                 <span class="page-link-custom disabled">다음 &raquo;</span>
+
             {% endif %}
+
         </div>
+
         {% endif %}
 
 

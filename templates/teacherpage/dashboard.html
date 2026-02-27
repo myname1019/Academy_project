@@ -335,6 +335,11 @@
                 <p class="profile-username">@{{ target_user.username }} · 강사</p>
             </div>
         </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <a class="btn-outline" href="{% url 'course:course_create' %}">강의 등록</a> 
+            {% comment %} 체크 {% endcomment %}
+        </div>
     </div>
 
     <!-- 통계 -->

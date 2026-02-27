@@ -62,9 +62,14 @@
             </form>
 
             <div class="sub-links">
-                <a href="{% url 'common:signup' %}">회원가입</a>
-                <a href="{% url 'common:find_username' %}">아이디 찾기</a>
-                <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
+            <a href="{% url 'common:find_username' %}">아이디 찾기</a>
+            <span style="color: #ddd;">|</span>
+            <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
+            </div>
+
+            <div class="text-center" style="font-size: 14px; color: #888; text-align: center; margin-top: 20px;">
+            아직 회원이 아니신가요? 
+            <a href="{% url 'common:signup' %}" style="color: #6c5ce7; font-weight: bold; text-decoration: none;">회원가입</a>
             </div>
 
         </div>
