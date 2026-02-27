@@ -1,51 +1,59 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'common/css/navbar.css' %}">
 
-
 <header>
-    <div class="nav-top">
-        <a href="/" class="logo">TiKiTaKa</a>
-        
-        <div class="search-bar">
-            <form action="/search/" method="get">
-                <input type="text" name="q" placeholder="배우고 싶은 것을 검색해 보세요" value="{{ request.GET.q }}">
-            </form>
+  <div class="nav-top">
+    <a href="/" class="logo">TiKiTaKa</a>
+
+    <div class="search-bar">
+      <form action="/search/" method="get">
+        <input type="text" name="q" placeholder="배우고 싶은 것을 검색해 보세요" value="{{ request.GET.q }}">
+      </form>
+    </div>
+
+    <!-- ✅ 오른쪽 묶음: 메뉴 + 토글 -->
+    <div class="nav-right">
+      {% if user.is_anonymous %}
+        <nav class="nav-menu">
+          <a href="{% url 'common:signup' %}">회원가입</a>
+          <a href="{% url 'common:login' %}">로그인</a>
+        </nav>
+      {% else %}
+        <nav class="nav-menu">
+          <a href="{% url 'common:mypage' %}">내 페이지</a>
+          <form action="{% url 'common:logout' %}" method="post" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">로그아웃</button>
+          </form>
+        </nav>
+      {% endif %}
+
+      <!-- 🌙 메인 전용 다크모드 토글 -->
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="다크모드 전환">🌙</button>
+    </div>
+  </div>
+
+  <div class="nav-bottom">
+    <ul class="category-list">
+      <li>
+        <div class="dropdown">
+          <a href="{% url 'Board:notice_list' %}" class="dropbtn">학원안내</a>
+          <ul class="dropdown-content">
+            <li><a href="{% url 'Board:notice_list' %}">공지사항</a></li>
+            <li><a href="{% url 'Board:community_list' %}">게시판</a></li>
+          </ul>
         </div>
-
-        {% if user.is_anonymous %}
-        <nav class="nav-menu">
-            <a href="{% url 'common:signup' %}">회원가입</a>
-            <a href="{% url 'common:login' %}">로그인</a>
-        </nav>
-        {% else %}
-        <nav class="nav-menu">
-            <a href="{% url 'common:mypage' %}">내 페이지</a>
-            <form action="{% url 'common:logout' %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">로그아웃</button>
-            </form>
-        </nav>
-        {% endif %}
-    </div>
-
-    <div class="nav-bottom">
-        <ul class="category-list">
-            <li>
-                <div class="dropdown">
-                    <a href="{% url 'Board:notice_list' %}" class="dropbtn">학원안내</a>
-                    <ul class="dropdown-content">
-                        <li><a href="{% url 'Board:notice_list' %}">공지사항</a></li>
-                        <li><a href="{% url 'Board:community_list' %}">게시판</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li><a href="/?show=all">전체</a></li>
-            <li><a href="/?subject=korean">국어</a></li>
-            <li><a href="/?subject=math">수학</a></li>
-            <li><a href="/?subject=english">영어</a></li>
-            <li><a href="/?subject=social">사회</a></li>
-            <li><a href="/?subject=science">과학</a></li>
-            <li><a href="/?subject=etc">기타</a></li>
-        </ul>
-    </div>
+      </li>
+      <li><a href="/?show=all">전체</a></li>
+      <li><a href="/?subject=korean">국어</a></li>
+      <li><a href="/?subject=math">수학</a></li>
+      <li><a href="/?subject=english">영어</a></li>
+      <li><a href="/?subject=social">사회</a></li>
+      <li><a href="/?subject=science">과학</a></li>
+      <li><a href="/?subject=etc">기타</a></li>
+    </ul>
+  </div>
 </header>
+
+<!-- ✅ JS 파일로 분리 적용 -->
+<script src="{% static 'common/js/navbar_theme.js' %}"></script>
