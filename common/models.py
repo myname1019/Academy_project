@@ -29,6 +29,7 @@ class CustomUser(AbstractUser):
         # 마지막 변경일 + 90일이 지금 시간보다 과거라면? -> 만료된 것!
         expiration_date = self.last_password_change + timedelta(days=90) # 💡 테스트용으로 0초로 설정 (실제론 90일 = 90*24*60*60 초)
         return timezone.now() >= expiration_date
+
 # 2. 학생 전용 테이블 따로 만들기
 class Student(models.Model):
     # CustomUser 테이블과 1:1로 연결! (유저가 삭제되면 학생 정보도 같이 삭제됨)
@@ -51,6 +52,7 @@ class Teacher(models.Model):
     def __str__(self):
         return f"{self.user.username} (선생님)"
 
+# 💡 과거 비밀번호들을 저장해 둘 새로운 테이블!
 class PasswordHistory(models.Model):
     # 어떤 유저의 비밀번호 기록인지 연결
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='password_histories')
@@ -64,4 +66,3 @@ class PasswordHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.username}님의 비밀번호 변경 기록 ({self.created_at.strftime('%Y-%m-%d')})"
-    
