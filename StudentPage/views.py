@@ -62,4 +62,4 @@ def enroll_course(request, course_id):
         # 💡 성공적으로 신청되었을 때 초록색 체크 팝업 띄우기! (SweetAlert2의 success 아이콘으로 뜹니다)
         messages.success(request, f"'{course.title}' 수강 신청이 완료되었습니다!")
 
-    return redirect('student_dashboard')
+    return redirect('StudentPage:student_dashboard')

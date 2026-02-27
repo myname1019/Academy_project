@@ -10,41 +10,15 @@
 </head>
 <body>
 
-    .sub-links a:hover { color: #6c5ce7; }
+    <div class="modal-overlay">
+        <div class="login-box">
 
             <button type="button" class="close-btn" onclick="history.back();" aria-label="닫기">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-<div id="login-page-wrapper">
-    <div class="login-box">
-        <button type="button" class="close-btn" onclick="location.href='{% url 'Board:community_list' %}'">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <div class="logo-area">TiKiTaKa</div>
-
-        <form action="{% url 'common:login' %}" method="POST" autocomplete="off">
-            {% csrf_token %}
-            
-            {% if form.errors %}
-                <p class="text-danger small text-center mb-3">아이디 또는 비밀번호가 올바르지 않습니다.</p>
-            {% endif %}
-
-            <input type="text" name="fakeusernameremembered" style="display:none">
-            <input type="password" name="fakepasswordremembered" style="display:none">
-
-            <div class="input-group">
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="아이디를 입력하세요"
-                    value="{{ form.username.value|default_if_none:'' }}"
-                    required
-                    autocomplete="username"
-                    autocapitalize="none"
-                    spellcheck="false"
-                >
+            <div class="logo-area">
+                TiKiTaKa
             </div>
 
             <form action="{% url 'common:login' %}" method="POST" autocomplete="off">
@@ -88,43 +62,33 @@
             </form>
 
             <div class="sub-links">
-                <a href="{% url 'common:signup' %}">회원가입</a>
-                <a href="{% url 'common:find_username' %}">아이디 찾기</a>
-                <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
-            </div>
-
-            <button type="submit" class="login-btn">로그인</button>
-        </form>
-
-        <div class="sub-links">
             <a href="{% url 'common:find_username' %}">아이디 찾기</a>
             <span style="color: #ddd;">|</span>
             <a href="{% url 'common:password_reset' %}">비밀번호 찾기</a>
-        </div>
+            </div>
 
-        <div class="text-center" style="font-size: 14px; color: #888;">
+            <div class="text-center" style="font-size: 14px; color: #888; text-align: center; margin-top: 20px;">
             아직 회원이 아니신가요? 
             <a href="{% url 'common:signup' %}" style="color: #6c5ce7; font-weight: bold; text-decoration: none;">회원가입</a>
+            </div>
+
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const togglePw = document.getElementById('togglePw');
-        const passwordInput = document.getElementById('passwordInput');
+    <script>
+        // 비밀번호 보기 토글 스크립트
+        const togglePw = document.getElementById("togglePw");
+        const pwInput = document.getElementById("passwordInput");
 
-        if (togglePw && passwordInput) {
-            togglePw.addEventListener('click', function() {
-                // type이 password면 text로, text면 password로 바꿉니다.
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                // 폰트어썸 아이콘 모양을 바꿉니다 (눈 감기/뜨기)
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
+        if (togglePw && pwInput) {
+            togglePw.addEventListener("click", () => {
+                const isHidden = pwInput.type === "password";
+                pwInput.type = isHidden ? "text" : "password";
+                togglePw.classList.toggle("fa-eye");
+                togglePw.classList.toggle("fa-eye-slash");
             });
         }
-    });
-</script>
-{% endblock %}
+    </script>
+
+</body>
+</html>
