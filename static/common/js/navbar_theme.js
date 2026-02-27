@@ -2,24 +2,32 @@
 (function () {
   const key = "theme"; // base쪽과 같은 키면 모드가 공유됨
 
+  function applyTheme(isDark, btn) {
+    // ✅ 핵심: html + body 둘 다 dark 토글
+    document.documentElement.classList.toggle("dark", isDark);
+    document.body.classList.toggle("dark", isDark);
+
+    if (btn) btn.textContent = isDark ? "☀️" : "🌙";
+    localStorage.setItem(key, isDark ? "dark" : "light");
+  }
+
   function init() {
     const btn = document.getElementById("themeToggle");
     if (!btn) return;
 
     const saved = localStorage.getItem(key);
     const prefersDark =
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     const startDark = saved === "dark" || (!saved && prefersDark);
 
-    document.body.classList.toggle("dark", startDark);
-    btn.textContent = startDark ? "☀️" : "🌙";
+    // ✅ 초기 적용
+    applyTheme(startDark, btn);
 
     btn.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      const isDark = document.body.classList.contains("dark");
-      localStorage.setItem(key, isDark ? "dark" : "light");
-      btn.textContent = isDark ? "☀️" : "🌙";
+      const isDark = !document.body.classList.contains("dark");
+      applyTheme(isDark, btn);
     });
   }
 
