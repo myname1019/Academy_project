@@ -5,158 +5,221 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'teacherpage/css/dashboard.css' %}">
+<style>
+    /* ✅ feature: 카드 클릭 효과 및 알림 점(dot) 스타일 결합 */
+    .course-card {
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    .course-card:hover {
+        border-color: #00c471;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 20px rgba(0, 196, 113, 0.08);
+    }
+    .msg-indicator {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        background: var(--soft-bg);
+        border-radius: 8px;
+        font-size: 16px;
+    }
+    .msg-indicator.muted { opacity: 0.4; }
+    .msg-indicator .dot {
+        position: absolute;
+        top: -2px; right: -2px;
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: #ff4d4f;
+        border: 2px solid var(--card);
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="profile-container surface">
 
-  <!-- 상단 프로필 -->
-  <div class="profile-header">
-    <div class="profile-info-group">
-      <img class="profile-avatar"
-           src="{% if target_user.profile_image %}
-                    {{ target_user.profile_image.url }}
-                {% else %}
-                    {% static 'images/default_thumbnail.png' %}
-                {% endif %}"
-           alt="프로필">
-      <div>
-        <h2 class="profile-name">{{ target_user.first_name|default:target_user.username }}</h2>
-        <p class="profile-username subtext">@{{ target_user.username }} · 강사</p>
-      </div>
-    </div>
-
-    <div class="header-actions">
-      <a class="btn-outline" href="{% url 'course:course_create' %}">강의 등록</a>
-    </div>
-  </div>
-
-    <div class="stat-grid">
-
-    <a href="{% url 'course:my_courses' %}" class="stat-box-link">
-        <div class="stat-box surface no-shadow">
-        <span class="stat-label">📚 내 강의</span>
-        <p class="stat-value">{{ total_courses|default:"0" }}개</p>
-        </div>
-    </a>
-
-    <a href="{% url 'teacherpage:students_all' %}" class="stat-box-link">
-        <div class="stat-box surface no-shadow">
-        <span class="stat-label">👥 전체 수강생(중복 제외)</span>
-        <p class="stat-value">{{ total_students|default:"0" }}명</p>
-        </div>
-    </a>
-
-    </div>
-
-  <!-- 강사 소개 -->
-  <div class="section-header">
-    <span class="section-title">강사 소개</span>
-    {% if request.user == target_user %}
-    {% endif %}
-  </div>
-
-  <div class="bio-box surface no-shadow">
-    <div id="bio-display">
-      {% if target_user.bio %}
-        <div class="bio-text">{{ target_user.bio }}</div>
-      {% else %}
-        <p class="bio-empty muted">강사 소개가 아직 없습니다. 수강생에게 소개를 남겨보세요!</p>
-      {% endif %}
-    </div>
-
-    {% if request.user == target_user %}
-    <form method="POST" action="{% url 'teacherpage:dashboard' %}">
-      {% csrf_token %}
-      <textarea name="bio" id="bio-input" class="bio-textarea" rows="5">{{ target_user.bio }}</textarea>
-
-      <div id="btn-group" class="btn-group">
-        <button type="submit" class="btn-save">저장하기</button>
-        <button type="button" class="btn-gray" id="bioCancelBtn">취소</button>
-      </div>
-    </form>
-    {% endif %}
-  </div>
-
-  <!-- 강의 관리 -->
-  <div class="section-header section-gap">
-    <span class="section-title">강의 관리</span>
-  </div>
-
-  <div class="course-list">
-    {% for course in my_courses %}
-      <div class="course-card">
-        <div class="course-left">
-          {% if course.thumbnail %}
-            <img class="thumb" src="{{ course.thumbnail.url }}" alt="썸네일">
-          {% else %}
-            <img class="thumb" src="{% static 'images/default_thumbnail.png' %}" alt="기본 썸네일">
-          {% endif %}
-
-          <div class="course-meta">
-            <p class="course-title">{{ course.title }}</p>
-            <div class="course-sub">
-              <span class="pill">가격: {{ course.price }}</span>
-              <span class="pill">수강생: {{ course.student_count|default:"0" }}명</span>
-              {% if course.video %}
-                <span class="pill">영상: 등록됨</span>
-              {% endif %}
-              <span class="pill">등록일: {{ course.created_at|date:"Y-m-d" }}</span>
+    <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div class="profile-info-group" style="display: flex; gap: 20px; align-items: center;">
+            <img class="profile-avatar"
+                 src="{% if target_user.profile_image %}{{ target_user.profile_image.url }}{% else %}{% static 'images/default_thumbnail.png' %}{% endif %}"
+                 alt="프로필"
+                 style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border);">
+            <div>
+                <h2 class="profile-name" style="margin: 0; font-size: 26px; font-weight: 800;">{{ target_user.first_name|default:target_user.username }}</h2>
+                <p class="profile-username subtext" style="margin-top: 4px;">@{{ target_user.username }} · 강사</p>
             </div>
-          </div>
         </div>
 
-        <div class="course-actions">
-          {% if course.unread_chat_count|default:0 > 0 %}
-            <span class="msg-indicator" title="새 메시지 있음">💬<span class="dot"></span></span>
-          {% else %}
-            <span class="msg-indicator muted" title="새 메시지 없음">💬</span>
-          {% endif %}
-
-          <a class="btn-sm" href="{% url 'teacherpage:course_students' course.id %}">수강생</a>
-          <a class="btn-sm" href="{% url 'course:course_update' course.id %}">수정</a>
-          <a class="btn-danger-sm" href="{% url 'teacherpage:course_delete' course.id %}">삭제</a>
+        <div class="header-actions">
+            <a class="btn-outline" href="{% url 'course:course_create' %}">강의 등록</a>
         </div>
-      </div>
-    {% empty %}
-      <div class="empty-box soft">
-        <p class="muted">아직 등록한 강의가 없습니다. 상단의 “강의 등록”으로 시작해보세요.</p>
-      </div>
-    {% endfor %}
-  </div>
+    </div>
 
-  <!-- 공통 액션(본인만) -->
-  {% if request.user == target_user %}
-  <div class="action-fixed">
-    <a href="{% url 'common:profile_edit' %}" class="btn-save">내 정보 수정</a>
-    <a href="{% url 'common:password_change' %}" class="btn-outline">비밀번호 변경</a>
-    <button type="button" class="btn-danger" id="deleteOpenBtn">회원탈퇴</button>
-  </div>
-  {% endif %}
+    <div class="stat-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 35px;">
+        <a href="{% url 'course:my_courses' %}" class="stat-box-link" style="text-decoration: none; color: inherit;">
+            <div class="stat-box surface no-shadow" style="padding: 20px; border: 1px solid var(--border); border-radius: 12px;">
+                <span class="stat-label" style="font-size: 13px; color: var(--muted); display: block; margin-bottom: 5px;">📚 내 강의</span>
+                <p class="stat-value" style="font-size: 18px; font-weight: 700; margin: 0;">{{ total_courses|default:"0" }}개</p>
+            </div>
+        </a>
+        <a href="{% url 'teacherpage:students_all' %}" class="stat-box-link" style="text-decoration: none; color: inherit;">
+            <div class="stat-box surface no-shadow" style="padding: 20px; border: 1px solid var(--border); border-radius: 12px;">
+                <span class="stat-label" style="font-size: 13px; color: var(--muted); display: block; margin-bottom: 5px;">👥 전체 수강생(중복 제외)</span>
+                <p class="stat-value" style="font-size: 18px; font-weight: 700; margin: 0;">{{ total_students|default:"0" }}명</p>
+            </div>
+        </a>
+    </div>
+
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+        <span class="section-title" style="font-size: 18px; font-weight: 700;">강사 소개</span>
+        {% if request.user == target_user %}
+            <button class="edit-trigger btn-ghost" id="bioEditBtn" onclick="showEditForm()" style="padding: 6px 12px; font-size: 13px; border-radius: 8px;">수정하기</button>
+        {% endif %}
+    </div>
+
+    <div class="bio-box surface no-shadow" style="padding: 25px; border-radius: 12px; border: 1px solid var(--border); min-height: 120px;">
+        <div id="bio-display">
+            {% if target_user.bio %}
+                <div class="bio-text" style="white-space: pre-wrap; line-height: 1.6;">{{ target_user.bio }}</div>
+            {% else %}
+                <p class="bio-empty muted" style="text-align:center;">강사 소개가 아직 없습니다. 수강생에게 소개를 남겨보세요!</p>
+            {% endif %}
+        </div>
+
+        {% if request.user == target_user %}
+        <form method="POST" action="{% url 'teacherpage:dashboard' %}" id="bio-form" style="display:none;">
+            {% csrf_token %}
+            <textarea name="bio" id="bio-input" class="bio-textarea" rows="5" style="width: 100%; border: 1px solid #00c471; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: var(--soft-bg); color: var(--text);">{{ target_user.bio }}</textarea>
+            
+            <div id="btn-group" class="btn-group" style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" class="btn-gray" onclick="hideEditForm()" style="background: #adb5bd; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;">취소</button>
+                <button type="submit" class="btn-save" style="background: #00c471; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;">저장하기</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+
+    <div class="section-header section-gap" style="margin-top: 40px; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+        <span class="section-title" style="font-size: 18px; font-weight: 700;">강의 관리</span>
+    </div>
+
+    <div class="course-list" style="display: flex; flex-direction: column; gap: 15px;">
+        {% for course in my_courses %}
+            <div class="course-card surface" data-href="{% url 'course:course_detail' course.id %}" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 16px; border: 1px solid var(--border);">
+                
+                <div class="course-left" style="display: flex; gap: 15px; align-items: center;">
+                    {% if course.thumbnail %}
+                        <img class="thumb" src="{{ course.thumbnail.url }}" alt="썸네일" style="width: 110px; height: 68px; border-radius: 8px; object-fit: cover;">
+                    {% else %}
+                        <img class="thumb" src="{% static 'images/default_thumbnail.png' %}" alt="기본 썸네일" style="width: 110px; height: 68px; border-radius: 8px; object-fit: cover;">
+                    {% endif %}
+
+                    <div class="course-meta">
+                        <p class="course-title" style="font-weight: bold; font-size: 16px; margin: 0 0 8px 0;">{{ course.title }}</p>
+                        <div class="course-sub" style="display: flex; gap: 8px; font-size: 12px; color: var(--muted); flex-wrap: wrap;">
+                            <span class="pill" style="background: var(--soft-bg); padding: 4px 10px; border-radius: 999px;">가격: {{ course.price }}</span>
+                            <span class="pill" style="background: var(--soft-bg); padding: 4px 10px; border-radius: 999px;">수강생: {{ course.student_count|default:"0" }}명</span>
+                            {% if course.video %}
+                                <span class="pill" style="background: var(--soft-bg); padding: 4px 10px; border-radius: 999px;">영상: 등록됨</span>
+                            {% endif %}
+                            <span class="pill" style="background: var(--soft-bg); padding: 4px 10px; border-radius: 999px;">등록일: {{ course.created_at|date:"Y-m-d" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-actions" style="display: flex; gap: 8px; align-items: center;">
+                    {% if course.unread_chat_count|default:0 > 0 %}
+                        <span class="msg-indicator" title="새 메시지 있음">💬<span class="dot"></span></span>
+                    {% else %}
+                        <span class="msg-indicator muted" title="새 메시지 없음">💬</span>
+                    {% endif %}
+
+                    <a class="btn-sm" href="{% url 'teacherpage:course_students' course.id %}" data-stop="1" style="padding: 8px 12px; border: 1px solid #00c471; color: #00c471; border-radius: 8px; text-decoration: none; font-weight: bold;">수강생</a>
+                    <a class="btn-sm" href="{% url 'course:course_update' course.id %}" data-stop="1" style="padding: 8px 12px; border: 1px solid #00c471; color: #00c471; border-radius: 8px; text-decoration: none; font-weight: bold;">수정</a>
+                    <a class="btn-danger-sm" href="{% url 'teacherpage:course_delete' course.id %}" data-stop="1" style="padding: 8px 12px; background: #ffe3e3; color: #fa5252; border-radius: 8px; text-decoration: none; font-weight: bold;">삭제</a>
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="empty-box soft" style="text-align: center; padding: 40px; color: var(--muted); border-radius: 12px;">
+                <p style="margin: 0;">아직 등록한 강의가 없습니다. 상단의 “강의 등록”으로 시작해보세요.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if request.user == target_user %}
+    <div class="action-fixed" style="margin-top: 40px; display: flex; gap: 10px; justify-content: flex-end;">
+        <a href="{% url 'common:profile_edit' %}" class="btn-save" style="padding: 10px 18px; background: #00c471; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">내 정보 수정</a>
+        <a href="{% url 'common:password_change' %}" class="btn-outline" style="padding: 10px 18px; border: 1px solid var(--navbar-bg); color: var(--navbar-bg); border-radius: 8px; text-decoration: none; font-weight: bold;">비밀번호 변경</a>
+        <button type="button" class="btn-danger" id="deleteOpenBtn" style="padding: 10px 18px; border: 1px solid #fa5252; color: #fa5252; background: none; border-radius: 8px; font-weight: bold; cursor: pointer;">회원탈퇴</button>
+    </div>
+    {% endif %}
 
 </div>
 
 {% if request.user == target_user %}
-<div id="deleteOverlay" class="confirm-overlay" aria-hidden="true">
-  <div class="confirm-modal surface">
-    <h3 class="confirm-title">정말 탈퇴하시겠어요?</h3>
-    <p class="confirm-desc muted">
-      탈퇴하면 계정 접근이 불가능해집니다.<br>
-      진행 중인 데이터가 삭제될 수 있습니다.
-    </p>
+<div id="deleteOverlay" class="confirm-overlay" aria-hidden="true" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+    <div class="confirm-modal surface" style="padding: 25px; border-radius: 14px; max-width: 400px; width: 100%;">
+        <h3 class="confirm-title" style="margin-top: 0;">정말 탈퇴하시겠어요?</h3>
+        <p class="confirm-desc muted" style="line-height: 1.6;">
+            탈퇴하면 계정 접근이 불가능해집니다.<br>
+            진행 중인 데이터가 삭제될 수 있습니다.
+        </p>
 
-    <form method="POST" action="{% url 'common:delete_account' %}">
-      {% csrf_token %}
-      <div class="confirm-actions">
-        <button type="button" class="btn-ghost" id="deleteCancelBtn">취소</button>
-        <button type="submit" class="btn-danger-solid">탈퇴하기</button>
-      </div>
-    </form>
-  </div>
+        <form method="POST" action="{% url 'common:delete_account' %}">
+            {% csrf_token %}
+            <div class="confirm-actions" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn-ghost" id="deleteCancelBtn" onclick="document.getElementById('deleteOverlay').style.display='none'" style="padding: 8px 14px; border: 1px solid var(--border); background: var(--soft-bg); border-radius: 8px; cursor: pointer; color: var(--text); font-weight: bold;">취소</button>
+                <button type="submit" class="btn-danger-solid" style="padding: 8px 14px; background: #fa5252; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">탈퇴하기</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'teacherpage/js/dashboard.js' %}"></script>
+<script>
+    // 1. 자기소개 폼 전환 스크립트
+    function showEditForm() {
+        document.getElementById('bio-display').style.display = 'none';
+        document.getElementById('bioEditBtn').style.display = 'none';
+        document.getElementById('bio-form').style.display = 'block';
+        document.getElementById('bio-input').focus();
+    }
+
+    function hideEditForm() {
+        document.getElementById('bio-display').style.display = 'block';
+        document.getElementById('bioEditBtn').style.display = 'inline-block';
+        document.getElementById('bio-form').style.display = 'none';
+    }
+
+    // 2. 강의 카드 클릭 시 이동 로직
+    document.querySelectorAll('.course-card').forEach(function(card){
+        card.addEventListener('click', function(){
+            const href = card.getAttribute('data-href');
+            if (href) window.location.href = href;
+        });
+    });
+
+    // 3. 버튼 클릭 시 카드 링크 이동 방지 (이벤트 버블링 차단)
+    document.querySelectorAll('[data-stop="1"]').forEach(function(el){
+        el.addEventListener('click', function(e){
+            e.stopPropagation();
+        });
+    });
+
+    // 4. 회원탈퇴 모달 제어
+    const delOpen = document.getElementById('deleteOpenBtn');
+    if(delOpen) {
+        delOpen.addEventListener('click', () => {
+            document.getElementById('deleteOverlay').style.display = 'flex';
+        });
+    }
+</script>
 {% endblock %}

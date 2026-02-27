@@ -15,11 +15,13 @@
     <div class="nav-right">
       {% if user.is_anonymous %}
         <nav class="nav-menu">
+          <a href="{% url 'course:course_list' %}">강의 목록</a>
           <a href="{% url 'common:signup' %}">회원가입</a>
           <a href="{% url 'common:login' %}">로그인</a>
         </nav>
       {% else %}
         <nav class="nav-menu">
+          <a href="{% url 'course:course_list' %}">강의 목록</a>
           <a href="{% url 'common:mypage' %}">내 페이지</a>
           <form action="{% url 'common:logout' %}" method="post" class="logout-form">
             {% csrf_token %}
