@@ -34,13 +34,11 @@
       {% if course_list %}
         {% for course in course_list %}
           <div class="col">
-            <!-- ✅ h-100 제거 + course-card 추가 -->
             <div class="card shadow-sm border-0 course-card"
                  style="cursor: pointer;"
                  onclick="location.href='/course/{{ course.id }}/'">
 
               {% if course.thumbnail %}
-                <!-- ✅ course-card-img 추가 -->
                 <img src="{{ course.thumbnail.url }}" class="card-img-top course-card-img">
               {% else %}
                 <img src="{% static 'images/default_thumbnail.png' %}" class="card-img-top course-card-img" alt="기본 썸네일">
@@ -97,6 +95,7 @@
       </div>
     {% endif %}
 
+  {# --- 메인 홈 화면 (공지사항 & 최근게시글) --- #}
   {% else %}
 
     <div class="row g-4">

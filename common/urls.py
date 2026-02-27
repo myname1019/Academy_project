@@ -2,6 +2,7 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from common import views 
 
+# 💡 에러 방지: forms.py에서 우리가 만든 커스텀 폼들을 꼭 가져와야 합니다!
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 
 app_name = 'common'
@@ -21,7 +22,11 @@ urlpatterns = [
         ),
         name='password_change'
     ),
+    
+    # ===== 여기서부터 another 브랜치의 최신 기능들입니다 =====
+    
     path('find_username/', views.find_username, name='find_username'), # 아이디 찾기 페이지 연결
+    
     # 1. 이메일 입력 화면
     path('password_reset/', auth_views.PasswordResetView.as_view( # 비밀번호 초기화 페이지 연결 (로그인하지 않은 상태에서 접근)
         template_name='common/password_reset.html',

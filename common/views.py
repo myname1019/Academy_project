@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout, get_user_model
+# 💡 에러 방지: get_user_model 을 꼭 가져와야 아래서 쓸 수 있습니다!
+from django.contrib.auth import authenticate, login, logout, get_user_model 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
@@ -9,6 +10,9 @@ from common.forms import UserForm
 from .models import Student, Teacher, CustomUser
 from review.models import Review   # ⚠ review 앱 이름 확인 (review or reviews)
 from .forms import ProfileUpdateForm 
+
+# 💡 아이디 찾기 등에서 쓸 User 모델을 미리 세팅해 둡니다.
+User = get_user_model()
 
 # ✅ 회원가입
 def signup(request):
@@ -84,6 +88,7 @@ def profile_view(request, username):
 
     return render(request, "studentpage/dashboard.html", context)
 
+
 @login_required
 @require_POST
 def delete_account(request):
@@ -121,12 +126,13 @@ def profile_edit(request):
         "form": form
     })
 
-User = get_user_model()
+# ===== 여기서부터 another 브랜치의 아이디 찾기 기능입니다 =====
 
 def find_username(request): # 이메일로 아이디 찾기
     if request.method == 'POST':
         email = request.POST.get('email')
         users = User.objects.filter(email=email)
+        
         if users.exists():
             user = users.first()
             username = user.username
