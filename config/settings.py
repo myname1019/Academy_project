@@ -9,14 +9,13 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-import os
+
 from pathlib import Path
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -47,7 +46,16 @@ INSTALLED_APPS = [
     'review.apps.ReviewConfig',
     "channels",
     "chat",
+
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.naver",
 ]
+
+SITE_ID = 2
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -57,6 +65,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "allauth.account.middleware.AccountMiddleware",
+    'common.middleware.RoleRequiredMiddleware',
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -174,3 +185,13 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # 3. (선택) 유저가 인터넷 브라우저 창(크롬 등)을 완전히 닫으면 즉시 로그아웃
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+AUTH_USER_MODEL = 'common.CustomUser'
+SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True

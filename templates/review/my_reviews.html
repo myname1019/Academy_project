@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}내 수강평{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'review/css/my_reviews.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="review-container">
+
+  <h2 class="review-title">내 수강평</h2>
+
+  <div class="review-summary">
+    총 {{ review_count }}개
+    {% if avg_rating %} · 평균 ⭐ {{ avg_rating|floatformat:1 }}{% endif %}
+  </div>
+
+  {% if reviews %}
+    <div class="review-list">
+      {% for r in reviews %}
+        <div class="review-card">
+
+          <div class="review-top">
+            <div>
+              <div class="course-title">{{ r.course.title }}</div>
+              <div class="review-meta">
+                ⭐ {{ r.rating }}
+                <span class="divider">·</span>
+                {{ r.created_at|date:"Y.m.d" }}
+              </div>
+            </div>
+
+            <div class="review-actions">
+              <a class="btn-ghost" href="{% url 'course:course_detail' r.course.id %}">강의 보기</a>
+              <a class="btn-primary" href="{% url 'review:review_update' r.id %}">수정</a>
+              <form method="post" action="{% url 'review:review_delete' r.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger"
+                        onclick="return confirm('리뷰를 삭제하시겠습니까?');">
+                  삭제
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {% if r.content %}
+            <div class="review-content is-hidden">
+              {{ r.content|linebreaksbr }}
+            </div>
+            <button type="button"
+                    class="toggle-content"
+                    onclick="
+                      const content = this.previousElementSibling;
+                      content.classList.toggle('is-hidden');
+                      this.textContent = content.classList.contains('is-hidden') ? '내용 보기' : '접기';
+                    ">
+              내용 보기
+            </button>
+          {% endif %}
+
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a class="page-btn" href="?page={{ page_obj.previous_page_number }}">이전</a>
+        {% endif %}
+
+        <span class="page-info">
+          {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+          <a class="page-btn" href="?page={{ page_obj.next_page_number }}">다음</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div class="review-empty">아직 작성한 수강평이 없습니다.</div>
+  {% endif %}
+
+</div>
+{% endblock %} 

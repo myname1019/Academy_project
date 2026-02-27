@@ -1,233 +1,59 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}1:1 대화{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'chat/css/dm.css' %}">
+  
+  <style>
+    .hint {
+      margin-top: 10px;
+      color: #adb5bd;
+      font-size: 12px;
+      text-align: right;
+    }
+
+    /* 날짜 구분선 */
+    .date-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .date-divider::before,
+    .date-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e9ecef;
+    }
+
+    .date-chip {
+      font-size: 12px;
+      font-weight: 800;
+      color: #868e96;
+      background: #fff;
+      border: 1px solid #e9ecef;
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* 읽음 표시 */
+    .read-receipt {
+      font-size: 12px;
+      font-weight: 800;
+      color: #868e96;
+    }
+    .read-receipt.read {
+      color: #00c471;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-
-<style>
-  /* 이 페이지에서만 메시지 알림 박스 숨김 */
-  .messages-container { display: none !important; }
-
-  body {
-    background: #f8f9fa;
-    font-family: 'Pretendard', -apple-system, sans-serif;
-    color: #212529;
-  }
-
-  .dm-wrap{
-    max-width: 950px;
-    margin: 40px auto;
-    padding: 0 16px;
-  }
-
-  .dm-card{
-    background:#fff;
-    border-radius: 18px;
-    box-shadow: 0 10px 26px rgba(0,0,0,0.06);
-    border: 1px solid #f1f3f5;
-    overflow: hidden;
-  }
-
-  .dm-header{
-    padding: 18px 20px;
-    border-bottom: 1px solid #f1f3f5;
-    display:flex;
-    align-items:flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    background: linear-gradient(180deg, rgba(0,196,113,0.06), rgba(0,196,113,0));
-  }
-
-  .dm-title{
-    margin:0;
-    font-size: 18px;
-    font-weight: 900;
-  }
-
-  .dm-sub{
-    margin: 6px 0 0 0;
-    color:#868e96;
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .dm-actions{
-    display:flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .btn-outline{
-    background: white;
-    color: #00c471;
-    border: 1px solid #00c471;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 800;
-    text-decoration:none;
-    display:inline-block;
-    cursor:pointer;
-    font-size: 13px;
-  }
-  .btn-gray{
-    background: #adb5bd;
-    color: #fff;
-    border: 1px solid #adb5bd;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-weight: 800;
-    text-decoration:none;
-    display:inline-block;
-    cursor:pointer;
-    font-size: 13px;
-  }
-
-  .dm-body{
-    padding: 18px 18px 0 18px;
-  }
-
-  .chat-box{
-    height: 420px;
-    overflow: auto;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid #f1f3f5;
-    background: #f8f9fa;
-  }
-
-  .msg-row{
-    display:flex;
-    margin-bottom: 10px;
-  }
-  .msg-row.me{
-    justify-content:flex-end;
-  }
-  .msg-row.other{
-    justify-content:flex-start;
-  }
-
-  .bubble{
-    max-width: 70%;
-    padding: 10px 12px;
-    border-radius: 16px;
-    line-height: 1.45;
-    font-size: 14px;
-    white-space: pre-wrap;
-    word-break: break-word;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.05);
-  }
-
-  .bubble.me{
-    background: #00c471;
-    color: #fff;
-    border-bottom-right-radius: 6px;
-  }
-
-  .bubble.other{
-    background: #fff;
-    color: #212529;
-    border: 1px solid #eef1f4;
-    border-bottom-left-radius: 6px;
-  }
-
-  .meta{
-    margin-top: 6px;
-    font-size: 12px;
-    color: #868e96;
-    display:flex;
-    gap: 8px;
-    align-items:center;
-  }
-  .meta.me{
-    justify-content:flex-end;
-  }
-
-  .name-badge{
-    font-weight: 800;
-  }
-
-  .dm-footer{
-    padding: 14px 18px 18px 18px;
-    border-top: 1px solid #f1f3f5;
-    background: #fff;
-  }
-
-  .input-row{
-    display:flex;
-    gap: 10px;
-    align-items:center;
-  }
-
-  .input{
-    flex: 1;
-    height: 44px;
-    border-radius: 12px;
-    border: 1px solid #e9ecef;
-    padding: 0 14px;
-    outline: none;
-    font-size: 14px;
-    background: #fff;
-  }
-  .input:focus{
-    border-color: #00c471;
-    box-shadow: 0 0 0 3px rgba(0,196,113,0.12);
-  }
-
-  .send{
-    height: 44px;
-    padding: 0 16px;
-    border-radius: 12px;
-    border: 1px solid #00c471;
-    background: #00c471;
-    color: #fff;
-    font-weight: 900;
-    cursor:pointer;
-  }
-
-  .hint{
-    margin-top: 10px;
-    color:#adb5bd;
-    font-size: 12px;
-    text-align: right;
-  }
-
-  /* 날짜 구분선 */
-.date-divider{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 14px 0;
-}
-
-.date-divider::before,
-.date-divider::after{
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: #e9ecef;
-}
-
-.date-chip{
-  font-size: 12px;
-  font-weight: 800;
-  color: #868e96;
-  background: #fff;
-  border: 1px solid #e9ecef;
-  padding: 6px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
-/* 읽음 표시 */
-.read-receipt{
-  font-size: 12px;
-  font-weight: 800;
-  color: #868e96;
-}
-.read-receipt.read{
-  color: #00c471;
-}
-</style>
-
 <div class="dm-wrap">
   <div class="dm-card">
     <div class="dm-header">
@@ -237,59 +63,58 @@
       </div>
 
       <div class="dm-actions">
-        {# 강사/학생에 따라 돌아갈 곳만 다르게 하고 싶으면 여기 링크만 바꾸면 됨 #}
         <a class="btn-outline" href="javascript:history.back()">이전</a>
         <a class="btn-gray" href="{% url 'chat:inbox' %}">대화함</a>
       </div>
     </div>
 
-  <div class="dm-body">
-  <div id="chatBox" class="chat-box">
-    {% for m in messages %}
+    <div class="dm-body">
+      <div id="chatBox" class="chat-box">
+        {% for m in messages %}
 
-      {# 날짜가 바뀌는 순간에만 구분선 출력 #}
-      {% ifchanged m.created_at|date:"Y-m-d" %}
-        <div class="date-divider">
-          <span class="date-chip">{{ m.created_at|date:"Y-m-d" }}</span>
-        </div>
-      {% endifchanged %}
-
-      {% if m.sender_id == user.id %}
-        <div class="msg-row me">
-          <div>
-            <div class="bubble me">{{ m.content }}</div>
-
-            <div class="meta me">
-              <span>{{ m.created_at|date:"H:i" }}</span>
-
-              {# 읽음 체크: 내 메시지에만 표시 #}
-              {% if m.is_read %}
-                <span class="read-receipt read">읽음</span>
-              {% else %}
-                <span class="read-receipt">안읽음</span>
-              {% endif %}
+          {# 날짜가 바뀌는 순간에만 구분선 출력 #}
+          {% ifchanged m.created_at|date:"Y-m-d" %}
+            <div class="date-divider">
+              <span class="date-chip">{{ m.created_at|date:"Y-m-d" }}</span>
             </div>
-          </div>
-        </div>
-      {% else %}
-        <div class="msg-row other">
-          <div>
-            <div class="bubble other">{{ m.content }}</div>
+          {% endifchanged %}
 
-            <div class="meta">
-              <span>{{ m.created_at|date:"H:i" }}</span>
+          {% if m.sender_id == user.id %}
+            <div class="msg-row me">
+              <div>
+                <div class="bubble me">{{ m.content }}</div>
+
+                <div class="meta me">
+                  <span>{{ m.created_at|date:"H:i" }}</span>
+
+                  {# 읽음 체크: 내 메시지에만 표시 #}
+                  {% if m.is_read %}
+                    <span class="read-receipt read">읽음</span>
+                  {% else %}
+                    <span class="read-receipt">안읽음</span>
+                  {% endif %}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      {% endif %}
+          {% else %}
+            <div class="msg-row other">
+              <div>
+                <div class="bubble other">{{ m.content }}</div>
 
-    {% empty %}
-      <div style="padding:18px; color:#868e96; text-align:center;">
-        아직 메시지가 없습니다. 첫 문의를 남겨보세요.
+                <div class="meta">
+                  <span>{{ m.created_at|date:"H:i" }}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+        {% empty %}
+          <div class="empty-msg" style="padding:18px; color:#868e96; text-align:center;">
+            아직 메시지가 없습니다. 첫 문의를 남겨보세요.
+          </div>
+        {% endfor %}
       </div>
-    {% endfor %}
-  </div>
-</div>
+    </div>
 
     <div class="dm-footer">
       <form method="POST" action="">
@@ -303,13 +128,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
-<script>
-  // 채팅 들어오면 자동으로 맨 아래로 스크롤
-  (function() {
-    const box = document.getElementById("chatBox");
-    if (box) box.scrollTop = box.scrollHeight;
-  })();
-</script>
-
+{% block script %}
+  <script src="{% static 'chat/js/dm.js' %}"></script>
 {% endblock %}
