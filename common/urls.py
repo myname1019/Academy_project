@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from common import views 
 
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
+from django.urls import path, include
 
 app_name = 'common'
 urlpatterns = [
@@ -46,4 +47,9 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
         template_name='common/password_reset_complete.html'
     ), name='password_reset_complete'),
+
+    path('login/', auth_views.LoginView.as_view(template_name='common/login.html'), name='login'),
+    path('accounts/', include('allauth.urls')),  # 소셜 로그인 URL 포함
+
+    path('social-signup-role/', views.social_signup_role, name='social_signup_role'),
 ]

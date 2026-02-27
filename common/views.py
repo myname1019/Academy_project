@@ -141,3 +141,28 @@ def find_username(request): # 이메일로 아이디 찾기
             
     # GET 요청일 때 (처음 페이지에 접속했을 때)
     return render(request, 'common/find_username.html')
+
+@login_required
+def social_signup_role(request):
+    # 이미 프로필이 있는 유저가 접근하면 메인으로 튕겨냄
+    if Student.objects.filter(user=request.user).exists() or Teacher.objects.filter(user=request.user).exists():
+        return redirect('/')
+
+    if request.method == 'POST':
+        role = request.POST.get('role')
+        user = request.user
+        
+        # 1. CustomUser 모델의 role 업데이트
+        user.role = role
+        user.save()
+
+        # 2. 역할별 프로필 생성 (핵심!)
+        if role == 'student':
+            Student.objects.get_or_create(user=user)
+        elif role == 'teacher':
+            Teacher.objects.get_or_create(user=user)
+            
+        messages.success(request, f"{user.get_role_display()}님, 환영합니다!")
+        return redirect('/') # 이제 메인으로 이동
+
+    return render(request, 'common/social_signup.html') # 만들어두신 템플릿
