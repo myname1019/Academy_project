@@ -38,15 +38,14 @@
           {# 학생이 먼저 메시지를 보낸 경우에만 강사에게 1:1 버튼 표시 #}
           {% if s.has_chat %}
             <a class="btn-sm"
-               href="{% url 'chat:dm_room' course.id s.id %}">
-              1:1 대화
-            </a>
+              href="{% url 'chat:dm_room' course.id s.id %}">
+            1:1 대화
+          </a>
 
-            {% if s.unread_count|default:0 > 0 %}
-              <span class="badge-unread" title="안읽은 메시지">
-                {{ s.unread_count }}
-              </span>
-            {% endif %}
+          <span class="badge-unread js-unread-badge"
+            data-student-id="{{ s.id }}"
+            title="안읽은 메시지"
+            style="display:none;"></span>
           {% else %}
             <span class="pill pill-muted">문의 없음</span>
           {% endif %}
@@ -65,5 +64,8 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+  console.log("extra_js block rendered");
+</script>
 <script src="{% static 'teacherpage/js/course_students.js' %}"></script>
 {% endblock %}

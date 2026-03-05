@@ -21,16 +21,17 @@
         </div>
 
         <div class="chat-card">
-            {% if unread_count > 0 %}
-                <span class="chat-dot"></span>
-            {% endif %}
+
+            <span id="dmDot" class="chat-dot" style="display:none;"></span>
 
             <a href="{% url 'chat:inbox' %}" class="chat-link">
                 <div class="chat-card-inner">
                     <h4>💬 1:1 대화</h4>
                 </div>
             </a>
+
         </div>
+
     </div> 
 
     <div class="stat-grid">
@@ -145,6 +146,44 @@
     </div>
 </div>
 {% endif %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const dot = document.getElementById("dmDot");
+        if (!dot) return;
+
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsUrl = `${wsScheme}://${window.location.host}/ws/notify/`;
+
+        const socket = new WebSocket(wsUrl);
+
+        socket.onmessage = (e) => {
+
+            let payload;
+
+            try {
+                payload = JSON.parse(e.data);
+            } catch {
+            return;
+            }
+
+            if (payload.event !== "unread_count") return;
+
+            const unread = payload.data.unread_count;
+
+            if (unread > 0) {
+                dot.style.display = "block";
+            } else {
+                dot.style.display = "none";
+            }
+        };
+
+        socket.onerror = () => {
+            console.log("notify socket error");
+        };
+
+    });
+</script>
 {% endblock %}
 
 {% block extra_js %}

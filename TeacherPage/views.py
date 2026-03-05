@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, Q, Exists, OuterRef, Subquery, Value, IntegerField
 from django.db.models.functions import Coalesce
-
+from django.http import JsonResponse
 from course.models import Course
 from .forms import TeacherCourseForm
 from common.permissions import is_teacher
@@ -22,7 +22,7 @@ def teacher_dashboard(request):
             unread_chat_count=Count(
                 "conversations__messages",
                 filter=Q(conversations__messages__is_read=False)
-                       & ~Q(conversations__messages__sender=request.user),
+                    & ~Q(conversations__messages__sender=request.user),
                 distinct=True,
             )
         )
@@ -237,3 +237,29 @@ def students_all(request):
         "courses_by_student": courses_by_student,
     }
     return render(request, "teacherpage/students_all.html", context)
+
+@login_required
+def course_unread_counts(request, course_id):
+    """
+    강사 페이지 실시간 뱃지 갱신용:
+    특정 강의(course_id)에서 학생별 '안읽은 메시지 개수'를 반환한다.
+    """
+    # 강사 본인 강의인지 확인 (보안)
+    course = Course.objects.filter(id=course_id, teacher=request.user).first()
+    if course is None:
+        return JsonResponse({"counts": {}}, status=403)
+
+    qs = (
+        Message.objects
+        .filter(
+            conversation__course_id=course_id,
+            conversation__teacher_id=request.user.id,
+            is_read=False,
+        )
+        .exclude(sender_id=request.user.id)
+        .values("conversation__student_id")
+        .annotate(cnt=Count("id"))
+    )
+
+    counts = {str(row["conversation__student_id"]): row["cnt"] for row in qs}
+    return JsonResponse({"counts": counts})

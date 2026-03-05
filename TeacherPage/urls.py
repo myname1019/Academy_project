@@ -13,5 +13,6 @@ urlpatterns = [
 
     # 수강생 목록(강사 전용)
     path("course/<int:course_id>/students/", views.course_students, name="course_students"),
+    path("course/<int:course_id>/unread-counts/", views.course_unread_counts, name="course_unread_counts"),
     path("students/", views.students_all, name="students_all"),
 ]
