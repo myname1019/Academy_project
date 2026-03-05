@@ -89,14 +89,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+load_dotenv()
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'academy_db',
+        'USER': os.environ.get('DB_USER'),         
+        'PASSWORD': os.environ.get('DB_PASSWORD'), 
+        'HOST': os.environ.get('DB_MASTER_HOST'),
+        'PORT': '3306',
+    },
+    'replica': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'academy_db',
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_SLAVE_HOST'),
+        'PORT': '3306',
     }
 }
 
@@ -134,8 +147,8 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-
 import os
+from dotenv import load_dotenv
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -195,3 +208,4 @@ AUTH_USER_MODEL = 'common.CustomUser'
 SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
