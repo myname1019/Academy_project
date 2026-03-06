@@ -7,6 +7,66 @@
     <title>{% block title %}강의 관리 시스템{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'base/css/base.css' %}">
     {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* 🔔 카톡 스타일 알림창 애니메이션 및 디자인 */
+        #msg-toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-left: 6px solid #00c471;
+            z-index: 10000;
+            padding: 16px;
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            cursor: pointer; /* 클릭 가능 표시 */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(100px); /* 처음에 아래에 숨겨짐 */
+            opacity: 0;
+        }
+
+        #msg-toast.show {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .toast-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #00c471;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toast-close {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #adb5bd;
+            font-size: 18px;
+            padding: 0 4px;
+        }
+
+        .toast-body {
+            font-size: 13.5px;
+            color: #495057;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,7 +97,6 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- 🌙 다크모드 버튼 -->
             <button type="button" class="theme-toggle" id="themeToggle" aria-label="다크모드 전환">🌙</button>
         </nav>
     </header>
@@ -61,33 +120,108 @@
         <p>&copy; 2026 My Academy | Course Management System</p>
     </footer>
 
+    <div id="msg-toast" onclick="goToDashboard()">
+        <div class="toast-header">
+            <span class="toast-title">📩 새 메시지 알림</span>
+            <button class="toast-close" onclick="event.stopPropagation(); closeToast();">×</button>
+        </div>
+        <div class="toast-body" id="toast-content">
+            수강생으로부터 새로운 메시지가 도착했습니다.
+        </div>
+    </div>
+
     {% block extra_js %}{% endblock %}
 
-    <!-- ✅ 다크모드 토글 스크립트 -->
     <script>
-      (function () {
-        const key = "theme";
-        const btn = document.getElementById("themeToggle");
+        /* 1. 다크모드 로직 */
+        (function () {
+            const key = "theme";
+            const btn = document.getElementById("themeToggle");
+            const saved = localStorage.getItem(key);
+            const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-        const saved = localStorage.getItem(key);
-        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (saved === "dark" || (!saved && prefersDark)) {
+                document.body.classList.add("dark");
+                if (btn) btn.textContent = "☀️";
+            } else {
+                if (btn) btn.textContent = "🌙";
+            }
 
-        if (saved === "dark" || (!saved && prefersDark)) {
-          document.body.classList.add("dark");
-          if (btn) btn.textContent = "☀️";
-        } else {
-          if (btn) btn.textContent = "🌙";
+            if (btn) {
+                btn.addEventListener("click", () => {
+                    document.body.classList.toggle("dark");
+                    const isDark = document.body.classList.contains("dark");
+                    localStorage.setItem(key, isDark ? "dark" : "light");
+                    btn.textContent = isDark ? "☀️" : "🌙";
+                });
+            }
+        })();
+
+        /* 2. 실시간 메시지 알림 로직 (강사 로그인 시에만 작동) */
+        {% if user.is_authenticated and user.role == 'teacher' %}
+        let lastUnreadCount = 0;
+        let isFirstLoad = true;
+
+        function checkNewMessages() {
+            // 현재 페이지가 대시보드가 아니더라도 대시보드 URL을 통해 데이터를 가져옵니다.
+            // URL은 질문자님의 프로젝트 구조에 맞게 수정이 필요할 수 있습니다.
+            fetch("{% url 'teacherpage:dashboard' %}") 
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // 대시보드 내의 빨간 점(.dot) 개수를 세어 읽지 않은 메시지 파악
+                    const currentCount = doc.querySelectorAll('.dot').length;
+                    
+                    // 첫 로드 시에는 개수만 저장하고 알림은 띄우지 않음
+                    if (isFirstLoad) {
+                        lastUnreadCount = currentCount;
+                        isFirstLoad = false;
+                        return;
+                    }
+
+                    // 이전보다 읽지 않은 메시지(빨간 점)가 늘어났을 때만 알림 발생
+                    if (currentCount > lastUnreadCount) {
+                        showToast("수강생이 메시지를 보냈습니다. 대시보드에서 확인하세요!");
+                        
+                        // 현재 대시보드 페이지를 보고 있다면 목록만 실시간 업데이트
+                        const courseList = document.querySelector('.course-list');
+                        const newCourseList = doc.querySelector('.course-list');
+                        if (courseList && newCourseList) {
+                            courseList.innerHTML = newCourseList.innerHTML;
+                        }
+                    }
+                    lastUnreadCount = currentCount;
+                })
+                .catch(err => console.error("메시지 체크 오류:", err));
         }
 
-        if (btn) {
-          btn.addEventListener("click", () => {
-            document.body.classList.toggle("dark");
-            const isDark = document.body.classList.contains("dark");
-            localStorage.setItem(key, isDark ? "dark" : "light");
-            btn.textContent = isDark ? "☀️" : "🌙";
-          });
+        function showToast(message) {
+            const toast = document.getElementById('msg-toast');
+            document.getElementById('toast-content').innerText = message;
+            
+            toast.style.display = 'block';
+            // 애니메이션을 위해 아주 짧은 지연 후 클래스 추가
+            setTimeout(() => { toast.classList.add('show'); }, 10);
+            
+            // 5초 후 자동 닫기
+            setTimeout(closeToast, 5000);
         }
-      })();
+
+        function closeToast() {
+            const toast = document.getElementById('msg-toast');
+            toast.classList.remove('show');
+            setTimeout(() => { toast.style.display = 'none'; }, 300);
+        }
+
+        function goToDashboard() {
+            location.href = "{% url 'teacherpage:dashboard' %}";
+        }
+
+        // 10초마다 체크 (서버 부하를 줄이기 위해 10초로 설정, 필요시 조절 가능)
+        setInterval(checkNewMessages, 10000);
+        {% endif %}
     </script>
 </body>
 </html>
