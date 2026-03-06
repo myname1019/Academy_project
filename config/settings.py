@@ -153,9 +153,25 @@ AUTH_USER_MODEL = 'common.CustomUser'
 
 ASGI_APPLICATION = "config.asgi.application"
 
+#서버 등록시 아이피 주소 변경 필수
+# Channels (Redis)
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    }
+}
+
+# Django Cache (Redis) - presence에서 사용
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # DB 1 사용(채널레이어와 분리)
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 from django.contrib.messages import constants as messages_constants

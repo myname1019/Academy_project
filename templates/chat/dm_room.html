@@ -5,63 +5,16 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'chat/css/dm.css' %}">
-  
-  <style>
-    .hint {
-      margin-top: 10px;
-      color: #adb5bd;
-      font-size: 12px;
-      text-align: right;
-    }
-
-    /* 날짜 구분선 */
-    .date-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 14px 0;
-    }
-
-    .date-divider::before,
-    .date-divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #e9ecef;
-    }
-
-    .date-chip {
-      font-size: 12px;
-      font-weight: 800;
-      color: #868e96;
-      background: #fff;
-      border: 1px solid #e9ecef;
-      padding: 6px 10px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    /* 읽음 표시 */
-    .read-receipt {
-      font-size: 12px;
-      font-weight: 800;
-      color: #868e96;
-    }
-    .read-receipt.read {
-      color: #00c471;
-    }
-  </style>
 {% endblock %}
 
 {% block content %}
-<div class="dm-wrap">
+<div class="dm-wrap" id="dmRoot" data-my-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}">
   <div class="dm-card">
     <div class="dm-header">
       <div>
         <h2 class="dm-title">{{ course.title }} · 1:1 대화</h2>
         <p class="dm-sub">강사: {{ teacher.username }} / 수강생: {{ student.username }}</p>
       </div>
-
       <div class="dm-actions">
         <a class="btn-outline" href="javascript:history.back()">이전</a>
         <a class="btn-gray" href="{% url 'chat:inbox' %}">대화함</a>
@@ -71,28 +24,15 @@
     <div class="dm-body">
       <div id="chatBox" class="chat-box">
         {% for m in messages %}
-
-          {# 날짜가 바뀌는 순간에만 구분선 출력 #}
-          {% ifchanged m.created_at|date:"Y-m-d" %}
-            <div class="date-divider">
-              <span class="date-chip">{{ m.created_at|date:"Y-m-d" }}</span>
-            </div>
-          {% endifchanged %}
-
           {% if m.sender_id == user.id %}
-            <div class="msg-row me">
+            <div class="msg-row me" data-message-id="{{ m.id }}">
               <div>
                 <div class="bubble me">{{ m.content }}</div>
-
                 <div class="meta me">
                   <span>{{ m.created_at|date:"H:i" }}</span>
-
-                  {# 읽음 체크: 내 메시지에만 표시 #}
-                  {% if m.is_read %}
-                    <span class="read-receipt read">읽음</span>
-                  {% else %}
-                    <span class="read-receipt">안읽음</span>
-                  {% endif %}
+                  <span class="read-receipt {% if m.is_read %}read{% endif %}">
+                    {% if m.is_read %}읽음{% else %}안읽음{% endif %}
+                  </span>
                 </div>
               </div>
             </div>
@@ -100,14 +40,12 @@
             <div class="msg-row other">
               <div>
                 <div class="bubble other">{{ m.content }}</div>
-
                 <div class="meta">
                   <span>{{ m.created_at|date:"H:i" }}</span>
                 </div>
               </div>
             </div>
           {% endif %}
-
         {% empty %}
           <div class="empty-msg" style="padding:18px; color:#868e96; text-align:center;">
             아직 메시지가 없습니다. 첫 문의를 남겨보세요.
@@ -124,238 +62,11 @@
           <button class="send" type="submit">전송</button>
         </div>
       </form>
-      <div class="hint">Enter로 전송됩니다. (모바일은 전송 버튼)</div>
     </div>
   </div>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // HTML 특수문자 이스케이프 함수 (XSS 방지용)
-  function escapeHTML(str) {
-    return String(str)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  // DOM 준비
-  const chatBox = document.getElementById("chatBox");
-  const chatForm = document.getElementById("chatForm");
-  const chatInput = document.getElementById("chatInput");
-
-  // 요소 못 찾으면 조용히 종료(콘솔 확인)
-  if (!chatBox || !chatForm || !chatInput) {
-    console.log("chatBox/chatForm/chatInput 중 일부를 못 찾았어요. dm_room.html의 id를 확인하세요.");
-    return;
-  }
-
-  // 현재 로그인 유저 id, 대화방 id (Django 템플릿 변수)
-  const myUserId = Number("{{ user.id }}");
-  const conversationId = Number("{{ conversation.id }}");
-
-  // ws / wss 자동 선택
-  const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-  const wsUrl = `${wsScheme}://${window.location.host}/ws/chat/room/${conversationId}/`;
-
-  // ====== UI 함수들 (기존 유지) ======
-
-  // 메시지 UI 추가 함수
-  function appendMessage({ sender_id, content, created_at, is_read }) {
-    const isMe = Number(sender_id) === myUserId;
-
-    // 시간 표시 (ISO -> HH:MM 느낌으로 간단히)
-    let timeText = "";
-    if (created_at && created_at.includes("T")) {
-      timeText = created_at.split("T")[1].slice(0, 5);
-    }
-
-    const safeContent = escapeHTML(content);
-
-    const wrapper = document.createElement("div");
-    wrapper.className = isMe ? "msg-row me" : "msg-row other";
-
-    if (isMe) {
-      const readText = is_read ? "읽음" : "안읽음";
-      const readClass = is_read ? "read-receipt read" : "read-receipt";
-
-      wrapper.innerHTML = `
-        <div>
-          <div class="bubble me">${safeContent}</div>
-          <div class="meta me">
-            <span>${escapeHTML(timeText)}</span>
-            <span class="${readClass}">${readText}</span>
-          </div>
-        </div>
-      `;
-    } else {
-      wrapper.innerHTML = `
-        <div>
-          <div class="bubble other">${safeContent}</div>
-          <div class="meta">
-            <span>${escapeHTML(timeText)}</span>
-          </div>
-        </div>
-      `;
-    }
-
-    chatBox.appendChild(wrapper);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  // 읽음 처리 UI 업데이트: 내 메시지의 "안읽음"을 전부 "읽음"으로 바꿈 (단순 버전)
-  function markMyMessagesRead() {
-    const receipts = chatBox.querySelectorAll(".msg-row.me .read-receipt");
-    receipts.forEach((el) => {
-      el.textContent = "읽음";
-      el.classList.add("read");
-    });
-  }
-
-  // ====== 자동 재연결 로직 ======
-
-  let socket = null;
-  let reconnectTimerId = null;
-  let reconnectAttempt = 0;
-  let manuallyClosed = false;
-
-  function getReconnectDelayMs(attempt) {
-    const base = 500;   // 0.5초
-    const max = 10000;  // 최대 10초
-    const delay = Math.min(max, base * Math.pow(2, attempt));
-    return delay + Math.floor(Math.random() * 250);
-  }
-
-  function connectWebSocket() {
-    // 중복 연결 방지
-    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-      return;
-    }
-
-    manuallyClosed = false;
-
-    socket = new WebSocket(wsUrl);
-
-    socket.onopen = () => {
-      reconnectAttempt = 0; // 성공하면 초기화
-      chatBox.scrollTop = chatBox.scrollHeight;
-      console.log("WebSocket connected:", wsUrl);
-      socket.send(JSON.stringify({ action: "seen" }));
-    };
-    setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ action: "seen" }));
-      }
-    }, 10000);
-
-    socket.onmessage = (e) => {
-      let payload;
-      try {
-        payload = JSON.parse(e.data);
-      } catch (err) {
-        return;
-      }
-
-      const eventType = payload.event;
-      const data = payload.data;
-
-      // 메시지 이벤트
-      if (eventType === "message" && data) {
-        appendMessage({
-          sender_id: data.sender_id,
-          content: data.content,
-          created_at: data.created_at,
-          is_read: data.is_read
-        });
-        return;
-      }
-
-      // 읽음 이벤트
-      if (eventType === "read" && data) {
-        const readerId = Number(data.reader_id);
-        if (readerId !== myUserId) {
-          markMyMessagesRead();
-        }
-        return;
-      }
-    };
-
-    socket.onerror = () => {
-      console.log("WebSocket error");
-      // 보통 onclose가 뒤이어 실행됨
-    };
-
-    socket.onclose = (evt) => {
-      console.log("WebSocket closed", evt.code);
-
-      if (manuallyClosed) return;
-
-      scheduleReconnect();
-    };
-  }
-
-  function scheduleReconnect() {
-    if (reconnectTimerId) return;
-
-    const delay = getReconnectDelayMs(reconnectAttempt);
-    reconnectAttempt += 1;
-
-    console.log(`Reconnecting in ${Math.round(delay / 1000)}s...`);
-
-    reconnectTimerId = window.setTimeout(() => {
-      reconnectTimerId = null;
-      connectWebSocket();
-    }, delay);
-  }
-
-  // 최초 연결
-  connectWebSocket();
-
-  // 폼 전송(Enter/버튼 클릭)을 WebSocket 전송으로 바꾸기
-  chatForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const text = (chatInput.value || "").trim();
-    if (!text) return;
-
-    if (!socket || socket.readyState !== WebSocket.OPEN) {
-      alert("연결이 끊겨 있어요. 자동으로 재연결 중입니다.");
-      return;
-    }
-
-    socket.send(JSON.stringify({ action: "send", content: text }));
-    chatInput.value = "";
-    chatInput.focus();
-  });
-
-  // 탭이 다시 보이면(잠자기/복귀) 연결이 죽어있을 수 있어 재연결 시도
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      if (!socket || socket.readyState === WebSocket.CLOSED) {
-        connectWebSocket();
-      }
-    }
-  });
-
-  // 페이지 닫을 때는 재연결 중지 + 소켓 정리
-  window.addEventListener("beforeunload", () => {
-    manuallyClosed = true;
-
-    if (reconnectTimerId) {
-      clearTimeout(reconnectTimerId);
-      reconnectTimerId = null;
-    }
-
-    if (socket) {
-      socket.close();
-    }
-  });
-});
-</script>
 {% endblock %}
 
-{% block script %}
+{% block extra_js %}
   <script src="{% static 'chat/js/dm.js' %}"></script>
 {% endblock %}
