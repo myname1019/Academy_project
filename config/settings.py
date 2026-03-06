@@ -210,3 +210,5 @@ SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 DATABASE_ROUTERS = ['config.db_router.MasterSlaveRouter']
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
