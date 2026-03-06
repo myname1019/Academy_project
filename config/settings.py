@@ -99,15 +99,7 @@ DATABASES = {
         'NAME': 'academy_db',
         'USER': os.environ.get('DB_USER'),         
         'PASSWORD': os.environ.get('DB_PASSWORD'), 
-        'HOST': os.environ.get('DB_MASTER_HOST'),
-        'PORT': '3306',
-    },
-    'replica': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'academy_db',
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_SLAVE_HOST'),
+        'HOST': os.environ.get('DB_HOST'),  # 👈 핵심! 이제 HOST 하나만 바라봅니다.
         'PORT': '3306',
     }
 }
