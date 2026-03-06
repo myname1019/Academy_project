@@ -212,3 +212,10 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 DATABASE_ROUTERS = ['config.db_router.MasterSlaveRouter']
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.tikitaka.com',
+    'http://www.tikitaka.com',
+    'http://10.10.102.70',  # 웹 서버 IP
+    'http://10.10.102.200', # 쓰기 VIP (혹시 이쪽으로 직접 붙는다면)
+]
