@@ -89,20 +89,29 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
+DATABASE_ROUTERS = ['config.db_router.MasterSlaveRouter']
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': {  # 쓰기 전용 (200번)
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'academy_db',
         'USER': os.environ.get('DB_USER'),         
         'PASSWORD': os.environ.get('DB_PASSWORD'), 
-        'HOST': os.environ.get('DB_HOST'),  # 👈 핵심! 이제 HOST 하나만 바라봅니다.
+        'HOST': os.environ.get('DB_MASTER_HOST'),
+        'PORT': '3306',
+    },
+    'replica': {  # 읽기 전용 (201번)
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'academy_db',
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_SLAVE_HOST'),
         'PORT': '3306',
     }
 }
+
 
 
 # Password validation
