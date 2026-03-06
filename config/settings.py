@@ -89,7 +89,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-DATABASE_ROUTERS = ['config.db_router.MasterSlaveRouter']
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -209,3 +209,4 @@ SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
+DATABASE_ROUTERS = ['config.db_router.MasterSlaveRouter']
