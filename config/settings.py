@@ -9,11 +9,12 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -89,16 +90,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {  # 쓰기 전용 (200번)
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'academy_db',
+        'USER': os.environ.get('DB_USER'),         
+        'PASSWORD': os.environ.get('DB_PASSWORD'), 
+        'HOST': os.environ.get('DB_MASTER_HOST'),
+        'PORT': '3306',
+    },
+    'replica': {  # 읽기 전용 (201번)
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'academy_db',
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_SLAVE_HOST'),
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
@@ -134,8 +147,8 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-
 import os
+from dotenv import load_dotenv
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -195,3 +208,14 @@ AUTH_USER_MODEL = 'common.CustomUser'
 SOCIALACCOUNT_ADAPTER = 'common.adapters.CustomSocialAccountAdapter'
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+DATABASE_ROUTERS = ['config.db_router.MasterSlaveRouter']
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.tikitaka.com',
+    'http://www.tikitaka.com',
+    'http://10.10.102.70',  # 웹 서버 IP
+    'http://10.10.102.200', # 쓰기 VIP (혹시 이쪽으로 직접 붙는다면)
+]
