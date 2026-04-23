@@ -219,3 +219,4 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.whatmyname.click',
     'http://www.whatmyname.click',
 ]
+
