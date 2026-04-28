@@ -1,0 +1,21 @@
+from django.urls import path
+from . import views
+
+app_name = 'course'
+
+urlpatterns = [
+    path('', views.CourseList.as_view(), name='course_list'),
+    path('<int:pk>/', views.CourseDetail.as_view(), name='course_detail'),
+    
+    #  강의 생성 시에는 아직 번호(pk)가 없으므로 main 브랜치 설정을 유지합니다.
+    path('create/', views.CourseCreate.as_view(), name='course_create'),
+    
+    path('<int:pk>/update/', views.CourseUpdate.as_view(), name='course_update'),
+    path('<int:pk>/delete/', views.course_delete, name='course_delete'),
+    path("my/", views.MyTeachingCourseList.as_view(), name="my_courses"),
+    path("enrolled/", views.MyEnrolledCourseList.as_view(), name="my_enrollments"),
+    path('<int:course_id>/lesson/add/', views.lesson_add, name='lesson_add'),
+    path('lesson/<int:lesson_id>/play/', views.lesson_play, name='lesson_play'),
+    path('lesson/<int:lesson_id>/update/', views.lesson_update, name='lesson_update'),
+    path('lesson/<int:lesson_id>/delete/', views.lesson_delete, name='lesson_delete'),
+]

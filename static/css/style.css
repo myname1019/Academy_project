@@ -1,0 +1,107 @@
+/* ============================= */
+/* 🌍 전역 변수 */
+/* ============================= */
+:root{
+  --bg: #ffffff;
+  --text: #212529;
+
+  /* (선택) 다크에서 Bootstrap 보정에 쓰는 변수들 */
+  --card: #ffffff;
+  --muted: #6c757d;
+  --line: #dee2e6;
+}
+
+/* ✅ 핵심: html.dark + body.dark 둘 다 변수 변경 */
+html.dark,
+body.dark{
+  --bg: #0f1220;
+  --text: #f1f3ff;
+
+  --card: #1b1f36;
+  --muted: #aab0e6;
+  --line: #2a2f4a;
+}
+
+/* ============================= */
+/* 🧱 기본 레이아웃 */
+/* ============================= */
+html, body{
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+/* ✅ html에도 배경 칠해서 "아래 흰색" 방지 */
+html{
+  background: var(--bg);
+}
+
+body{
+  min-height: 100vh;   /* 화면은 최소로 채우고 */
+  height: auto;        /* 내용 늘어나면 자연스럽게 확장 */
+  background: var(--bg);
+  color: var(--text);
+  transition: background .25s ease, color .25s ease;
+}
+
+/* ============================= */
+/* 🎯 board_base 전용 제어 */
+/* ============================= */
+.board-layout main,
+.board-layout .container{
+  background: transparent !important;
+}
+
+/* ============================= */
+/* 🔐 비밀번호 경고 배너 */
+/* ============================= */
+.pw-warning{
+  position: relative;
+  background-color: #ffeaa7;
+  color: #d63031;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px solid #fdcb6e;
+}
+
+.pw-link{
+  margin-left: 15px;
+  background: #d63031;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.pw-close{
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #d63031;
+  cursor: pointer;
+}
+
+/* ============================= */
+/* ✅ 다크모드에서 Bootstrap 유틸 보정 */
+/* ============================= */
+.board-layout.dark .bg-white{
+  background-color: var(--card) !important;
+}
+
+.board-layout.dark .text-dark{
+  color: var(--text) !important;
+}
+
+.board-layout.dark .text-muted{
+  color: var(--muted) !important;
+}
+
+.board-layout.dark .border{
+  border-color: var(--line) !important;
+}

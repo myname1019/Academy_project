@@ -1,0 +1,34 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'course/css/pagination.css' %}">
+
+
+
+<div class="pagination-container">
+    {% if prev_group_start %}
+        <a href="?page={{ prev_group_start }}" class="page-link-custom" title="{{ prev_group_start }}페이지로 이동">
+            &laquo; 이전
+        </a>
+    {% else %}
+        <span class="page-link-custom disabled">&laquo; 이전</span>
+    {% endif %}
+
+    <span class="page-divider">|</span>
+
+    {% for i in custom_page_range %}
+        {% if page_obj.number == i %}
+            <span class="page-link-custom active">{{ i }}</span>
+        {% else %}
+            <a href="?page={{ i }}" class="page-link-custom">{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+
+    <span class="page-divider">|</span>
+
+    {% if next_group_start %}
+        <a href="?page={{ next_group_start }}" class="page-link-custom" title="{{ next_group_start }}페이지로 이동">
+            다음 &raquo;
+        </a>
+    {% else %}
+        <span class="page-link-custom disabled">다음 &raquo;</span>
+    {% endif %}
+</div>

@@ -1,0 +1,17 @@
+# TeacherPage/urls.py
+from django.urls import path
+from . import views
+
+app_name = "teacherpage"
+
+urlpatterns = [
+    path("", views.teacher_dashboard, name="dashboard"),
+
+    # 강의 CRUD
+    path("course/<int:course_id>/edit/", views.edit_course, name="course_edit"),
+    path("course/<int:course_id>/delete/", views.delete_course, name="course_delete"),
+
+    # 수강생 목록(강사 전용)
+    path("course/<int:course_id>/students/", views.course_students, name="course_students"),
+    path("students/", views.students_all, name="students_all"),
+]

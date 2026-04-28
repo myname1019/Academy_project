@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'course/css/course_detail.css' %}">
+{% endblock %}
+{% block content %}
+
+<div class="detail-container">
+  <div class="breadcrumb">
+    <a href="{% url 'course:course_list' %}" style="color:#868e96; text-decoration:none; font-weight:700;">전체 강의</a>
+    <span class="dot">&nbsp;>&nbsp;</span>
+    <span>{{ course.get_category_display }}</span>
+  </div>
+
+  <div class="page-grid">
+    <div class="card">
+      <div class="category-badge">🏷️ {{ course.get_category_display }}</div>
+      <h1 class="title">{{ course.title }}</h1>
+
+      {% with avg=course.avg_rating|default:0 count=course.review_count %}
+      <div class="meta-row">
+        <span class="stars">
+          {% for i in "12345" %}
+            {% if forloop.counter <= avg %}★{% else %}☆{% endif %}
+          {% endfor %}
+          {{ avg|floatformat:1 }}
+        </span>
+        <span class="dot">•</span>
+        <span>리뷰 <strong>{{ count }}</strong></span>
+        <span class="dot">•</span>
+        <span>지식공유자 <strong>{{ course.teacher.username }}</strong></span>
+      </div>
+      {% endwith %}
+
+      <div class="price-box">
+        <div class="price">
+          {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
+        </div>
+        <div class="small-note">수강 전 강의 정보를 확인하세요.</div>
+      </div>
+
+      <div class="btn-row">
+        {% if user.is_authenticated %}
+            {% if request.user == course.teacher %}
+                <span class="btn btn-ghost">관리 중인 강의</span>
+            {% elif is_enrolled %}
+                <span class="btn btn-ghost" style="color:#00c471; background:#e6fcf5;">✅ 수강 중</span>
+                
+                {# 수강 중인 학생만 강사에게 DM 시작 가능 #}
+                <a href="{% url 'chat:dm_room' course.id course.teacher.id %}"
+                  class="btn btn-ghost"
+                  style="border:1px solid #00c471; color:#00c471; background:#fff;">
+                  1:1 대화
+                </a>
+            {% else %}
+                <a href="{% url 'studentpage:course_checkout' course.id %}" 
+                  class="btn btn-primary" 
+                  style="background:#00c471; border:none;">
+                  🚀 수강 신청하기
+                </a>
+            {% endif %}
+            <a href="{% url 'review:review_create' course.id %}" class="btn btn-primary">✍️ 리뷰 작성</a>
+        {% else %}
+            <a href="{% url 'common:login' %}" class="btn btn-primary">로그인 후 신청</a>
+        {% endif %}
+        <a href="{% url 'course:course_list' %}" class="btn btn-ghost">📚 목록</a>
+
+        {% if request.user == course.teacher %}
+          <a href="{% url 'course:course_update' pk=course.id %}" class="btn btn-primary">⚙️ 수정</a>
+          <form method="post" action="{% url 'course:course_delete' pk=course.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" onclick="return confirm('정말 이 강의를 삭제하시겠습니까?')">🗑️ 삭제</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card thumb-wrap">
+      {% if course.thumbnail %}
+        <img class="thumb" src="{{ course.thumbnail.url }}" alt="{{ course.title }} 썸네일">
+      {% else %}
+        <img class="thumb" src="{% static 'images/default_thumbnail.png' %}" alt="기본 썸네일">
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <div class="section-title">
+      <span>📌 강의 소개</span>
+    </div>
+    <div class="desc">
+      {{ course.description|linebreaks }}
+    </div>
+  </div>
+
+  <div class="card curriculum-section" style="margin-top: 18px;">
+      <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f3f5; padding-bottom: 15px; margin-bottom: 20px;">
+          <span>📚 커리큘럼</span>
+          
+          {% if request.user == course.teacher %}
+              <a href="{% url 'course:lesson_add' course.id %}" class="btn btn-primary" style="background: #6c5ce7; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px; text-decoration: none; color: white;">
+                  + 영상 추가하기
+              </a>
+          {% endif %}
+      </div>
+
+      {% if lessons_page %}
+          <div class="lesson-list" style="display: flex; flex-direction: column; gap: 10px;">
+              {% for lesson in lessons_page %}
+                  <div class="lesson-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; transition: 0.2s;">
+                      <div style="display: flex; align-items: center; gap: 15px;">
+                          <span style="display: inline-block; width: 40px; height: 40px; line-height: 40px; text-align: center; background: #e5e0ff; color: #6c5ce7; border-radius: 50%; font-weight: bold; font-size: 14px;">
+                              {{ lesson.order }}
+                          </span>
+                          <span style="font-weight: 600; font-size: 16px; color: #343a40;">{{ lesson.title }}</span>
+                      </div>
+                      
+                      {% if request.user == course.teacher %}
+                          <div style="display: flex; gap: 8px; margin-right: auto; margin-left: 20px;">
+                              <a href="{% url 'course:lesson_update' lesson.id %}" style="font-size: 13px; color: #4e73df; text-decoration: none; padding: 4px 8px; background: #eef2ff; border-radius: 4px;">수정</a>
+                              <form method="post" action="{% url 'course:lesson_delete' lesson.id %}" style="margin: 0;">
+                                  {% csrf_token %}
+                                  <button type="submit" style="font-size: 13px; color: #e74a3b; background: #fdf3f2; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="return confirm('이 영상을 정말 삭제하시겠습니까?');">삭제</button>
+                              </form>
+                          </div>
+                      {% endif %}
+
+                      {% if is_enrolled or request.user == course.teacher %}
+                          <a href="{% url 'course:lesson_play' lesson.id %}" class="btn-play" style="padding: 6px 15px; border: 1px solid #00c471; color: #00c471; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; background: white;">
+                              ▶ 영상 보기
+                          </a>
+                      {% else %}
+                          <span style="color: #adb5bd; font-size: 13px;">🔒 수강생 전용</span>
+                      {% endif %}
+                  </div>
+              {% endfor %}
+          </div>
+
+          {% if lessons_page.paginator.num_pages > 1 %}
+            <div class="lesson-pagination" style="margin-top: 25px; display: flex; justify-content: center; align-items: center; gap: 15px;">
+              {% if lessons_page.has_previous %}
+                <a class="btn btn-ghost" href="?lpage={{ lessons_page.previous_page_number }}&rpage={{ request.GET.rpage|default:'1' }}" style="padding: 6px 12px; border: 1px solid #dee2e6; color: #495057; border-radius: 6px; text-decoration: none; font-size: 14px;">이전</a>
+              {% endif %}
+
+              <span class="muted" style="font-weight: 800; color: #6c5ce7;">
+                {{ lessons_page.number }} / {{ lessons_page.paginator.num_pages }}
+              </span>
+
+              {% if lessons_page.has_next %}
+                <a class="btn btn-ghost" href="?lpage={{ lessons_page.next_page_number }}&rpage={{ request.GET.rpage|default:'1' }}" style="padding: 6px 12px; border: 1px solid #dee2e6; color: #495057; border-radius: 6px; text-decoration: none; font-size: 14px;">다음</a>
+              {% endif %}
+            </div>
+          {% endif %}
+
+      {% else %}
+          <div style="text-align: center; padding: 40px 0; color: #868e96;">
+              <p style="margin: 0; font-size: 15px;">아직 등록된 커리큘럼 영상이 없습니다.</p>
+          </div>
+      {% endif %}
+  </div>
+
+  <div class="card review-card" style="margin-top: 10px; margin-bottom: 40px;">
+    <div class="review-header">
+      <div class="section-title" style="margin:0;">
+        <span>💬 수강평</span>
+        {% with count=course.review_count %}
+          <span class="muted" style="font-weight:800;">총 {{ count }}개</span>
+        {% endwith %}
+      </div>
+
+      {% with avg=course.avg_rating|default:0 count=course.review_count %}
+        <div class="review-summary">
+          <div class="review-avg">
+            <div class="review-avg-score">{{ avg|floatformat:1 }}</div>
+            <div class="review-avg-meta">
+              <div class="stars">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= avg %}★{% else %}☆{% endif %}
+                {% endfor %}
+              </div>
+              <div class="muted" style="font-weight:800;">
+                {% if count %}{{ count }}명 수강평{% else %}아직 리뷰 없음{% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% if request.user != course.teacher %}
+            <div class="review-actions">
+              {% if user.is_authenticated and is_enrolled %}
+                <a href="{% url 'review:review_create' course.id %}" class="btn btn-primary">✍️ 리뷰 작성</a>
+              {% elif user.is_authenticated and not is_enrolled %}
+                <span class="btn btn-ghost">수강 신청 후 작성 가능</span>
+              {% else %}
+                <a href="{% url 'common:login' %}" class="btn btn-ghost">로그인 후 작성</a>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endwith %}
+    </div>
+
+    <div class="review-list">
+      {% for review in reviews_page %}
+        <div class="review-item review-collapsed">
+          <div class="review-topline">
+            <div class="review-left">
+              <div class="review-user">{{ review.user.username }}</div>
+              <div class="review-rating-badge">⭐ {{ review.rating }}</div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="review-date">{{ review.created_at|date:"Y.m.d" }}</div>
+
+              {% if user.is_authenticated and review.user == request.user %}
+                <div class="review-controls">
+                  <a href="{% url 'review:review_update' review.pk %}" class="review-edit-btn">
+                    수정
+                  </a>
+
+                  <form method="post" action="{% url 'review:review_delete' review.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="review-delete-btn" onclick="return confirm('리뷰를 삭제하시겠습니까?');">
+                      삭제
+                    </button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="review-content">{{ review.content }}</div>
+
+          {% if review.content|length > 120 %}
+            <button type="button" class="review-toggle js-review-toggle">더보기</button>
+          {% endif %}
+        </div>
+      {% empty %}
+        <div class="review-empty">
+          <p class="muted" style="margin:0;">아직 작성된 리뷰가 없습니다.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if reviews_page.paginator.num_pages > 1 %}
+      <div class="review-pagination">
+        {% if reviews_page.has_previous %}
+          <a class="btn btn-ghost" href="?rpage={{ reviews_page.previous_page_number }}">이전</a>
+        {% endif %}
+
+        <span class="muted" style="font-weight:900;">
+          {{ reviews_page.number }} / {{ reviews_page.paginator.num_pages }}
+        </span>
+
+        {% if reviews_page.has_next %}
+          <a class="btn btn-ghost" href="?rpage={{ reviews_page.next_page_number }}">다음</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'course/js/course_detail.js' %}"></script>
+{% endblock %}

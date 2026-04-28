@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}수강생 목록{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'teacherpage/css/course_students.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container surface">
+
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">{{ course.title }} 수강생</h2>
+      <div class="sub-text">총 {{ student_count|default:students|length }}명</div>
+    </div>
+
+    <a class="btn-outline" href="{% url 'teacherpage:dashboard' %}">대시보드</a>
+  </div>
+
+  <div class="student-list">
+    {% for s in students %}
+      <div class="student-card surface">
+
+        <div class="student-info">
+          <p class="student-name">{{ s.first_name|default:s.username }}</p>
+          {% if s.email %}
+            <span class="student-email">{{ s.email }}</span>
+          {% else %}
+            <span class="student-email muted">이메일 없음</span>
+          {% endif %}
+        </div>
+
+        <div class="student-actions">
+          <span class="pill">수강생</span>
+
+          {# 학생이 먼저 메시지를 보낸 경우에만 강사에게 1:1 버튼 표시 #}
+          {% if s.has_chat %}
+            <a class="btn-sm"
+               href="{% url 'chat:dm_room' course.id s.id %}">
+              1:1 대화
+            </a>
+
+            {% if s.unread_count|default:0 > 0 %}
+              <span class="badge-unread" title="안읽은 메시지">
+                {{ s.unread_count }}
+              </span>
+            {% endif %}
+          {% else %}
+            <span class="pill pill-muted">문의 없음</span>
+          {% endif %}
+        </div>
+
+      </div>
+    {% empty %}
+      <div class="empty-box soft">
+        아직 수강생이 없습니다.<br>
+        학생이 수강 등록을 완료하면 여기에서 수강생 확인 및 1:1 문의가 가능해집니다.
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'teacherpage/js/course_students.js' %}"></script>
+{% endblock %}

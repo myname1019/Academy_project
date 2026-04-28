@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}강의 관리 시스템{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'base/css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="/" style="margin-left: 5px;">TiKiTaKa</a>
+        </div>
+
+        <nav>
+            {% if user.is_authenticated and user.role == 'teacher' %}
+                <a href="{% url 'course:my_courses' %}">내 강의 목록</a>
+                <a href="{% url 'course:course_create' %}">새 강의 등록</a>
+            {% elif user.is_authenticated and user.role == 'student' %}
+                <a href="{% url 'course:my_enrollments' %}">내 강의 목록</a>
+            {% else %}
+                <a href="{% url 'course:course_list' %}">강의 목록</a>
+            {% endif %}
+
+            {% with vn=request.resolver_match.view_name %}
+                {% if user.is_authenticated %}
+                    {% if user.role == 'student' and vn != 'studentpage:student_dashboard' %}
+                        <a href="{% url 'common:mypage' %}">내 페이지</a>
+                    {% elif user.role == 'teacher' and vn != 'teacherpage:dashboard' %}
+                        <a href="{% url 'common:mypage' %}">내 페이지</a>
+                    {% elif user.role != 'student' and user.role != 'teacher' %}
+                        <a href="{% url 'common:mypage' %}">내 페이지</a>
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- 🌙 다크모드 버튼 -->
+            <button type="button" class="theme-toggle" id="themeToggle" aria-label="다크모드 전환">🌙</button>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                <button type="button" class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 My Academy | Course Management System</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- ✅ 다크모드 토글 스크립트 -->
+    <script>
+      (function () {
+        const key = "theme";
+        const btn = document.getElementById("themeToggle");
+
+        const saved = localStorage.getItem(key);
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if (saved === "dark" || (!saved && prefersDark)) {
+          document.body.classList.add("dark");
+          if (btn) btn.textContent = "☀️";
+        } else {
+          if (btn) btn.textContent = "🌙";
+        }
+
+        if (btn) {
+          btn.addEventListener("click", () => {
+            document.body.classList.toggle("dark");
+            const isDark = document.body.classList.contains("dark");
+            localStorage.setItem(key, isDark ? "dark" : "light");
+            btn.textContent = isDark ? "☀️" : "🌙";
+          });
+        }
+      })();
+    </script>
+</body>
+</html>

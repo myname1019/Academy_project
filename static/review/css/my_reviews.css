@@ -1,0 +1,195 @@
+/* review/css/my_reviews.css (theme-ready) */
+
+.review-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: var(--text);
+}
+
+.review-title {
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.review-summary {
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.review-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+    padding: 20px;
+    transition: 0.2s;
+    color: var(--text);
+    box-shadow: var(--shadow-soft);
+}
+
+.review-card:hover {
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    transform: translateY(-2px);
+}
+
+.review-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.course-title {
+    font-weight: 900;
+    font-size: 17px;
+    color: var(--text);
+}
+
+.review-meta {
+    margin-top: 6px;
+    color: var(--subtext);
+    font-weight: 700;
+}
+
+.divider {
+    color: var(--border);
+    margin: 0 6px;
+}
+
+.review-content {
+    margin-top: 15px;
+    color: var(--subtext);
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+/* 버튼들 */
+.review-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-ghost {
+    background: var(--soft-bg);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.btn-ghost:hover {
+    filter: brightness(0.95);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: var(--card);
+    color: #fa5252;
+    border: 1px solid #fa5252;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.btn-danger:hover {
+    background: #fa5252;
+    color: #fff;
+}
+
+.review-empty {
+    padding: 25px;
+    color: var(--muted);
+    font-weight: 800;
+    background: var(--soft-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    text-align: center;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .review-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .review-actions {
+        justify-content: flex-start;
+    }
+}
+
+.review-content.is-hidden { display: none; }
+
+.toggle-content{
+  margin-top: 12px;
+  background: none;
+  border: none;
+  color: #00c471; /* 토글은 초록 포인트 유지 */
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggle-content:hover{
+  text-decoration: underline;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    background: var(--soft-bg);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.page-btn:hover {
+    filter: brightness(0.95);
+}
+
+.page-info {
+    font-weight: 900;
+    color: var(--subtext);
+    padding: 8px 12px;
+}

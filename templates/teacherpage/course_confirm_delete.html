@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-3">강의 삭제</h2>
+
+  <div class="alert alert-warning">
+    정말로 <strong>{{ course.title }}</strong> 강의를 삭제할까요?
+    삭제하면 되돌릴 수 없습니다.
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-danger">삭제</button>
+      <a href="{% url 'teacherpage:dashboard' %}" class="btn btn-outline-secondary">취소</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

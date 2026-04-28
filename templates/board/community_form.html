@@ -1,0 +1,26 @@
+{% extends "board_base.html" %}
+
+{% block content %}
+<div class="container my-5" style="max-width: 800px;">
+    <h3 class="fw-bold mb-4 border-bottom pb-3">게시판 글쓰기</h3>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="title" class="form-label fw-bold">제목</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{ post.title }}" placeholder="게시글 제목을 입력하세요" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label fw-bold">내용</label>
+            <textarea name="content" id="content" class="form-control" rows="12" placeholder="내용을 자유롭게 입력하세요" required>{{ post.content }}</textarea>
+        </div>
+
+        <div class="text-end pt-3">
+            <a href="{% url 'Board:community_list' %}" class="btn btn-outline-secondary me-2">취소</a>
+            <button type="submit" class="btn btn-dark px-4">등록하기</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

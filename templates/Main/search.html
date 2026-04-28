@@ -1,0 +1,42 @@
+{% extends "board_base.html" %}
+{% block content %}
+{% load static %}
+
+<main class="container my-5">
+    <h2 class="fs-4 fw-bold mb-4">
+        {% if q %}
+            '<span class="text-primary">{{ q }}</span>' 검색 결과 🔍
+        {% else %}
+            검색어를 입력해주세요.
+        {% endif %}
+    </h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% if course_list %}
+            {% for course in course_list %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0" style="cursor: pointer;" onclick="location.href='/course/{{ course.id }}/'">
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" style="aspect-ratio: 16/10; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_thumbnail.png' %}" class="card-img-top" style="aspect-ratio: 16/10; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body p-3">
+                        <h5 class="card-title fs-6 fw-bold text-truncate mb-2">{{ course.title }}</h5>
+                        <p class="card-text text-muted small mb-2">{{ course.author }}</p>
+                        <p class="card-text fw-bold m-0" style="color: #6c5ce7;">{% if course.price > 0 %}₩{{ course.price }}{% else %}무료{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center text-muted py-5">
+                {% if q %}검색 결과가 없습니다.{% endif %}
+            </div>
+        {% endif %}
+    </div>
+</main>
+<footer class="footer" style="text-align: center; margin-top: 50px; padding: 20px 0; color: #868e96; font-size: 14px; border-top: 1px solid #e9ecef;">
+    <p style="margin: 0;">&copy; 2026 My Academy | Course Management System</p>
+</footer>
+{% endblock %}

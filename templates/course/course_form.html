@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load static %} {% block title %}
+    {% if object %}강의 수정{% else %}강의 등록{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'course/css/course_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="form-wrapper">
+    <div class="form-card">
+        <div class="form-title">
+            🎓 {% if object %}강의 수정{% else %}새 강의 등록{% endif %}
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <div class="button-group">
+                <button type="submit" class="submit-btn">
+                    {% if object %}수정하기{% else %}저장하기{% endif %}
+                </button>
+                <a href="{% url 'course:course_list' %}" class="cancel-link">취소하고 목록으로</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

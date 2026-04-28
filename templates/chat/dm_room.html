@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}1:1 대화{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'chat/css/dm.css' %}">
+  
+  <style>
+    .hint {
+      margin-top: 10px;
+      color: #adb5bd;
+      font-size: 12px;
+      text-align: right;
+    }
+
+    /* 날짜 구분선 */
+    .date-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .date-divider::before,
+    .date-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e9ecef;
+    }
+
+    .date-chip {
+      font-size: 12px;
+      font-weight: 800;
+      color: #868e96;
+      background: #fff;
+      border: 1px solid #e9ecef;
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* 읽음 표시 */
+    .read-receipt {
+      font-size: 12px;
+      font-weight: 800;
+      color: #868e96;
+    }
+    .read-receipt.read {
+      color: #00c471;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="dm-wrap">
+  <div class="dm-card">
+    <div class="dm-header">
+      <div>
+        <h2 class="dm-title">{{ course.title }} · 1:1 대화</h2>
+        <p class="dm-sub">강사: {{ teacher.username }} / 수강생: {{ student.username }}</p>
+      </div>
+
+      <div class="dm-actions">
+        <a class="btn-outline" href="javascript:history.back()">이전</a>
+        <a class="btn-gray" href="{% url 'chat:inbox' %}">대화함</a>
+      </div>
+    </div>
+
+    <div class="dm-body">
+      <div id="chatBox" class="chat-box">
+        {% for m in messages %}
+
+          {# 날짜가 바뀌는 순간에만 구분선 출력 #}
+          {% ifchanged m.created_at|date:"Y-m-d" %}
+            <div class="date-divider">
+              <span class="date-chip">{{ m.created_at|date:"Y-m-d" }}</span>
+            </div>
+          {% endifchanged %}
+
+          {% if m.sender_id == user.id %}
+            <div class="msg-row me">
+              <div>
+                <div class="bubble me">{{ m.content }}</div>
+
+                <div class="meta me">
+                  <span>{{ m.created_at|date:"H:i" }}</span>
+
+                  {# 읽음 체크: 내 메시지에만 표시 #}
+                  {% if m.is_read %}
+                    <span class="read-receipt read">읽음</span>
+                  {% else %}
+                    <span class="read-receipt">안읽음</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="msg-row other">
+              <div>
+                <div class="bubble other">{{ m.content }}</div>
+
+                <div class="meta">
+                  <span>{{ m.created_at|date:"H:i" }}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+        {% empty %}
+          <div class="empty-msg" style="padding:18px; color:#868e96; text-align:center;">
+            아직 메시지가 없습니다. 첫 문의를 남겨보세요.
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="dm-footer">
+      <form method="POST" action="">
+        {% csrf_token %}
+        <div class="input-row">
+          <input class="input" name="content" placeholder="메시지 입력" autocomplete="off" />
+          <button class="send" type="submit">전송</button>
+        </div>
+      </form>
+      <div class="hint">Enter로 전송됩니다. (모바일은 전송 버튼)</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'chat/js/dm.js' %}"></script>
+{% endblock %}

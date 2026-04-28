@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'course/css/course_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="course-table-wrap">
+  <h2 class="course-table-title">{{ page_title }}</h2>
+
+  <div class="course-table">
+    <div class="course-table-head">
+      <div class="col-no">번호</div>
+      <div class="col-title">강의명</div>
+      <div class="col-action">상세</div>
+    </div>
+
+    {% if course_rows %}
+      {% for no, c in course_rows %}
+        <div class="course-table-row">
+          <div class="col-no muted">{{ no }}</div>
+          <div class="col-title strong">{{ c.title }}</div>
+          <div class="col-action">
+            <a class="btn-primary" href="{% url 'course:course_detail' c.pk %}">보기</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="course-table-empty">목록이 비어있습니다.</div>
+    {% endif %}
+  </div>
+
+  {% if is_paginated %}
+    <div class="course-table-pagination">
+      {% if page_obj.has_previous %}
+        <a class="btn-ghost" href="?page={{ page_obj.previous_page_number }}">이전</a>
+      {% endif %}
+
+      <span class="page-info">
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+        <a class="btn-ghost" href="?page={{ page_obj.next_page_number }}">다음</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

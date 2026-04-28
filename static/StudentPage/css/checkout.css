@@ -1,0 +1,31 @@
+/* StudentPage/static/StudentPage/css/checkout.css */
+
+.checkout-wrapper { max-width: 900px; margin: 50px auto; padding: 20px; }
+.checkout-title { font-size: 24px; font-weight: 800; margin-bottom: 30px; }
+
+.checkout-grid { display: flex; gap: 30px; }
+@media (max-width: 768px) { .checkout-grid { flex-direction: column; } }
+
+.checkout-left { flex: 2; }
+.checkout-right { flex: 1; }
+
+.box-card { background: #fff; border: 1px solid #e9ecef; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+.box-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; border-bottom: 2px solid #f1f3f5; padding-bottom: 10px; }
+
+/* 주문 상품 정보 */
+.order-item { display: flex; gap: 15px; align-items: center; }
+.order-thumb { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; }
+.order-info h4 { margin: 0 0 5px 0; font-size: 16px; font-weight: 700; }
+.order-info p { margin: 0; color: #868e96; font-size: 14px; }
+
+/* 가짜 결제 수단 라디오 버튼 */
+.pay-method-label { display: block; padding: 15px; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+.pay-method-label:hover { border-color: #6c5ce7; background: #f8f9fa; }
+.pay-method-label input { margin-right: 10px; }
+
+/* 최종 결제 금액 박스 */
+.price-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; }
+.total-price-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 2px dashed #e9ecef; font-size: 20px; font-weight: 800; color: #6c5ce7; }
+
+.btn-pay { width: 100%; background: #00c471; color: white; border: none; padding: 18px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+.btn-pay:hover { background: #00a860; }

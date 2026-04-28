@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load static %} {% block title %}강의 목록{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'course/css/course_list.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="course-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            {% if subject_display %}
+                {{ subject_display }} 강의 목록
+            {% elif request.GET.q %}
+                '{{ request.GET.q }}' 검색 결과
+            {% else %}
+                전체 강의 목록
+            {% endif %}
+        </h2>
+    </div>
+
+    <div class="category-filter-nav">
+        <a href="?subject=all" class="filter-btn {% if not request.GET.subject or request.GET.subject == 'all' %}active{% endif %}">전체</a>
+        <a href="?subject=korean" class="filter-btn {% if request.GET.subject == 'korean' %}active{% endif %}">국어</a>
+        <a href="?subject=math" class="filter-btn {% if request.GET.subject == 'math' %}active{% endif %}">수학</a>
+        <a href="?subject=english" class="filter-btn {% if request.GET.subject == 'english' %}active{% endif %}">영어</a>
+        <a href="?subject=social" class="filter-btn {% if request.GET.subject == 'social' %}active{% endif %}">사회</a>
+        <a href="?subject=science" class="filter-btn {% if request.GET.subject == 'science' %}active{% endif %}">과학</a>
+        <a href="?subject=etc" class="filter-btn {% if request.GET.subject == 'etc' %}active{% endif %}">기타</a>
+    </div>
+
+    {% if courses %}
+    <div class="course-grid">
+        {% for course in courses %}
+        <div class="course-card">
+            <a href="{% url 'course:course_detail' pk=course.id %}" style="text-decoration: none;">
+                <div class="thumbnail">
+                    {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail.url }}" 
+                            alt="{{ course.title }} 썸네일"
+                            style="width:100%; height:100%; object-fit:cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_thumbnail.png' %}" 
+                            alt="{{ course.title }} 썸네일"
+                            style="width:100%; height:100%; object-fit:cover;">
+                    {% endif %}
+                </div>
+            </a>
+
+            <div class="course-body">
+                <div class="course-title">
+                    <a href="{% url 'course:course_detail' pk=course.id %}">
+                        {{ course.title }}
+                    </a>
+                </div>
+                <div class="course-desc">
+                    {{ course.description|truncatechars:80 }}
+                </div>
+            </div>
+
+            <div class="course-footer">
+                <div class="price">
+                    {% if course.price == 0 %}무료{% else %}₩ {{ course.price }}{% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% include 'course/_pagination.html' %}
+
+    {% else %}
+        <div class="empty-box">
+            아직 등록된 강의가 없습니다
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

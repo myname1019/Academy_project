@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static teacher_extras %}
+
+{% block title %}전체 수강생 목록{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'teacherpage/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'teacherpage/css/students_all.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container surface">
+
+  <div class="students-head">
+    <div class="section-header" style="margin:0;">
+      <span class="section-title">👥 전체 수강생(중복 제외)</span>
+      <span class="muted students-count">총 {{ student_count }}명</span>
+    </div>
+
+    <div class="students-controls">
+      <input id="studentSearch" class="students-search" type="text" placeholder="이름/아이디/이메일 검색">
+      <a class="btn-outline" href="{% url 'teacherpage:dashboard' %}">← 대시보드</a>
+    </div>
+  </div>
+
+  {% if students %}
+    <div class="students-list" id="studentsList">
+      {% for s in students %}
+        <div class="student-card" data-key="{{ s.username }} {{ s.first_name }} {{ s.email }}">
+          <div class="student-left">
+            <div class="student-name">
+              {{ s.first_name|default:s.username }}
+              <span class="student-username muted">@{{ s.username }}</span>
+            </div>
+
+            {% if s.email %}
+              <div class="student-email muted">{{ s.email }}</div>
+            {% endif %}
+
+            <div class="student-courses">
+              {% for c in courses_by_student|get_item:s.id %}
+                <a class="pill pill-link" href="{% url 'teacherpage:course_students' c.id %}" title="해당 강의 수강생 보기">
+                  {{ c.title }}
+                </a>
+              {% empty %}
+                <span class="pill">수강 강의 없음</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="student-actions">
+            {% if s.unread_total|default:0 > 0 %}
+              <span class="pill pill-alert">안읽음 {{ s.unread_total }}</span>
+            {% else %}
+              <span class="pill">안읽음 0</span>
+            {% endif %}
+
+            {% if s.has_chat %}
+              <span class="pill pill-ok">DM 가능</span>
+            {% else %}
+              <span class="pill">문의 없음</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-box soft">
+      <p class="muted">아직 수강생이 없습니다.</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'teacherpage/js/students_all.js' %}"></script>
+{% endblock %}
