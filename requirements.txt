@@ -20,3 +20,5 @@ sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.6.3
 virtualenv==20.31.2
+boto3==1.36.0
+django-storages==1.14.4
