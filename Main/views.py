@@ -4,6 +4,7 @@ from course.models import Course
 # ✅ [추가] Board 앱의 Post 모델을 가져옵니다. (경로가 다르면 수정하세요)
 from Board.models import Post 
 
+
 # 1. 메인 페이지 (클래스형 뷰)
 class MainPageView(ListView):
     model = Course
@@ -78,3 +79,38 @@ class SearchPageView(ListView):
         context = super().get_context_data(**kwargs)
         context['q'] = self.request.GET.get('q', '')
         return context
+
+from django.http import HttpResponse
+import socket
+
+def session_test_view(request):
+    # 1. 세션에 방문 횟수(visit_count) 기록
+    if 'visit_count' not in request.session:
+        request.session['visit_count'] = 1
+    else:
+        request.session['visit_count'] += 1
+
+    # 2. 현재 이 코드를 실행 중인 서버(EC2)의 프라이빗 IP 가져오기
+    try:
+        server_ip = socket.gethostbyname(socket.gethostname())
+    except Exception:
+        server_ip = "IP 확인 불가"
+
+    # 3. 화면에 출력할 HTML 생성
+    html = f"""
+    <html>
+    <head><title>Redis Session Test</title></head>
+    <body style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>🔄 로드밸런서 & Redis 세션 테스트</h2>
+        <hr>
+        <p><strong>현재 접속 중인 서버 IP (EC2):</strong> <span style="color: blue; font-size: 20px;">{server_ip}</span></p>
+        <p><strong>내 세션 ID (Session Key):</strong> {request.session.session_key}</p>
+        <p><strong>이 페이지 방문 횟수:</strong> <span style="color: red; font-size: 20px;">{request.session['visit_count']}</span></p>
+        <hr>
+        <p>💡 <b>테스트 방법:</b> F5(새로고침)를 여러 번 눌러보세요.<br>
+        서버 IP는 ALB 라운드 로빈에 의해 <b>변경</b>될 수 있지만, <br>
+        세션 ID는 <b>그대로 유지</b>되고 방문 횟수는 계속 <b>증가</b>한다면 Redis 세션 관리가 완벽하게 동작하는 것입니다!</p>
+    </body>
+    </html>
+    """
+    return HttpResponse(html)

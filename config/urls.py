@@ -36,6 +36,8 @@ urlpatterns = [
 
     # 소셜 로그인
     path('accounts/', include('allauth.urls')),
+
+    path('test-session/', views.session_test_view, name='test_session'),
 ]
 
 # 개발환경(DEBUG=True)에서만 미디어 파일 서빙 (안전한 방식)
