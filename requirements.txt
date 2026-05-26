@@ -22,7 +22,3 @@ urllib3==2.6.3
 virtualenv==20.31.2
 boto3==1.36.0
 django-storages==1.14.4
-PyMySQL==1.1.1
-django-redis==5.4.0
-aws-xray-sdk==2.14.0
-gunicorn==22.0.0
